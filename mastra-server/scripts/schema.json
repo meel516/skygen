@@ -1,0 +1,5564 @@
+{
+  "tables": [
+    {
+      "name": "Template",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "category",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'general'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'user'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "data",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'{}'::jsonb",
+          "is_identity": "NO"
+        },
+        {
+          "name": "isPublic",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "false",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdById",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "previewUrl",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "isFreeTier",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "false",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "Video",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "(gen_random_uuid())::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "data",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'{}'::jsonb",
+          "is_identity": "NO"
+        },
+        {
+          "name": "url",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "duration",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "userId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "_migrations",
+      "columns": [
+        {
+          "name": "version",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "applied_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "banned_emails",
+      "columns": [
+        {
+          "name": "email",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "banned_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "reason",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "block_thumbnails",
+      "columns": [
+        {
+          "name": "block_type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "thumbnail_url",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_by",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "checkpoint_blobs",
+      "columns": [
+        {
+          "name": "thread_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "checkpoint_ns",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "''::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "channel",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "version",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "blob",
+          "data_type": "bytea",
+          "udt_name": "bytea",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "checkpoint_migrations",
+      "columns": [
+        {
+          "name": "v",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "checkpoint_writes",
+      "columns": [
+        {
+          "name": "thread_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "checkpoint_ns",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "''::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "checkpoint_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "task_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "idx",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "channel",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "blob",
+          "data_type": "bytea",
+          "udt_name": "bytea",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "checkpoints",
+      "columns": [
+        {
+          "name": "thread_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "checkpoint_ns",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "''::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "checkpoint_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "parent_checkpoint_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "checkpoint",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'{}'::jsonb",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "linkedin_accounts",
+      "columns": [
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "access_token",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "refresh_token",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "expiry_date",
+          "data_type": "bigint",
+          "udt_name": "int8",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_agent_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "agentId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "instructions",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "model",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tools",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "defaultOptions",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "workflows",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "agents",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "integrationTools",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "inputProcessors",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "outputProcessors",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "memory",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scorers",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "mcpClients",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestContextSchema",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "workspace",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "skills",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "skillsFormat",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_agents",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_ai_spans",
+      "columns": [
+        {
+          "name": "traceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "spanId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "spanType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isEvent",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "parentSpanId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "entityType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "entityId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "entityName",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "parentEntityType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "parentEntityId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "parentEntityName",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "rootEntityType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "rootEntityId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "rootEntityName",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "userId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "organizationId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resourceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "runId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "sessionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "threadId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "environment",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "serviceName",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scope",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "experimentId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "source",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tags",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "attributes",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "links",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "input",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "output",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "error",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "endedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestContext",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "endedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "entityVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "parentEntityVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "rootEntityVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_background_tasks",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tool_call_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tool_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "agent_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "run_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "thread_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resource_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "args",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "result",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "error",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "retry_count",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "max_retries",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "timeout_ms",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "completedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "completedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "suspendedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "suspendedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_dataset_items",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "datasetId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "datasetVersion",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "validTo",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isDeleted",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "input",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "groundTruth",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestContext",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "source",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "expectedTrajectory",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_dataset_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "datasetId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "version",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_datasets",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "inputSchema",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "groundTruthSchema",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestContextSchema",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tags",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "targetType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "targetIds",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scorerIds",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "version",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_experiment_results",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "experimentId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "itemId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "itemDatasetVersion",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "input",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "output",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "groundTruth",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "error",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "completedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "retryCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "traceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tags",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "completedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_experiments",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "datasetId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "datasetVersion",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "targetType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "targetId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "totalItems",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "succeededCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "failedCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "skippedCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "completedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "agentVersion",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "startedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "completedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_mcp_client_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "mcpClientId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "servers",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_mcp_clients",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_mcp_server_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "mcpServerId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "version",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "instructions",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "repository",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "releaseDate",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isLatest",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "packageCanonical",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tools",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "agents",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "workflows",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_mcp_servers",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_messages",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "thread_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "content",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "role",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resourceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_observational_memory",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "lookupKey",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scope",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resourceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "threadId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeObservations",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeObservationsPendingUpdate",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "originType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "config",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "generationCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastObservedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastReflectionAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "pendingMessageTokens",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "totalTokensObserved",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "observationTokenCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isObserving",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isReflecting",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "observedMessageIds",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "observedTimezone",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedObservations",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedObservationTokens",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedMessageIds",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedReflection",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedReflectionTokens",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedReflectionInputTokens",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "reflectedObservationLineCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "bufferedObservationChunks",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isBufferingObservation",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "isBufferingReflection",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastBufferedAtTokens",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastBufferedAtTime",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastObservedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastReflectionAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "lastBufferedAtTimeZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_prompt_block_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "blockId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "content",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "rules",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestContextSchema",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_prompt_blocks",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_resources",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "workingMemory",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_scorer_definition_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scorerDefinitionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "type",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "model",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "instructions",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scoreRange",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "presetConfig",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "defaultSampling",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_scorer_definitions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_scorers",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scorerId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "traceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "spanId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "runId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scorer",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "preprocessStepResult",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "extractStepResult",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "analyzeStepResult",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "score",
+          "data_type": "double precision",
+          "udt_name": "float8",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "reason",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "preprocessPrompt",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "extractPrompt",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "generateScorePrompt",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "generateReasonPrompt",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "analyzePrompt",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "reasonPrompt",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "input",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "output",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "additionalContext",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "requestContext",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "entityType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "entity",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "entityId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "source",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resourceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "threadId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_skill_blobs",
+      "columns": [
+        {
+          "name": "hash",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "content",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "size",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "mimeType",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_skill_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "skillId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "instructions",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "license",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "compatibility",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "source",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "references",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "scripts",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "assets",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tree",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_skills",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_threads",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resourceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "title",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_workflow_snapshot",
+      "columns": [
+        {
+          "name": "workflow_name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "run_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "resourceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "snapshot",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_workspace_versions",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "workspaceId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "versionNumber",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "filesystem",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "sandbox",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "mounts",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "search",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "skills",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tools",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "autoSync",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "operationTimeout",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changedFields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "changeMessage",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "mastra_workspaces",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "activeVersionId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "authorId",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "metadata",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAtZ",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "music_tracks",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "artist",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'Unknown'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "mood",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'calm'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "duration",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "120",
+          "is_identity": "NO"
+        },
+        {
+          "name": "src",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "tags",
+          "data_type": "ARRAY",
+          "udt_name": "_text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'{}'::text[]",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdBy",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "plugins",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "version",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'1.0.0'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "category",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'custom'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "icon",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'puzzle'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "color",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'#7C3AED'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'stable'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "s3_key",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "schema_json",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'{}'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "generation_fields",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'{\"audio\": [], \"image\": [], \"video\": []}'::jsonb",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "site_config",
+      "columns": [
+        {
+          "name": "key",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "value",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'{}'::jsonb",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_by",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "staged_payloads",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "payload",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "story_arcs",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "label",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "emoji",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'📋'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "''::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "is_premium",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "true",
+          "is_identity": "NO"
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "true",
+          "is_identity": "NO"
+        },
+        {
+          "name": "sort_order",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "0",
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "arc_pattern",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "support_messages",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "(gen_random_uuid())::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "ticket_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "sender_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "sender_role",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "message",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "support_tickets",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "(gen_random_uuid())::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "email",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "subject",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'open'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "priority",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'normal'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "assigned_to",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "user_api_keys",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "gen_random_uuid()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "key_hash",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "key_prefix",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "label",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'Default'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "last_used_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "email",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "name",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "role",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "'USER'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "videoCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "0",
+          "is_identity": "NO"
+        },
+        {
+          "name": "videoLimit",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "10",
+          "is_identity": "NO"
+        },
+        {
+          "name": "aiCount",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "0",
+          "is_identity": "NO"
+        },
+        {
+          "name": "aiLimit",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "20",
+          "is_identity": "NO"
+        },
+        {
+          "name": "aiTokensUsed",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "0",
+          "is_identity": "NO"
+        },
+        {
+          "name": "aiTokenLimit",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "100000",
+          "is_identity": "NO"
+        },
+        {
+          "name": "createdAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updatedAt",
+          "data_type": "timestamp without time zone",
+          "udt_name": "timestamp",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "deleted_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "xai_api_key",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "deepgram_api_key",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "elevenlabs_api_key",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "cartesia_api_key",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "visual_styles",
+      "columns": [
+        {
+          "name": "id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "label",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "emoji",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'🎨'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "description",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "''::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "is_premium",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "true",
+          "is_identity": "NO"
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "udt_name": "bool",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "true",
+          "is_identity": "NO"
+        },
+        {
+          "name": "sort_order",
+          "data_type": "integer",
+          "udt_name": "int4",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "0",
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "prompt_prefix",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "wizard_jobs",
+      "columns": [
+        {
+          "name": "thread_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "status",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "'running'::text",
+          "is_identity": "NO"
+        },
+        {
+          "name": "interrupt",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "payload",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "error",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "is_identity": "NO"
+        },
+        {
+          "name": "state",
+          "data_type": "jsonb",
+          "udt_name": "jsonb",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        }
+      ]
+    },
+    {
+      "name": "youtube_accounts",
+      "columns": [
+        {
+          "name": "user_id",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "access_token",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "NO",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "refresh_token",
+          "data_type": "text",
+          "udt_name": "text",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "expiry_date",
+          "data_type": "bigint",
+          "udt_name": "int8",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": null,
+          "is_identity": "NO"
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp with time zone",
+          "udt_name": "timestamptz",
+          "char_len": null,
+          "is_nullable": "YES",
+          "column_default": "now()",
+          "is_identity": "NO"
+        }
+      ]
+    }
+  ]
+}

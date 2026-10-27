@@ -1,0 +1,44 @@
+# Cloud Build Configuration for Video Renderer
+# Deploy from GitHub to Google Cloud with GPU support
+
+steps:
+  # 1. Build Docker image from videoGen directory
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/video-renderer:$COMMIT_SHA', '-f', 'videoGen/Dockerfile.video-renderer', 'videoGen']
+
+  # 2. Push to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/video-renderer:$COMMIT_SHA']
+
+  # 3. Deploy to Cloud Run with GPU
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'videogen'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/video-renderer:$COMMIT_SHA'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'us-central1'
+      - '--cpu'
+      - '4'
+      - '--memory'
+      - '16Gi'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '3031'
+
+images:
+  - 'gcr.io/$PROJECT_ID/video-renderer:$COMMIT_SHA'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _BRANCH_NAME: 'main'
+
+timeout: 1800s

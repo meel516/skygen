@@ -1,0 +1,18 @@
+{
+  "id": "map-region-reveal",
+  "name": "Map Region Reveal",
+  "version": "1.0.0",
+  "category": "visual",
+  "icon": "map",
+  "color": "#06B6D4",
+  "description": "Animated world map with glowing region borders, lightning highlights, cutout image reveal, and stats panel. Supports multiple regions.",
+  "remotion": {
+    "compositionId": "map-region-reveal-scene",
+    "defaultDuration": 8
+  },
+  "features": {
+    "supportsTheming": true,
+    "supportsCustomization": true,
+    "supportsAudio": false
+  }
+}

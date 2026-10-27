@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  video-renderer:
+    build:
+      context: .
+      dockerfile: Dockerfile.video-renderer
+    container_name: video-renderer
+    ports:
+      - "3031:3031"
+    environment:
+      - NODE_ENV=production
+      # GPU Configuration
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      # Chromium paths
+      - CHROME_PATH=/usr/bin/chromium-browser
+      - REMOTION_CHROMIUM_PATH=/usr/bin/chromium-browser
+    volumes:
+      # Mount bundle (required for rendering)
+      - ./bundle:/app/bundle:ro
+      # Temp storage for rendered videos
+      - render-cache:/tmp
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu, video]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3031/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  render-cache:

@@ -1,0 +1,66 @@
+# ============================================================================
+# Video Renderer Service Dockerfile
+# Uses Chrome for Testing for better headless rendering
+# ============================================================================
+FROM oven/bun:1-debian AS production
+
+# ----------------------
+# Environment variables
+# ----------------------
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CHROME_PATH=/opt/chrome/chrome
+ENV REMOTION_CHROMIUM_PATH=/opt/chrome/chrome
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
+
+# ----------------------
+# Install system dependencies
+# ----------------------
+RUN apt-get update && apt-get install -y \
+    curl unzip bash git wget gnupg \
+    libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+    libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+    libxrandr2 libgbm1 libasound2 libpango-1.0-0 \
+    libpangocairo-1.0-0 libx11-6 libxext6 libxrender1 \
+    ffmpeg ca-certificates jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# ----------------------
+# Install Chrome for Testing (v130.0.6723.91)
+# ----------------------
+ENV CHROME_VERSION=130.0.6723.91
+RUN curl -s "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip" -o /tmp/chrome.zip \
+    && unzip -q /tmp/chrome.zip -d /opt/chrome \
+    && rm /tmp/chrome.zip \
+    && chmod +x /opt/chrome/chrome-linux64/chrome \
+    && ln -sf /opt/chrome/chrome-linux64/chrome /opt/chrome/chrome
+
+# ----------------------
+# App setup
+# ----------------------
+WORKDIR /app
+
+# Copy and install dependencies
+COPY mini-services/video-renderer/package.json ./package.json
+RUN bun install --frozen-lockfile
+
+# Copy source code
+COPY mini-services/video-renderer/index.ts ./index.ts
+
+# Copy pre-built bundle (must be built locally first: bun run video:bundle)
+COPY mini-services/video-renderer/bundle ./bundle/
+
+# Fix permissions
+RUN chown -R bun:bun /app
+
+# GPU environment variables
+ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/usr/local/nvidia/lib:$LD_LIBRARY_PATH
+
+# Expose port
+EXPOSE 3031
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3031/health || exit 1
+
+# Start the service
+CMD ["bun", "index.ts"]

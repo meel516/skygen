@@ -1,0 +1,7 @@
+{
+  "name": "my-skygen-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Example Skygen plugin authored as real files",
+  "dependencies": {}
+}

@@ -1,0 +1,51 @@
+{
+  "properties": {
+    "bg_image": {
+      "type": "string",
+      "title": "Background Image",
+      "editor": "image",
+      "description": "dark abstract background representing the topic",
+      "default": ""
+    },
+    "logo": {
+      "type": "string",
+      "title": "Logo Image",
+      "editor": "image",
+      "description": "company logo or product icon on white background",
+      "default": ""
+    },
+    "narration": {
+      "type": "string",
+      "title": "Narration Audio",
+      "editor": "audio",
+      "description": "explain {keyMessage} in a professional tone",
+      "default": ""
+    },
+    "headline": {
+      "type": "string",
+      "title": "Headline",
+      "editor": "text",
+      "default": "Your Headline Here"
+    },
+    "subtext": {
+      "type": "string",
+      "title": "Subtext",
+      "editor": "textarea",
+      "default": "Supporting text goes here"
+    },
+    "accent_color": {
+      "type": "string",
+      "title": "Accent Color",
+      "editor": "color",
+      "default": "#7C3AED"
+    }
+  },
+  "defaults": {
+    "bg_image": "",
+    "logo": "",
+    "narration": "",
+    "headline": "Your Headline Here",
+    "subtext": "Supporting text goes here",
+    "accent_color": "#7C3AED"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "my-plugin",
+  "version": "1.0.0",
+  "description": "My custom video block plugin",
+  "scripts": {
+    "build": "npx esbuild src/Scene.tsx --bundle --format=esm --outfile=dist/index.esm.js --external:react --external:react-dom --external:remotion --external:@remotion/player --external:@remotion/renderer --target=chrome90 --platform=browser",
+    "package": "node -e \"const a=require('adm-zip'),z=new a();['plugin.json','schema.json','src','dist'].forEach(f=>{try{const s=require('fs').statSync(f);s.isDirectory()?z.addLocalFolder(f,f):z.addLocalFile(f)}catch(e){}});z.writeZip(require('path').basename(process.cwd())+'.zip');console.log('Created '+require('path').basename(process.cwd())+'.zip')\""
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "remotion": ">=4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "dependencies": {
+  }
+}

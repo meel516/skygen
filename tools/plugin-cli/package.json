@@ -1,0 +1,13 @@
+{
+  "name": "plugin-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for creating and managing video plugins",
+  "main": "index.ts",
+  "bin": {
+    "plugin": "./index.ts"
+  },
+  "scripts": {
+    "dev": "bun run index.ts"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../src/*"]
+    }
+  },
+  "include": ["src/**/*", "../src/lib/video/ai/mastra/**/*", "../src/lib/video/ai/providers/**/*", "../src/lib/video/ai/fill-custom-plugin.ts", "../src/lib/db.ts", "../src/lib/mcp/wizard-jobs.ts", "../src/lib/plugins/**/*", "../src/lib/s3.ts", "../src/lib/video/ai/index.ts", "../src/lib/video/schemas/**/*"],
+  "mastra": {
+    "serverPort": 4111
+  }
+}

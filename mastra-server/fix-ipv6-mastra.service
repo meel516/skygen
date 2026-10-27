@@ -1,0 +1,12 @@
+[Unit]
+Description=Fix public IPv6 source route for Mastra origin
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/fix-ipv6-mastra.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+{
+  "id": "announcement-block",
+  "name": "Announcement",
+  "version": "1.0.0",
+  "category": "content",
+  "icon": "megaphone",
+  "color": "#F59E0B",
+  "description": "Full-screen announcement with headline, emoji, and animated gradient background",
+  "remotion": {
+    "compositionId": "announcement-block-scene",
+    "defaultDuration": 4
+  },
+  "features": {
+    "supportsTheming": true,
+    "supportsCustomization": true,
+    "supportsAudio": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "quote-block",
+  "name": "Quote Block",
+  "version": "1.0.0",
+  "category": "content",
+  "description": "Animated quote card with author attribution",
+  "icon": "quote",
+  "color": "#0EA5E9"
+}

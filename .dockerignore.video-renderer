@@ -1,0 +1,10 @@
+# Docker ignore
+node_modules
+.git
+.next
+out
+mini-services-dist
+build
+*.log
+.env
+.env.local

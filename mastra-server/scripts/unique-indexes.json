@@ -1,0 +1,362 @@
+[
+  {
+    "schemaname": "public",
+    "tablename": "Template",
+    "indexname": "Template_pkey",
+    "indexdef": "CREATE UNIQUE INDEX \"Template_pkey\" ON public.\"Template\" USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "Video",
+    "indexname": "Video_pkey",
+    "indexdef": "CREATE UNIQUE INDEX \"Video_pkey\" ON public.\"Video\" USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "_migrations",
+    "indexname": "_migrations_pkey",
+    "indexdef": "CREATE UNIQUE INDEX _migrations_pkey ON public._migrations USING btree (version)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "banned_emails",
+    "indexname": "banned_emails_pkey",
+    "indexdef": "CREATE UNIQUE INDEX banned_emails_pkey ON public.banned_emails USING btree (email)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "block_thumbnails",
+    "indexname": "block_thumbnails_pkey",
+    "indexdef": "CREATE UNIQUE INDEX block_thumbnails_pkey ON public.block_thumbnails USING btree (block_type)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "checkpoint_blobs",
+    "indexname": "checkpoint_blobs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX checkpoint_blobs_pkey ON public.checkpoint_blobs USING btree (thread_id, checkpoint_ns, channel, version)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "checkpoint_migrations",
+    "indexname": "checkpoint_migrations_pkey",
+    "indexdef": "CREATE UNIQUE INDEX checkpoint_migrations_pkey ON public.checkpoint_migrations USING btree (v)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "checkpoint_writes",
+    "indexname": "checkpoint_writes_pkey",
+    "indexdef": "CREATE UNIQUE INDEX checkpoint_writes_pkey ON public.checkpoint_writes USING btree (thread_id, checkpoint_ns, checkpoint_id, task_id, idx)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "checkpoints",
+    "indexname": "checkpoints_pkey",
+    "indexdef": "CREATE UNIQUE INDEX checkpoints_pkey ON public.checkpoints USING btree (thread_id, checkpoint_ns, checkpoint_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "linkedin_accounts",
+    "indexname": "linkedin_accounts_pkey",
+    "indexdef": "CREATE UNIQUE INDEX linkedin_accounts_pkey ON public.linkedin_accounts USING btree (user_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_agent_versions",
+    "indexname": "mastra_agent_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_agent_versions_pkey ON public.mastra_agent_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_agents",
+    "indexname": "mastra_agents_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_agents_pkey ON public.mastra_agents USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_ai_spans",
+    "indexname": "public_mastra_ai_spans_traceid_spanid_pk",
+    "indexdef": "CREATE UNIQUE INDEX public_mastra_ai_spans_traceid_spanid_pk ON public.mastra_ai_spans USING btree (\"traceId\", \"spanId\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_background_tasks",
+    "indexname": "mastra_background_tasks_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_background_tasks_pkey ON public.mastra_background_tasks USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_dataset_items",
+    "indexname": "mastra_dataset_items_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_dataset_items_pkey ON public.mastra_dataset_items USING btree (id, \"datasetVersion\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_dataset_versions",
+    "indexname": "idx_dataset_versions_dataset_version_unique",
+    "indexdef": "CREATE UNIQUE INDEX idx_dataset_versions_dataset_version_unique ON public.mastra_dataset_versions USING btree (\"datasetId\", version)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_dataset_versions",
+    "indexname": "mastra_dataset_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_dataset_versions_pkey ON public.mastra_dataset_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_datasets",
+    "indexname": "mastra_datasets_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_datasets_pkey ON public.mastra_datasets USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_experiment_results",
+    "indexname": "idx_experiment_results_exp_item",
+    "indexdef": "CREATE UNIQUE INDEX idx_experiment_results_exp_item ON public.mastra_experiment_results USING btree (\"experimentId\", \"itemId\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_experiment_results",
+    "indexname": "mastra_experiment_results_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_experiment_results_pkey ON public.mastra_experiment_results USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_experiments",
+    "indexname": "mastra_experiments_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_experiments_pkey ON public.mastra_experiments USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_mcp_client_versions",
+    "indexname": "idx_mcp_client_versions_client_version",
+    "indexdef": "CREATE UNIQUE INDEX idx_mcp_client_versions_client_version ON public.mastra_mcp_client_versions USING btree (\"mcpClientId\", \"versionNumber\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_mcp_client_versions",
+    "indexname": "mastra_mcp_client_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_mcp_client_versions_pkey ON public.mastra_mcp_client_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_mcp_clients",
+    "indexname": "mastra_mcp_clients_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_mcp_clients_pkey ON public.mastra_mcp_clients USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_mcp_server_versions",
+    "indexname": "idx_mcp_server_versions_server_version",
+    "indexdef": "CREATE UNIQUE INDEX idx_mcp_server_versions_server_version ON public.mastra_mcp_server_versions USING btree (\"mcpServerId\", \"versionNumber\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_mcp_server_versions",
+    "indexname": "mastra_mcp_server_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_mcp_server_versions_pkey ON public.mastra_mcp_server_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_mcp_servers",
+    "indexname": "mastra_mcp_servers_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_mcp_servers_pkey ON public.mastra_mcp_servers USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_messages",
+    "indexname": "mastra_messages_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_messages_pkey ON public.mastra_messages USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_observational_memory",
+    "indexname": "mastra_observational_memory_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_observational_memory_pkey ON public.mastra_observational_memory USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_prompt_block_versions",
+    "indexname": "idx_prompt_block_versions_block_version",
+    "indexdef": "CREATE UNIQUE INDEX idx_prompt_block_versions_block_version ON public.mastra_prompt_block_versions USING btree (\"blockId\", \"versionNumber\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_prompt_block_versions",
+    "indexname": "mastra_prompt_block_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_prompt_block_versions_pkey ON public.mastra_prompt_block_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_prompt_blocks",
+    "indexname": "mastra_prompt_blocks_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_prompt_blocks_pkey ON public.mastra_prompt_blocks USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_resources",
+    "indexname": "mastra_resources_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_resources_pkey ON public.mastra_resources USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_scorer_definition_versions",
+    "indexname": "idx_scorer_definition_versions_def_version",
+    "indexdef": "CREATE UNIQUE INDEX idx_scorer_definition_versions_def_version ON public.mastra_scorer_definition_versions USING btree (\"scorerDefinitionId\", \"versionNumber\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_scorer_definition_versions",
+    "indexname": "mastra_scorer_definition_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_scorer_definition_versions_pkey ON public.mastra_scorer_definition_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_scorer_definitions",
+    "indexname": "mastra_scorer_definitions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_scorer_definitions_pkey ON public.mastra_scorer_definitions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_scorers",
+    "indexname": "mastra_scorers_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_scorers_pkey ON public.mastra_scorers USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_skill_blobs",
+    "indexname": "mastra_skill_blobs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_skill_blobs_pkey ON public.mastra_skill_blobs USING btree (hash)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_skill_versions",
+    "indexname": "idx_skill_versions_skill_version",
+    "indexdef": "CREATE UNIQUE INDEX idx_skill_versions_skill_version ON public.mastra_skill_versions USING btree (\"skillId\", \"versionNumber\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_skill_versions",
+    "indexname": "mastra_skill_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_skill_versions_pkey ON public.mastra_skill_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_skills",
+    "indexname": "mastra_skills_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_skills_pkey ON public.mastra_skills USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_threads",
+    "indexname": "mastra_threads_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_threads_pkey ON public.mastra_threads USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_workflow_snapshot",
+    "indexname": "public_mastra_workflow_snapshot_workflow_name_run_id_key",
+    "indexdef": "CREATE UNIQUE INDEX public_mastra_workflow_snapshot_workflow_name_run_id_key ON public.mastra_workflow_snapshot USING btree (workflow_name, run_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_workspace_versions",
+    "indexname": "idx_workspace_versions_workspace_version",
+    "indexdef": "CREATE UNIQUE INDEX idx_workspace_versions_workspace_version ON public.mastra_workspace_versions USING btree (\"workspaceId\", \"versionNumber\")"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_workspace_versions",
+    "indexname": "mastra_workspace_versions_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_workspace_versions_pkey ON public.mastra_workspace_versions USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "mastra_workspaces",
+    "indexname": "mastra_workspaces_pkey",
+    "indexdef": "CREATE UNIQUE INDEX mastra_workspaces_pkey ON public.mastra_workspaces USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "music_tracks",
+    "indexname": "music_tracks_pkey",
+    "indexdef": "CREATE UNIQUE INDEX music_tracks_pkey ON public.music_tracks USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "plugins",
+    "indexname": "plugins_pkey",
+    "indexdef": "CREATE UNIQUE INDEX plugins_pkey ON public.plugins USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "site_config",
+    "indexname": "site_config_pkey",
+    "indexdef": "CREATE UNIQUE INDEX site_config_pkey ON public.site_config USING btree (key)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "staged_payloads",
+    "indexname": "staged_payloads_pkey",
+    "indexdef": "CREATE UNIQUE INDEX staged_payloads_pkey ON public.staged_payloads USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "story_arcs",
+    "indexname": "story_arcs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX story_arcs_pkey ON public.story_arcs USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "support_messages",
+    "indexname": "support_messages_pkey",
+    "indexdef": "CREATE UNIQUE INDEX support_messages_pkey ON public.support_messages USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "support_tickets",
+    "indexname": "support_tickets_pkey",
+    "indexdef": "CREATE UNIQUE INDEX support_tickets_pkey ON public.support_tickets USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_api_keys",
+    "indexname": "user_api_keys_key_hash_key",
+    "indexdef": "CREATE UNIQUE INDEX user_api_keys_key_hash_key ON public.user_api_keys USING btree (key_hash)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "user_api_keys",
+    "indexname": "user_api_keys_pkey",
+    "indexdef": "CREATE UNIQUE INDEX user_api_keys_pkey ON public.user_api_keys USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "indexname": "users_email_unique",
+    "indexdef": "CREATE UNIQUE INDEX users_email_unique ON public.users USING btree (email)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "users",
+    "indexname": "users_pkey",
+    "indexdef": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "visual_styles",
+    "indexname": "visual_styles_pkey",
+    "indexdef": "CREATE UNIQUE INDEX visual_styles_pkey ON public.visual_styles USING btree (id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "wizard_jobs",
+    "indexname": "wizard_jobs_pkey",
+    "indexdef": "CREATE UNIQUE INDEX wizard_jobs_pkey ON public.wizard_jobs USING btree (thread_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "youtube_accounts",
+    "indexname": "youtube_accounts_pkey",
+    "indexdef": "CREATE UNIQUE INDEX youtube_accounts_pkey ON public.youtube_accounts USING btree (user_id)"
+  }
+]

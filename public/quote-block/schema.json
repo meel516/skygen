@@ -1,0 +1,53 @@
+{
+  "properties": {
+    "quote": {
+      "type": "string",
+      "title": "Quote Text",
+      "editor": "textarea",
+      "default": "The best way to predict the future is to create it."
+    },
+    "author": {
+      "type": "string",
+      "title": "Author",
+      "editor": "text",
+      "default": "Peter Drucker"
+    },
+    "accentColor": {
+      "type": "string",
+      "title": "Accent Color",
+      "editor": "color",
+      "default": "#0EA5E9"
+    },
+    "textAlign": {
+      "type": "string",
+      "title": "Alignment",
+      "editor": "select",
+      "editorConfig": {
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "center", "label": "Center" },
+          { "value": "right", "label": "Right" }
+        ]
+      },
+      "default": "center"
+    }
+  },
+  "defaults": {
+    "quote": "The best way to predict the future is to create it.",
+    "author": "Peter Drucker",
+    "accentColor": "#0EA5E9",
+    "textAlign": "center"
+  },
+  "ui": {
+    "sections": [
+      {
+        "title": "Content",
+        "fields": ["quote", "author"]
+      },
+      {
+        "title": "Style",
+        "fields": ["accentColor", "textAlign"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title",
+      "editor": "text",
+      "default": "Hello Skygen"
+    },
+    "subtitle": {
+      "type": "string",
+      "title": "Subtitle",
+      "editor": "text",
+      "default": "Built from real files"
+    }
+  },
+  "defaults": {
+    "title": "Hello Skygen",
+    "subtitle": "Built from real files"
+  }
+}

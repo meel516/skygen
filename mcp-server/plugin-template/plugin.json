@@ -1,0 +1,6 @@
+{
+  "id": "my-skygen-plugin",
+  "name": "My Skygen Plugin",
+  "description": "Example multi-file plugin (edit id/name before create_plugin_from_dir)",
+  "category": "content"
+}

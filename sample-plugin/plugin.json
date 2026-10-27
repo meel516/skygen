@@ -1,0 +1,9 @@
+{
+  "id": "test-image-plugin",
+  "name": "Test Image Plugin",
+  "description": "Sample plugin to test generation_fields extraction",
+  "version": "1.0.0",
+  "category": "content",
+  "icon": "image",
+  "color": "#7C3AED"
+}

@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "title": "My Plugin",
+  "description": "Schema defines what fields appear in the Properties Panel",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title",
+      "description": "Main heading text",
+      "editor": "text",
+      "default": "Hello World"
+    },
+    "subtitle": {
+      "type": "string",
+      "title": "Subtitle",
+      "description": "Secondary text below the title",
+      "editor": "textarea",
+      "default": ""
+    },
+    "color": {
+      "type": "string",
+      "title": "Accent Color",
+      "description": "Color used for highlights",
+      "editor": "color",
+      "default": "#7C3AED"
+    },
+    "fontSize": {
+      "type": "number",
+      "title": "Font Size",
+      "editor": "slider",
+      "editorConfig": { "min": 24, "max": 120, "step": 4, "unit": "px" },
+      "default": 64
+    },
+    "showSubtitle": {
+      "type": "boolean",
+      "title": "Show Subtitle",
+      "editor": "toggle",
+      "default": true
+    },
+    "style": {
+      "type": "string",
+      "title": "Style",
+      "editor": "select",
+      "enum": ["minimal", "bold", "gradient"],
+      "enumLabels": { "minimal": "Minimal", "bold": "Bold", "gradient": "Gradient" },
+      "default": "minimal"
+    }
+  },
+  "required": ["title"],
+  "ui": {
+    "sections": [
+      {
+        "title": "Content",
+        "fields": ["title", "subtitle", "showSubtitle"],
+        "defaultOpen": true
+      },
+      {
+        "title": "Style",
+        "fields": ["color", "fontSize", "style"],
+        "defaultOpen": false
+      }
+    ]
+  },
+  "defaults": {
+    "title": "Hello World",
+    "subtitle": "Your subtitle here",
+    "color": "#7C3AED",
+    "fontSize": 64,
+    "showSubtitle": true,
+    "style": "minimal"
+  }
+}

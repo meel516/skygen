@@ -1,0 +1,27 @@
+# Caddyfile — reverse proxy that splits traffic between Next.js and the
+# standalone Mastra server.
+#
+# Browser requests to /api/ai/wizard/* are rewritten to /wizard/* and sent to
+# the Mastra server (port 4111). Everything else goes to Next.js (port 3000).
+# The session cookie is forwarded untouched so the Mastra server can verify
+# the NextAuth JWT with AUTH_SECRET.
+#
+# Run: caddy run --config Caddyfile
+
+{$DOMAIN:localhost} {
+	# Wizard chat + threads → Mastra server
+	@api_wizard path /api/ai/wizard/*
+	handle @api_wizard {
+		uri strip_prefix /api/ai/wizard
+		rewrite /wizard/{path}
+		reverse_proxy localhost:4111 {
+			# Forward the original host so cookie domain checks pass
+			header_up Host {host}
+			# Flush SSE chunks immediately — critical for streaming chat
+			flush_interval -1
+		}
+	}
+
+	# Everything else → Next.js
+	reverse_proxy localhost:3000
+}

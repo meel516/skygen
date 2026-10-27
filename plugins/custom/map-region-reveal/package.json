@@ -1,0 +1,16 @@
+{
+  "name": "map-region-reveal",
+  "version": "1.0.0",
+  "description": "Animated world map with glowing region borders, lightning highlights, cutout image and stats",
+  "scripts": {
+    "build": "npx esbuild src/Scene.tsx --bundle --format=esm --outfile=dist/index.esm.js --external:react --external:react-dom --external:remotion --external:@remotion/player --external:@remotion/renderer --target=chrome90 --platform=browser"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "remotion": ">=4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "dependencies": {}
+}

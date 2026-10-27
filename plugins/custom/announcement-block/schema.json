@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "title": "Announcement",
+  "description": "Full-screen announcement block",
+  "properties": {
+    "emoji": {
+      "type": "string",
+      "title": "Emoji",
+      "editor": "text",
+      "default": "🚀"
+    },
+    "headline": {
+      "type": "string",
+      "title": "Headline",
+      "editor": "text",
+      "default": "Big Announcement!"
+    },
+    "subtext": {
+      "type": "string",
+      "title": "Subtext",
+      "editor": "textarea",
+      "default": "Something exciting is coming"
+    },
+    "accentColor": {
+      "type": "string",
+      "title": "Accent Color",
+      "editor": "color",
+      "default": "#F59E0B"
+    },
+    "showSubtext": {
+      "type": "boolean",
+      "title": "Show Subtext",
+      "editor": "toggle",
+      "default": true
+    },
+    "textSize": {
+      "type": "number",
+      "title": "Headline Size",
+      "editor": "slider",
+      "editorConfig": { "min": 40, "max": 120, "step": 4, "unit": "px" },
+      "default": 72
+    }
+  },
+  "required": ["headline"],
+  "ui": {
+    "sections": [
+      {
+        "title": "Content",
+        "fields": ["emoji", "headline", "subtext", "showSubtext"],
+        "defaultOpen": true
+      },
+      {
+        "title": "Style",
+        "fields": ["accentColor", "textSize"],
+        "defaultOpen": false
+      }
+    ]
+  },
+  "defaults": {
+    "emoji": "🚀",
+    "headline": "Big Announcement!",
+    "subtext": "Something exciting is coming",
+    "accentColor": "#F59E0B",
+    "showSubtext": true,
+    "textSize": 72
+  }
+}

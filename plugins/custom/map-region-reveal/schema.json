@@ -1,0 +1,123 @@
+{
+  "type": "object",
+  "title": "Map Region Reveal",
+  "description": "Animated world map with glowing borders, lightning effects, image reveals and stats",
+  "properties": {
+    "mapStyle": {
+      "type": "string",
+      "title": "Map Style",
+      "editor": "select",
+      "enum": ["dark", "light", "satellite", "neon"],
+      "enumLabels": { "dark": "Dark Political", "light": "Light Clean", "satellite": "Satellite Dark", "neon": "Neon Cyber" },
+      "default": "dark"
+    },
+    "regions": {
+      "type": "array",
+      "title": "Regions",
+      "description": "List of regions to highlight (use ISO alpha-2 country codes or preset region names)",
+      "editor": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "regionId": { "type": "string", "title": "Region ID / Country Code", "editor": "text", "default": "US" },
+          "label": { "type": "string", "title": "Region Label", "editor": "text", "default": "United States" },
+          "accentColor": { "type": "string", "title": "Highlight Color", "editor": "color", "default": "#06B6D4" },
+          "imageUrl": { "type": "string", "title": "Cutout Image URL", "editor": "image", "default": "" },
+          "stat1Label": { "type": "string", "title": "Stat 1 Label", "editor": "text", "default": "Population" },
+          "stat1Value": { "type": "string", "title": "Stat 1 Value", "editor": "text", "default": "331M" },
+          "stat2Label": { "type": "string", "title": "Stat 2 Label", "editor": "text", "default": "GDP" },
+          "stat2Value": { "type": "string", "title": "Stat 2 Value", "editor": "text", "default": "$23T" },
+          "stat3Label": { "type": "string", "title": "Stat 3 Label", "editor": "text", "default": "Growth" },
+          "stat3Value": { "type": "string", "title": "Stat 3 Value", "editor": "text", "default": "+3.2%" }
+        }
+      },
+      "default": [
+        {
+          "regionId": "US",
+          "label": "United States",
+          "accentColor": "#06B6D4",
+          "imageUrl": "",
+          "stat1Label": "Population", "stat1Value": "331M",
+          "stat2Label": "GDP", "stat2Value": "$23T",
+          "stat3Label": "Growth", "stat3Value": "+3.2%"
+        }
+      ]
+    },
+    "animationStyle": {
+      "type": "string",
+      "title": "Border Animation",
+      "editor": "select",
+      "enum": ["lightning", "pulse", "dash", "glow"],
+      "enumLabels": { "lightning": "⚡ Lightning", "pulse": "◉ Pulse Rings", "dash": "── Dashing Border", "glow": "✦ Neon Glow" },
+      "default": "lightning"
+    },
+    "showCutout": {
+      "type": "boolean",
+      "title": "Show Cutout Image",
+      "editor": "toggle",
+      "default": true
+    },
+    "showStats": {
+      "type": "boolean",
+      "title": "Show Stats Panel",
+      "editor": "toggle",
+      "default": true
+    },
+    "staggerDelay": {
+      "type": "number",
+      "title": "Region Stagger (sec)",
+      "editor": "slider",
+      "editorConfig": { "min": 0.2, "max": 2.0, "step": 0.1, "unit": "s" },
+      "default": 0.8
+    },
+    "mapTitle": {
+      "type": "string",
+      "title": "Map Title",
+      "editor": "text",
+      "default": "Global Highlights"
+    },
+    "showTitle": {
+      "type": "boolean",
+      "title": "Show Title",
+      "editor": "toggle",
+      "default": true
+    }
+  },
+  "required": ["regions"],
+  "ui": {
+    "sections": [
+      { "title": "Content", "fields": ["mapTitle", "showTitle", "regions"], "defaultOpen": true },
+      { "title": "Style", "fields": ["mapStyle", "animationStyle"], "defaultOpen": false },
+      { "title": "Features", "fields": ["showCutout", "showStats", "staggerDelay"], "defaultOpen": false }
+    ]
+  },
+  "defaults": {
+    "mapStyle": "dark",
+    "animationStyle": "lightning",
+    "showCutout": true,
+    "showStats": true,
+    "staggerDelay": 0.8,
+    "mapTitle": "Global Highlights",
+    "showTitle": true,
+    "regions": [
+      {
+        "regionId": "US",
+        "label": "United States",
+        "accentColor": "#06B6D4",
+        "imageUrl": "",
+        "stat1Label": "Population", "stat1Value": "331M",
+        "stat2Label": "GDP", "stat2Value": "$23T",
+        "stat3Label": "Growth", "stat3Value": "+3.2%"
+      },
+      {
+        "regionId": "DE",
+        "label": "Germany",
+        "accentColor": "#F59E0B",
+        "imageUrl": "",
+        "stat1Label": "Population", "stat1Value": "84M",
+        "stat2Label": "GDP", "stat2Value": "$4.1T",
+        "stat3Label": "Growth", "stat3Value": "+1.8%"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+name: Deploy Mastra Server to VPS
+
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - 'mastra-server/**'
+      - 'src/lib/video/ai/mastra/**'
+      - 'src/lib/plugins/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install root dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Mastra
+        working-directory: ./mastra-server
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Create archive
+        run: |
+          tar -czf mastra-output-no-node-modules.tgz -C mastra-server/.mastra/output --exclude=node_modules .
+
+      - name: Upload to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: "37.187.139.100"
+          username: "root"
+          password: ${{ secrets.VPS_SSH_PW }}
+          port: 20033
+          source: "mastra-output-no-node-modules.tgz"
+          target: "/root"
+
+      - name: Extract and restart PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: "37.187.139.100"
+          username: "root"
+          password: ${{ secrets.VPS_SSH_PW }}
+          port: 20033
+          script: |
+            cd /opt/videogen-mastra/mastra-server/.mastra
+            cp -a output output.prev.$(date +%Y%m%d%H%M%S)
+            tar -xzf /root/mastra-output-no-node-modules.tgz -C output
+            cd output
+            npm install --omit=dev --legacy-peer-deps
+            pm2 restart videogen-mastra --update-env
+            pm2 status videogen-mastra

@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-09T18:02:36.246Z",
+  "plugins": [
+   
+ 
+    {
+      "id": "announcement-block",
+      "name": "Announcement",
+      "path": "./plugins/custom/announcement-block",
+      "category": "content",
+      "icon": "megaphone",
+      "color": "#F59E0B",
+      "description": "Full-screen announcement with headline, emoji, and animated gradient background",
+      "version": "1.0.0",
+      "status": "stable"
+    }
+  ],
+  "categories": {
+    "content": [
+      "text-block",
+      "announcement-block"
+    ],
+    "data": [
+      "counter-block",
+      "stat-block"
+    ],
+    "visual": [
+      "weather-block"
+    ],
+    "interactive": [
+      "cta-block"
+    ],
+    "social": [],
+    "media": [],
+    "layout": [],
+    "other": []
+  }
+}

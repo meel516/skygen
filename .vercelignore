@@ -1,0 +1,9 @@
+mastra-server/.mastra/
+mastra-server/node_modules/
+mastra-server/*.tar.gz
+mastra-server/*.tgz
+videoGen.tar.gz
+*.tar.gz
+*.tgz
+nginx-*.zip
+hyperframes-ashes-intro/
