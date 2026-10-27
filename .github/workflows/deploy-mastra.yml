@@ -3,7 +3,7 @@ name: Deploy SkyGen Web to VPS
 on:
   push:
     branches:
-      - prod
+      - main
     paths-ignore:
       - 'mastra-server/**'
       - '.github/workflows/deploy-mastra.yml'
