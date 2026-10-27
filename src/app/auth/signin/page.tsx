@@ -1,8 +1,9 @@
 'use client'
 
 import { signIn } from "next-auth/react"
+import { useState, type FormEvent } from "react"
 import Link from "next/link"
-import { Video, Sparkles, BarChart3, Box, Download, Check } from "lucide-react"
+import { Video, Sparkles, BarChart3, Box, Download, Check } from '@/components/ui/studio-icons'
 
 const PERKS = [
   { icon: Sparkles, text: "AI generates full video scripts instantly" },
@@ -12,10 +13,49 @@ const PERKS = [
 ]
 
 export default function SignInPage() {
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  const [signInError, setSignInError] = useState("")
+
+  function getCallbackUrl() {
+    const requested = new URLSearchParams(window.location.search).get("callbackUrl")
+    if (!requested) return "/"
+    try {
+      const target = new URL(requested, window.location.origin)
+      return target.origin === window.location.origin ? target.href : "/"
+    } catch {
+      return "/"
+    }
+  }
+
+  async function handleCredentialsSignIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (isSigningIn) return
+    const formData = new FormData(event.currentTarget)
+    setIsSigningIn(true)
+    setSignInError("")
+    try {
+      const result = await signIn("credentials", {
+        username: String(formData.get("email") || "").trim(),
+        password: formData.get("password"),
+        callbackUrl: getCallbackUrl(),
+        redirect: false,
+      })
+      if (!result || result.error || !result.ok) {
+        setSignInError("Unable to sign in. Check your email and password and try again.")
+        setIsSigningIn(false)
+        return
+      }
+      window.location.assign(result.url || getCallbackUrl())
+    } catch {
+      setSignInError("Sign-in is temporarily unavailable. Please try again.")
+      setIsSigningIn(false)
+    }
+  }
+
   return (
     <div
       className="min-h-screen flex"
-      style={{ background: '#0A0A0F', color: '#F1F1F8' }}
+      style={{ background: 'var(--background)', color: 'var(--foreground)' }}
     >
       {/* ── Left panel (hidden on small screens) ── */}
       <div
@@ -26,20 +66,20 @@ export default function SignInPage() {
         <div
           className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(124,58,237,0.18) 0%, transparent 70%)',
+            background: 'var(--primary)',
           }}
         />
         <div
           className="absolute -bottom-40 -right-40 w-[400px] h-[400px] rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 70%)',
+            background: 'var(--primary)',
           }}
         />
         {/* Dot grid */}
         <div
           className="absolute inset-0 pointer-events-none opacity-40"
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0)',
+            backgroundImage: 'none',
             backgroundSize: '24px 24px',
           }}
         />
@@ -47,7 +87,7 @@ export default function SignInPage() {
         {/* Logo */}
         <div className="relative flex items-center gap-2.5">
           <img src="/logo.png" alt="SKYGEN" className="w-12 h-12 object-contain scale-[2.5]" />
-          <span className="text-[17px] font-bold" style={{ color: '#F1F1F8' }}>SKYGEN</span>
+          <span className="text-[17px] font-bold" style={{ color: 'var(--foreground)' }}>SKYGEN</span>
         </div>
 
         {/* Hero copy */}
@@ -55,13 +95,13 @@ export default function SignInPage() {
           <div>
             <h2
               className="text-4xl font-extrabold leading-tight mb-4"
-              style={{ color: '#F1F1F8' }}
+              style={{ color: 'var(--foreground)' }}
             >
               Your studio.
               <br />
               <span
                 style={{
-                  background: 'linear-gradient(135deg, #A78BFA 0%, #38BDF8 100%)',
+                  background: 'var(--primary)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -70,7 +110,7 @@ export default function SignInPage() {
                 Powered by AI.
               </span>
             </h2>
-            <p className="text-[15px] leading-relaxed" style={{ color: '#8B8BAA' }}>
+            <p className="text-[15px] leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
               Build scroll-stopping videos from a library of animated blocks.
               No design skills needed.
             </p>
@@ -80,12 +120,12 @@ export default function SignInPage() {
             {PERKS.map(({ icon: Icon, text }) => (
               <li key={text} className="flex items-center gap-3">
                 <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)' }}
+                  className="w-7 h-7 rounded-sm flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'color-mix(in srgb, var(--primary) 20%, transparent)', border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)' }}
                 >
-                  <Icon className="w-3.5 h-3.5" style={{ color: '#A78BFA' }} />
+                  <Icon className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
                 </div>
-                <span className="text-[13px]" style={{ color: '#8B8BAA' }}>{text}</span>
+                <span className="text-[13px]" style={{ color: 'var(--muted-foreground)' }}>{text}</span>
               </li>
             ))}
           </ul>
@@ -93,26 +133,26 @@ export default function SignInPage() {
 
         {/* Bottom quote */}
         <div
-          className="relative p-5 rounded-2xl"
+          className="relative p-5 rounded-sm"
           style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
+            background: 'var(--border)',
+            border: '1px solid var(--border)',
           }}
         >
-          <p className="text-[13px] leading-relaxed italic mb-3" style={{ color: '#8B8BAA' }}>
+          <p className="text-[13px] leading-relaxed italic mb-3" style={{ color: 'var(--muted-foreground)' }}>
             "The 3D bar race chart blew up on TikTok — 2M views in 3 days.
             SKYGEN made it in under 5 minutes."
           </p>
           <div className="flex items-center gap-2.5">
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold"
-              style={{ background: 'linear-gradient(135deg, #7C3AED, #0EA5E9)', color: '#fff' }}
+              style={{ background: 'var(--primary)', color: 'var(--primary-foreground)' }}
             >
               S
             </div>
             <div>
-              <p className="text-[12px] font-medium" style={{ color: '#F1F1F8' }}>Saleem</p>
-              <p className="text-[11px]" style={{ color: '#55556A' }}>Content Creator</p>
+              <p className="text-[12px] font-medium" style={{ color: 'var(--foreground)' }}>Saleem</p>
+              <p className="text-[11px]" style={{ color: 'var(--muted-foreground)' }}>Content Creator</p>
             </div>
           </div>
         </div>
@@ -123,61 +163,95 @@ export default function SignInPage() {
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center gap-2 mb-10">
           <img src="/logo.png" alt="SKYGEN" className="w-10 h-10 object-contain scale-[2.5]" />
-          <span className="text-[15px] font-bold" style={{ color: '#F1F1F8' }}>SKYGEN</span>
+          <span className="text-[15px] font-bold" style={{ color: 'var(--foreground)' }}>SKYGEN</span>
         </div>
 
         {/* Card */}
         <div
-          className="w-full max-w-sm rounded-2xl p-8"
+          className="w-full max-w-sm rounded-sm p-8"
           style={{
-            background: '#13131C',
-            border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+            background: 'var(--card)',
+            border: '1px solid var(--border)',
+            boxShadow: 'none',
           }}
         >
           {/* Icon + heading */}
           <div className="text-center mb-8">
             <img src="/logo.png" alt="SKYGEN" className="w-16 h-16 object-contain scale-[2.5] mx-auto mb-5" />
-            <h1 className="text-[22px] font-bold mb-1.5" style={{ color: '#F1F1F8' }}>
+            <h1 className="text-[22px] font-bold mb-1.5" style={{ color: 'var(--foreground)' }}>
               Welcome back
             </h1>
-            <p className="text-[13px]" style={{ color: '#8B8BAA' }}>
+            <p className="text-[13px]" style={{ color: 'var(--muted-foreground)' }}>
               Sign in to your SKYGEN account
             </p>
           </div>
 
           {/* Free badge */}
           <div
-            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg mb-6 text-[12px]"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-sm mb-6 text-[12px]"
             style={{
-              background: 'rgba(124,58,237,0.1)',
-              border: '1px solid rgba(124,58,237,0.2)',
-              color: '#A78BFA',
+              background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
+              color: 'var(--primary)',
             }}
           >
             <Check className="w-3.5 h-3.5" />
             Free to use — no credit card required
           </div>
 
+          <form onSubmit={handleCredentialsSignIn} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="signin-email" className="text-[13px] font-medium">Email address</label>
+              <input
+                id="signin-email"
+                name="email"
+                type="email"
+                autoComplete="username"
+                required
+                disabled={isSigningIn}
+                className="w-full rounded-sm border border-border bg-background px-3 py-2.5 text-sm text-foreground disabled:opacity-60"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="signin-password" className="text-[13px] font-medium">Password</label>
+              <input
+                id="signin-password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                disabled={isSigningIn}
+                className="w-full rounded-sm border border-border bg-background px-3 py-2.5 text-sm text-foreground disabled:opacity-60"
+              />
+            </div>
+            {signInError && <p role="alert" className="text-sm text-destructive">{signInError}</p>}
+            <button
+              type="submit"
+              disabled={isSigningIn}
+              className="w-full rounded-sm bg-primary px-4 py-3 text-[14px] font-semibold text-primary-foreground disabled:opacity-60"
+            >
+              {isSigningIn ? "Signing in…" : "Sign in with email"}
+            </button>
+          </form>
+
+          <div className="flex items-center gap-3 my-5" aria-hidden="true">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-[11px] text-muted-foreground">OR</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
           {/* Google button */}
           <button
-            onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl font-semibold text-[14px] transition-all"
+            onClick={() => signIn("google", { callbackUrl: getCallbackUrl() })}
+            disabled={isSigningIn}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-sm font-semibold text-[14px]"
             style={{
               background: '#ffffff',
               color: '#1a1a2e',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+              boxShadow: 'none',
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#f0f0f8';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.35)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
-            }}
+
+
           >
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -190,29 +264,29 @@ export default function SignInPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
-            <span className="text-[11px]" style={{ color: '#55556A' }}>SECURE SIGN IN</span>
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
+            <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
+            <span className="text-[11px]" style={{ color: 'var(--muted-foreground)' }}>SECURE SIGN IN</span>
+            <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
           </div>
 
-          <p className="text-[11px] text-center leading-relaxed" style={{ color: '#55556A' }}>
+          <p className="text-[11px] text-center leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
             By signing in you agree to our{' '}
             <Link
               href="/terms"
-              className="underline transition-colors"
-              style={{ color: '#8B8BAA' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#F1F1F8')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8BAA')}
+              className="underline"
+              style={{ color: 'var(--muted-foreground)' }}
+
+
             >
               Terms of Service
             </Link>{' '}
             and{' '}
             <Link
               href="/privacy"
-              className="underline transition-colors"
-              style={{ color: '#8B8BAA' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#F1F1F8')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8BAA')}
+              className="underline"
+              style={{ color: 'var(--muted-foreground)' }}
+
+
             >
               Privacy Policy
             </Link>
@@ -223,10 +297,10 @@ export default function SignInPage() {
         {/* Back to home link */}
         <a
           href="/"
-          className="mt-6 text-[12px] transition-colors"
-          style={{ color: '#55556A' }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#8B8BAA')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = '#55556A')}
+          className="mt-6 text-[12px]"
+          style={{ color: 'var(--muted-foreground)' }}
+
+
         >
           ← Back to home
         </a>

@@ -30,7 +30,7 @@ export function ChipRow<T>({
   if (loading) {
     return (
       <div className="flex items-center gap-3 py-1.5">
-        <span className="text-xs font-medium shrink-0 w-16 flex items-center gap-1.5" style={{ color: '#55556A' }}>
+        <span className="text-xs font-medium shrink-0 w-16 flex items-center gap-1.5" style={{ color: 'var(--muted-foreground)' }}>
           {icon}
           {label}
         </span>
@@ -38,8 +38,8 @@ export function ChipRow<T>({
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-7 w-20 rounded-lg animate-pulse"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
+              className="h-7 w-20 rounded-sm animate-pulse"
+              style={{ background: 'var(--border)' }}
             />
           ))}
         </div>
@@ -54,7 +54,7 @@ export function ChipRow<T>({
       {/* Label */}
       <span
         className="text-xs font-medium shrink-0 w-16 flex items-center gap-1.5"
-        style={{ color: '#6B6B8A' }}
+        style={{ color: 'var(--muted-foreground)' }}
       >
         {icon}
         {label}
@@ -69,11 +69,11 @@ export function ChipRow<T>({
         {/* Auto chip */}
         <button
           onClick={() => onSelect(null, null as T)}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium"
           style={{
-            background: selectedId === null ? 'rgba(124,58,237,0.18)' : 'rgba(255,255,255,0.04)',
-            border: selectedId === null ? '1px solid rgba(124,58,237,0.45)' : '1px solid rgba(255,255,255,0.07)',
-            color: selectedId === null ? '#C4B5FD' : '#6B6B8A',
+            background: selectedId === null ? 'color-mix(in srgb, var(--primary) 18%, transparent)' : 'var(--border)',
+            border: selectedId === null ? '1px solid color-mix(in srgb, var(--primary) 45%, transparent)' : '1px solid var(--border)',
+            color: selectedId === null ? 'var(--primary)' : 'var(--muted-foreground)',
           }}
         >
           Auto
@@ -86,11 +86,11 @@ export function ChipRow<T>({
             <button
               key={id}
               onClick={() => onSelect(isSelected ? null : id, item)}
-              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-medium"
               style={{
-                background: isSelected ? 'rgba(124,58,237,0.18)' : 'rgba(255,255,255,0.04)',
-                border: isSelected ? '1px solid rgba(124,58,237,0.45)' : '1px solid rgba(255,255,255,0.07)',
-                color: isSelected ? '#C4B5FD' : '#9B9BBB',
+                background: isSelected ? 'color-mix(in srgb, var(--primary) 18%, transparent)' : 'var(--border)',
+                border: isSelected ? '1px solid color-mix(in srgb, var(--primary) 45%, transparent)' : '1px solid var(--border)',
+                color: isSelected ? 'var(--primary)' : '#9B9BBB',
               }}
             >
               {getIcon?.(item) && (

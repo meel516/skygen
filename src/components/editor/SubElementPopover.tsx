@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Type, Image as ImageIcon, Video as VideoIcon, RotateCcw, Upload, X } from 'lucide-react';
+import { Type, Image as ImageIcon, Video as VideoIcon, RotateCcw, Upload, X } from '@/components/ui/studio-icons';
 import type { ElementKind } from '@/lib/editor/element-path';
 import type { ElementOverride } from '@/lib/video/schemas';
 
@@ -49,14 +49,14 @@ export function SubElementPopover({ selection, override, onChange, onReset, onCl
     left,
     transform: flipBelow ? 'translate(-50%, 0)' : 'translate(-50%, -100%)',
     zIndex: 9999,
-    background: '#1E1E2D',
+    background: 'var(--popover)',
     border: '1px solid rgba(255,255,255,0.08)',
     borderRadius: 10,
     padding: 12,
     minWidth: 260,
-    color: '#F1F1F8',
+    color: 'var(--foreground)',
     fontSize: 12,
-    boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
+    boxShadow: 'none',
   };
 
   const Icon = selection.kind === 'img' ? ImageIcon : selection.kind === 'video' ? VideoIcon : Type;
@@ -74,12 +74,12 @@ export function SubElementPopover({ selection, override, onChange, onReset, onCl
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Icon size={14} style={{ color: '#A78BFA' }} />
+          <Icon size={14} style={{ color: 'var(--primary)' }} />
           <span style={{ fontWeight: 600 }}>{label}</span>
         </div>
         <button
           onClick={onClose}
-          style={{ background: 'transparent', border: 'none', color: '#8B8BAA', cursor: 'pointer', padding: 2 }}
+          style={{ background: 'transparent', border: 'none', color: 'var(--muted-foreground)', cursor: 'pointer', padding: 2 }}
           aria-label="Close"
         >
           <X size={14} />
@@ -95,8 +95,8 @@ export function SubElementPopover({ selection, override, onChange, onReset, onCl
 
       {/* position display */}
       {(override?.x !== undefined || override?.y !== undefined) && (
-        <div style={{ marginTop: 10, padding: 8, background: 'rgba(167,139,250,0.08)', borderRadius: 6 }}>
-          <div style={{ fontSize: 10, color: '#8B8BAA', marginBottom: 2 }}>OFFSET</div>
+        <div style={{ marginTop: 10, padding: 8, background: 'color-mix(in srgb, var(--primary) 8%, transparent)', borderRadius: 6 }}>
+          <div style={{ fontSize: 10, color: 'var(--muted-foreground)', marginBottom: 2 }}>OFFSET</div>
           <div style={{ fontFamily: 'monospace', fontSize: 11 }}>
             x: {Math.round(override.x ?? 0)}px · y: {Math.round(override.y ?? 0)}px
           </div>
@@ -223,9 +223,9 @@ function TextControls({
               onClick={() => onChange({ textAlign: a })}
               style={{
                 padding: '4px 8px',
-                background: textAlign === a ? '#A78BFA' : 'rgba(255,255,255,0.04)',
-                color: textAlign === a ? '#0E0E18' : '#F1F1F8',
-                border: '1px solid rgba(255,255,255,0.06)',
+                background: textAlign === a ? 'var(--primary)' : 'var(--border)',
+                color: textAlign === a ? '#0E0E18' : 'var(--foreground)',
+                border: '1px solid var(--border)',
                 borderRadius: 4,
                 fontSize: 11,
                 cursor: 'pointer',
@@ -288,7 +288,7 @@ function MediaControls({
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
         style={{
-          background: '#A78BFA',
+          background: 'var(--primary)',
           color: '#0E0E18',
           padding: '8px 12px',
           borderRadius: 6,
@@ -307,7 +307,7 @@ function MediaControls({
         {uploading ? 'Uploading…' : `Replace ${kind === 'img' ? 'image' : 'video'}`}
       </button>
       {override?.src && (
-        <div style={{ fontSize: 10, color: '#8B8BAA', wordBreak: 'break-all' }}>
+        <div style={{ fontSize: 10, color: 'var(--muted-foreground)', wordBreak: 'break-all' }}>
           src: {override.src.length > 60 ? `${override.src.slice(0, 60)}…` : override.src}
         </div>
       )}
@@ -319,7 +319,7 @@ function MediaControls({
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ width: 56, color: '#8B8BAA', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{label}</span>
+      <span style={{ width: 56, color: 'var(--muted-foreground)', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{label}</span>
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>{children}</div>
     </div>
   );
@@ -331,7 +331,7 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid rgba(255,255,255,0.06)',
   borderRadius: 4,
   padding: '4px 8px',
-  color: '#F1F1F8',
+  color: 'var(--foreground)',
   fontSize: 11,
   fontFamily: 'monospace',
   outline: 'none',

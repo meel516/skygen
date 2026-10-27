@@ -172,26 +172,26 @@ export function LivePreview() {
   const isPreviewValid = previewConfig && !isNaN(previewConfig.durationInFrames) && previewConfig.durationInFrames > 0;
 
   return (
-    <div className="relative flex flex-col h-full w-full min-w-0 bg-slate-100 dark:bg-[#0D0D14] transition-colors">
+    <div className="relative flex flex-col h-full w-full min-w-0 bg-muted dark:bg-[var(--background)]">
       {/* Plugin preview overlay — shown when agent has generated code pending approval */}
       {pendingPlugin && (
-        <div className="absolute inset-0 z-20 flex flex-col bg-white dark:bg-[#0A0A0F] transition-colors">
+        <div className="absolute inset-0 z-20 flex flex-col bg-card dark:bg-[var(--background)]">
           <PluginPreview />
         </div>
       )}
       {/* Header */}
       <div
-        className="flex items-center justify-between px-5 py-3.5 border-b shrink-0 border-slate-200 dark:border-white/[0.06] transition-colors"
+        className="flex items-center justify-between px-5 py-3.5 border-b shrink-0 border-border dark:border-white/[0.06]"
       >
         <div className="flex items-center gap-2.5">
-          <VideoCamera weight="duotone" size={16} className="text-slate-400 dark:text-[#55556A]" />
-          <span className="text-sm font-semibold text-slate-800 dark:text-[#C4C4D8]">
+          <VideoCamera weight="duotone" size={16} className="text-muted-foreground dark:text-[var(--muted-foreground)]" />
+          <span className="text-sm font-semibold text-foreground dark:text-[var(--foreground)]">
             Live Preview
           </span>
           {isGenerating && (
             <span
               className="flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full"
-              style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.25)', color: '#A78BFA' }}
+              style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)', color: 'var(--primary)' }}
             >
               <CircleNotch weight="bold" size={12} className="animate-spin" />
               Generating
@@ -218,10 +218,10 @@ export function LivePreview() {
           {onlySkeletons && <SkeletonGrid count={totalBlocks} aspectRatio={aspectRatio} currentBlock={currentGeneratingBlock} />}
           {hasFilledBlock && isPreviewValid && previewPlan && (
             <div
-              className="rounded-2xl overflow-hidden"
+              className="rounded-sm overflow-hidden"
               style={{
-                boxShadow: '0 0 60px rgba(124,58,237,0.18)',
-                border: '1px solid rgba(124,58,237,0.2)',
+                boxShadow: 'none',
+                border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
                 width: dims.width,
                 height: dims.height,
               }}
@@ -247,13 +247,13 @@ export function LivePreview() {
           <div className="shrink-0 flex justify-center pb-5">
             <button
               onClick={handleOpenInEditor}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-sm text-sm font-semibold text-white"
               style={{
-                background: 'linear-gradient(135deg, #7C3AED, #6D28D9)',
-                boxShadow: '0 0 24px rgba(124,58,237,0.35)',
+                background: 'var(--primary)',
+                boxShadow: 'none',
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 0 32px rgba(124,58,237,0.5)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 0 24px rgba(124,58,237,0.35)'; }}
+
+
             >
               <ArrowSquareOut weight="bold" size={16} />
               Open in Editor
@@ -266,11 +266,11 @@ export function LivePreview() {
           <div
             className="absolute bottom-5 right-5 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
             style={{
-              background: 'rgba(10,10,15,0.85)',
-              backdropFilter: 'blur(12px)',
-              border: isGenerating ? '1px solid rgba(124,58,237,0.35)' : '1px solid rgba(255,255,255,0.08)',
-              color: isGenerating ? '#A78BFA' : '#34D399',
-              boxShadow: isGenerating ? '0 0 12px rgba(124,58,237,0.2)' : 'none',
+              background: 'var(--background)',
+              backdropFilter: 'none',
+              border: isGenerating ? '1px solid color-mix(in srgb, var(--primary) 35%, transparent)' : '1px solid var(--border)',
+              color: isGenerating ? 'var(--primary)' : '#34D399',
+              boxShadow: 'none',
             }}
           >
             {isGenerating ? (
@@ -289,33 +289,10 @@ export function LivePreview() {
 // ─── Sub-components ────────────────────────────────────────────────────────
 
 function IdlePlaceholder() {
-  return (
-    <div className="flex flex-col items-center text-center">
-      {/* Animated gradient circle */}
-      <div
-        className="w-32 h-32 rounded-full mb-6 flex items-center justify-center"
-        style={{
-          background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
-        }}
-      >
-        <div
-          className="w-20 h-20 rounded-full flex items-center justify-center"
-          style={{
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(14,165,233,0.1))',
-            border: '1px solid rgba(124,58,237,0.15)',
-          }}
-        >
-          <Play weight="duotone" size={32} style={{ color: '#55556A' }} />
-        </div>
-      </div>
-      <p className="text-sm text-slate-500 dark:text-[#55556A]">
-        Your video preview will appear here
-      </p>
-      <p className="text-xs mt-1 text-slate-400 dark:text-[#3A3A50]">
-        Start by describing what you want to create
-      </p>
-    </div>
-  );
+  return <div className="preview-empty">
+    <div className="preview-empty-frame"><span className="studio-eyebrow">Your canvas</span><h2>A little space<br />for a big idea.</h2><p>Your scenes will appear here as you create. Start with a brief in the conversation.</p></div>
+    <p><span>Live preview</span><span>Waiting for your first scene</span></p>
+  </div>;
 }
 
 function GeneratingState() {
@@ -324,13 +301,13 @@ function GeneratingState() {
       <div
         className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
         style={{
-          background: 'linear-gradient(135deg, rgba(124,58,237,0.2), rgba(14,165,233,0.15))',
-          border: '1px solid rgba(124,58,237,0.3)',
+          background: 'var(--primary)',
+          border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
         }}
       >
-        <CircleNotch weight="bold" size={32} className="animate-spin" style={{ color: '#A78BFA' }} />
+        <CircleNotch weight="bold" size={32} className="animate-spin" style={{ color: 'var(--primary)' }} />
       </div>
-      <p className="text-sm font-medium" style={{ color: '#A78BFA' }}>
+      <p className="text-sm font-medium" style={{ color: 'var(--primary)' }}>
         Generating your video...
       </p>
       <div className="mt-3 space-y-1">
@@ -348,9 +325,9 @@ function ProgressPhase({ label }: { label: string }) {
     <div className="flex items-center gap-2">
       <div
         className="w-1.5 h-1.5 rounded-full"
-        style={{ background: 'rgba(124,58,237,0.5)' }}
+        style={{ background: 'color-mix(in srgb, var(--primary) 50%, transparent)' }}
       />
-      <span className="text-xs" style={{ color: '#55556A' }}>{label}</span>
+      <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>{label}</span>
     </div>
   );
 }
@@ -360,10 +337,10 @@ function SkeletonGrid({ count, aspectRatio, currentBlock }: { count: number; asp
   return (
     <div className="flex flex-col items-center gap-4">
       <div
-        className="rounded-2xl p-4"
+        className="rounded-sm p-4"
         style={{
-          border: '1px solid rgba(124,58,237,0.2)',
-          boxShadow: '0 0 40px rgba(124,58,237,0.15)',
+          border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)',
+          boxShadow: 'none',
           background: 'rgba(20,20,30,0.4)',
           width: dims.width,
           height: dims.height,
@@ -373,9 +350,9 @@ function SkeletonGrid({ count, aspectRatio, currentBlock }: { count: number; asp
           {Array.from({ length: Math.min(count, 6) }).map((_, i) => (
             <div
               key={i}
-              className="flex-1 rounded-lg animate-pulse"
+              className="flex-1 rounded-sm animate-pulse"
               style={{
-                background: 'linear-gradient(90deg, rgba(124,58,237,0.08), rgba(14,165,233,0.12), rgba(124,58,237,0.08))',
+                background: 'var(--primary)',
                 backgroundSize: '200% 100%',
                 animationDelay: `${i * 120}ms`,
               }}
@@ -386,9 +363,9 @@ function SkeletonGrid({ count, aspectRatio, currentBlock }: { count: number; asp
       <div
         className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs"
         style={{
-          background: 'rgba(124,58,237,0.15)',
-          border: '1px solid rgba(124,58,237,0.25)',
-          color: '#A78BFA',
+          background: 'color-mix(in srgb, var(--primary) 15%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+          color: 'var(--primary)',
         }}
       >
         <CircleNotch weight="bold" size={12} className="animate-spin" />
@@ -401,11 +378,11 @@ function SkeletonGrid({ count, aspectRatio, currentBlock }: { count: number; asp
 function RatioChip({ icon, active, label }: { icon: React.ReactNode; active: boolean; label: string }) {
   return (
     <div
-      className="flex items-center gap-1 px-2 py-1 rounded-lg transition-colors"
+      className="flex items-center gap-1 px-2 py-1 rounded-sm"
       style={{
-        color: active ? '#C4B5FD' : '#3A3A50',
-        background: active ? 'rgba(124,58,237,0.15)' : 'rgba(255,255,255,0.03)',
-        border: active ? '1px solid rgba(124,58,237,0.3)' : '1px solid rgba(255,255,255,0.05)',
+        color: active ? 'var(--primary)' : 'var(--muted-foreground)',
+        background: active ? 'color-mix(in srgb, var(--primary) 15%, transparent)' : 'var(--border)',
+        border: active ? '1px solid color-mix(in srgb, var(--primary) 30%, transparent)' : '1px solid var(--border)',
       }}
     >
       {icon}

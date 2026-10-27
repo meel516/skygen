@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useState } from 'react';
-import { Sparkles, Loader2, ArrowRight, ArrowLeft, ChevronDown } from 'lucide-react';
+import { Sparkles, Loader2, ArrowRight, ArrowLeft, ChevronDown } from '@/components/ui/studio-icons';
 
 const ARC_OPTIONS = [
   { value: '',              label: '✨ Auto-detect' },
@@ -75,38 +75,38 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
   };
 
   return (
-    <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+    <div className="bg-card rounded-sm p-6 border border-border">
       <div className="flex items-center gap-2 mb-6">
-        <Sparkles className="w-5 h-5 text-purple-400" />
+        <Sparkles className="w-5 h-5 text-primary" />
         <span className="font-medium">Generate with AI</span>
       </div>
 
       <div className="space-y-4">
         <div>
-          <Label className="text-gray-300 mb-2 block">Story Arc</Label>
+          <Label className="text-muted-foreground mb-2 block">Story Arc</Label>
           <div className="relative">
             <select
               value={selectedArc}
               onChange={e => setSelectedArc(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 text-slate-900 dark:text-white rounded-md px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-purple-500"
+              className="w-full bg-card border border-border text-foreground dark:text-white rounded-sm px-3 py-2 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-primary"
             >
               {ARC_OPTIONS.map(o => (
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           </div>
         </div>
 
         <div>
-          <Label className="text-gray-300 mb-2 block">
+          <Label className="text-muted-foreground mb-2 block">
             What should your video be about?
           </Label>
           <Textarea
             value={userPrompt}
             onChange={e => setUserPrompt(e.target.value)}
             placeholder={`e.g., "Create an inspiring motivational video about never giving up on your dreams. Include a powerful quote about perseverance and encourage viewers to take action."`}
-            className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white placeholder:text-gray-500 min-h-[120px]"
+            className="bg-card border-border text-foreground dark:text-white placeholder:text-muted-foreground min-h-[120px]"
           />
         </div>
 
@@ -116,19 +116,19 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
             <>
               <button
                 onClick={() => setUserPrompt('Create a powerful motivational video about overcoming challenges and achieving success. Include an inspiring quote and call to action.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Overcoming challenges
               </button>
               <button
                 onClick={() => setUserPrompt('Generate a motivational speech about never giving up, with an inspiring quote and uplifting tone.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Never give up
               </button>
               <button
                 onClick={() => setUserPrompt('Create a motivational video about pursuing your dreams with passion and determination.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Pursue dreams
               </button>
@@ -138,19 +138,19 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
             <>
               <button
                 onClick={() => setUserPrompt('Create a food vlog for a delicious creamy pasta recipe with step-by-step instructions and mouth-watering descriptions.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Pasta recipe
               </button>
               <button
                 onClick={() => setUserPrompt('Generate a food vlog about a homemade burger with fresh ingredients and cooking tips.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Burger recipe
               </button>
               <button
                 onClick={() => setUserPrompt('Create a food vlog about a healthy salad recipe with fresh vegetables and a tangy dressing.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Healthy salad
               </button>
@@ -160,19 +160,19 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
             <>
               <button
                 onClick={() => setUserPrompt('Create a tutorial about learning a new skill in 30 days with key milestones and tips.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Learn in 30 days
               </button>
               <button
                 onClick={() => setUserPrompt('Generate an educational tutorial explaining how to build a mobile app from scratch.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Build an app
               </button>
               <button
                 onClick={() => setUserPrompt('Create a tutorial about productivity tips for remote work with actionable advice.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Remote work tips
               </button>
@@ -182,19 +182,19 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
             <>
               <button
                 onClick={() => setUserPrompt('Create a business pitch for an innovative AI startup with key metrics and growth potential.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 AI startup pitch
               </button>
               <button
                 onClick={() => setUserPrompt('Generate a business pitch for a sustainable fashion brand with unique value proposition.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Fashion brand
               </button>
               <button
                 onClick={() => setUserPrompt('Create a pitch for a food delivery app with market opportunity and competitive advantage.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Food delivery app
               </button>
@@ -204,19 +204,19 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
             <>
               <button
                 onClick={() => setUserPrompt('Create a lifestyle vlog about a day in the life of a creative professional with inspiring moments.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Day in the life
               </button>
               <button
                 onClick={() => setUserPrompt('Generate a lifestyle vlog about morning routines for productivity and wellness.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Morning routine
               </button>
               <button
                 onClick={() => setUserPrompt('Create a vlog about travel adventures exploring a new city with memorable moments.')}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors"
+                className="text-xs px-3 py-1.5 bg-card hover:bg-gray-700 rounded-full text-muted-foreground"
               >
                 Travel vlog
               </button>
@@ -225,7 +225,7 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
         </div>
 
         {error && (
-          <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-lg">
+          <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-sm">
             {error}
           </div>
         )}
@@ -234,7 +234,7 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
           <Button
             variant="ghost"
             onClick={onManual}
-            className="text-gray-400 hover:text-slate-900 dark:text-white"
+            className="text-muted-foreground hover:text-foreground dark:text-white"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Fill manually
@@ -242,7 +242,7 @@ export function AITemplateGenerator({ template, onGenerate, onManual }: AITempla
           <Button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="bg-primary hover:bg-primary"
           >
             {isGenerating ? (
               <>

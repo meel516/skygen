@@ -1,4 +1,6 @@
 'use client';
+import { LibrarySkeleton } from '@/components/app/LibrarySkeleton';
+import { WorkspaceSkeleton } from '@/components/app/WorkspaceSkeleton';
 
 import { AppShell } from '@/components/app/AppShell';
 import { LibraryPreviewModal } from '@/components/app/LibraryPreviewModal';
@@ -6,7 +8,7 @@ import { PluginFieldMapModal } from '@/components/plugins/PluginFieldMapModal';
 import { useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Copy, Heart, Loader2, Puzzle, Search, Sparkles, Tag, X } from 'lucide-react';
+import { Copy, Heart, Loader2, Puzzle, Search, Sparkles, Tag, X } from '@/components/ui/studio-icons';
 
 interface PluginItem {
   id: string;
@@ -117,39 +119,33 @@ export default function PluginsPage() {
     }
   }
 
-  if (status === 'loading') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#0A0A0F]">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-500 dark:text-[#8B8BAA]" />
-      </div>
-    );
-  }
+  if (status === 'loading') return <WorkspaceSkeleton />;
 
   if (status === 'unauthenticated') return null;
 
   return (
     <AppShell>
-      <div className="h-screen overflow-y-auto bg-slate-50 dark:bg-[#0A0A0F] px-6 py-8 md:px-10 transition-colors">
+      <div className="h-screen overflow-y-auto bg-background dark:bg-[var(--background)] px-6 py-8 md:px-10 ">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/20 dark:border-[#7C3AED]/30 bg-[#7C3AED]/10 dark:bg-[#7C3AED]/15 px-3 py-1 text-xs font-medium text-[#7C3AED] dark:text-[#A78BFA] backdrop-blur-sm">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 dark:border-[var(--primary)]/30 bg-[var(--primary)]/10 dark:bg-[var(--primary)]/15 px-3 py-1 text-xs font-medium text-[var(--primary)] dark:text-[var(--primary)] ">
                 <Sparkles className="h-3.5 w-3.5" />
                 Reusable motion components
               </div>
-              <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-[#F1F1F8]">Plugins</h1>
-              <p className="mt-2 max-w-2xl text-sm font-medium text-slate-500 dark:text-[#8B8BAA]">
+              <h1 className="text-4xl font-bold tracking-tight text-foreground dark:text-[var(--foreground)]">Plugins</h1>
+              <p className="mt-2 max-w-2xl text-sm font-medium text-muted-foreground dark:text-[var(--muted-foreground)]">
                 Custom and installed renderers your agent can reuse inside videos.
               </p>
             </div>
 
             <div className="relative w-full md:w-[360px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-[#55556A]" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-[var(--muted-foreground)]" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search plugins..."
-                className="h-11 w-full rounded-xl border border-slate-200 dark:border-white/[0.07] bg-white/70 dark:bg-[#13131C]/70 backdrop-blur-md pl-10 pr-4 text-sm text-slate-900 dark:text-[#F1F1F8] outline-none transition placeholder:text-slate-400 dark:placeholder:text-[#55556A] focus:border-[#7C3AED]/50 focus:ring-4 focus:ring-[#7C3AED]/10 shadow-sm"
+                aria-label="Search plugins" placeholder="Search plugins..."
+                className="h-11 w-full rounded-sm border border-border dark:border-white/[0.07] bg-white/70 dark:bg-[var(--card)]/70  pl-10 pr-4 text-sm text-foreground dark:text-[var(--foreground)] outline-none  placeholder:text-muted-foreground dark:placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)]/50 focus:ring-4 focus:ring-[var(--primary)]/10 shadow-none"
               />
             </div>
           </div>
@@ -161,10 +157,10 @@ export default function PluginsPage() {
                 type="button"
                 onClick={() => setCategory(item)}
                 className={[
-                  'h-10 shrink-0 rounded-full border px-5 text-sm font-medium transition-all backdrop-blur-sm shadow-sm',
+                  'h-10 shrink-0 rounded-full border px-5 text-sm font-medium   shadow-none',
                   category === item
-                    ? 'border-[#7C3AED]/30 bg-[#7C3AED]/10 text-[#7C3AED] dark:border-[#7C3AED]/40 dark:bg-[#7C3AED]/20 dark:text-[#A78BFA]'
-                    : 'border-slate-200 dark:border-white/[0.07] bg-white/50 dark:bg-[#13131C]/50 text-slate-500 dark:text-[#8B8BAA] hover:border-slate-300 hover:text-slate-900 dark:hover:border-white/15 dark:hover:text-slate-900 dark:text-[#F1F1F8]',
+                    ? 'border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)] dark:border-[var(--primary)]/40 dark:bg-[var(--primary)]/20 dark:text-[var(--primary)]'
+                    : 'border-border dark:border-white/[0.07] bg-white/50 dark:bg-[var(--card)]/50 text-muted-foreground dark:text-[var(--muted-foreground)] hover:border-border hover:text-foreground dark:hover:border-white/15 dark:hover:text-foreground dark:text-[var(--foreground)]',
                 ].join(' ')}
               >
                 {item}
@@ -173,14 +169,11 @@ export default function PluginsPage() {
           </div>
 
           {loading ? (
-            <div className="mt-16 flex items-center justify-center text-slate-500 dark:text-[#8B8BAA]">
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Loading plugins
-            </div>
+            <LibrarySkeleton label="Loading plugins" />
           ) : (
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
               {filtered.map((plugin) => {
-                const accent = plugin.color || '#7C3AED';
+
                 const tags = (plugin.tags ?? []).slice(0, 3);
 
                 return (
@@ -192,38 +185,38 @@ export default function PluginsPage() {
                     onKeyDown={(event) => {
                       if (event.key === 'Enter' || event.key === ' ') setSelectedPlugin(plugin);
                     }}
-                    className="group cursor-pointer overflow-hidden rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white/60 dark:bg-[#13131C]/80 backdrop-blur-xl shadow-lg hover:shadow-xl dark:shadow-[0_14px_40px_rgba(0,0,0,0.22)] transition-all duration-300 hover:-translate-y-1 hover:border-[#7C3AED]/30 dark:hover:border-[#7C3AED]/45 hover:bg-white dark:hover:bg-slate-50 dark:bg-[#171724]"
+                    className="group cursor-pointer overflow-hidden rounded-sm border border-border dark:border-white/[0.08] bg-white/60 dark:bg-[var(--card)]/80  shadow-none hover:shadow-none dark:shadow-none    hover:border-[var(--primary)]/30 dark:hover:border-[var(--primary)]/45 hover:bg-card dark:hover:bg-background dark:bg-[#171724]"
                   >
                     <div
-                      className="relative h-44 overflow-hidden border-b border-slate-100 dark:border-white/[0.07]"
+                      className="relative h-44 overflow-hidden border-b border-border dark:border-white/[0.07]"
                       style={{
-                        background: `radial-gradient(circle at 28% 24%, ${accent}33, transparent 40%), radial-gradient(circle at 76% 70%, #0EA5E922, transparent 40%), var(--card-bg, transparent)`,
+                        background: 'var(--studio-accent-wash)',
                       }}
                     >
-                      <div className="absolute inset-0 bg-slate-50/50 dark:bg-[#09090D] -z-10" />
+                      <div className="absolute inset-0 bg-background/50 dark:bg-[#09090D] -z-10" />
                       <div
                         className="absolute inset-0 opacity-[0.12] dark:opacity-[0.16]"
                         style={{
                           backgroundImage:
-                            'linear-gradient(rgba(128,128,128,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(128,128,128,0.2) 1px, transparent 1px)',
+                            'none',
                           backgroundSize: '28px 28px',
                         }}
                       />
-                      <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent)] dark:bg-[linear-gradient(120deg,transparent,rgba(255,255,255,0.13),transparent)] opacity-0 transition duration-500 group-hover:translate-x-full group-hover:opacity-100" />
+
                       <div className="absolute left-4 top-4 flex gap-2">
                         {plugin.category && (
-                          <span className="rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 px-2.5 py-1 text-xs font-bold capitalize text-slate-700 dark:text-[#F1F1F8] backdrop-blur-md shadow-sm">
+                          <span className="rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 px-2.5 py-1 text-xs font-bold capitalize text-foreground dark:text-[var(--foreground)]  shadow-none">
                             {plugin.category}
                           </span>
                         )}
                         {plugin.status && (
-                          <span className="rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-400/10 px-2.5 py-1 text-xs font-bold capitalize text-emerald-600 dark:text-emerald-300 backdrop-blur-md shadow-sm">
+                          <span className="rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-400/10 px-2.5 py-1 text-xs font-bold capitalize text-emerald-600 dark:text-emerald-300  shadow-none">
                             {plugin.status}
                           </span>
                         )}
                       </div>
                       <div className="absolute right-4 top-4 flex items-center gap-2">
-                        <span className="inline-flex h-8 items-center gap-1.5 rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 px-2.5 text-xs font-bold text-slate-700 dark:text-[#F1F1F8] backdrop-blur-md shadow-sm">
+                        <span className="inline-flex h-8 items-center gap-1.5 rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 px-2.5 text-xs font-bold text-foreground dark:text-[var(--foreground)]  shadow-none">
                           <Heart className="h-3.5 w-3.5 text-rose-500" />
                           {plugin.likesCount ?? 0}
                         </span>
@@ -233,7 +226,7 @@ export default function PluginsPage() {
                             event.stopPropagation();
                             void navigator.clipboard?.writeText(plugin.id);
                           }}
-                          className="flex h-8 w-8 items-center justify-center rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 text-slate-500 dark:text-[#D8D8EA] backdrop-blur-md shadow-sm transition hover:bg-white/80 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-slate-900 dark:text-white"
+                          className="flex h-8 w-8 items-center justify-center rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 text-muted-foreground dark:text-[#D8D8EA]  shadow-none  hover:bg-white/80 dark:hover:bg-white/10 hover:text-foreground dark:hover:text-foreground dark:text-white"
                           aria-label={`Copy ${plugin.name} plugin id`}
                         >
                           <Copy className="h-3.5 w-3.5" />
@@ -242,12 +235,12 @@ export default function PluginsPage() {
 
                       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4">
                         <div
-                          className="flex h-16 w-16 items-center justify-center rounded-2xl text-slate-900 dark:text-white shadow-xl dark:shadow-2xl ring-1 ring-white/40 dark:ring-white/20 transition duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]"
-                          style={{ background: `linear-gradient(135deg, ${accent}, #0EA5E9)` }}
+                          className="flex h-16 w-16 items-center justify-center rounded-sm text-foreground dark:text-white shadow-none dark:shadow-none ring-1 ring-white/40 dark:ring-white/20    group-hover:shadow-none srgb, var(--primary) 30%, transparent)]"
+                          style={{ background: 'var(--studio-accent-wash)' }}
                         >
-                          <Puzzle className="h-7 w-7 drop-shadow-md" />
+                          <Puzzle className="h-7 w-7 drop-shadow-none" />
                         </div>
-                        <div className="mb-1 rounded-full border border-black/5 dark:border-white/[0.10] bg-white/50 dark:bg-white/[0.08] px-3 py-1 text-xs font-bold text-slate-700 dark:text-white/80 backdrop-blur-md shadow-sm">
+                        <div className="mb-1 rounded-full border border-black/5 dark:border-white/[0.10] bg-white/50 dark:bg-white/[0.08] px-3 py-1 text-xs font-bold text-foreground dark:text-white/80  shadow-none">
                           Open preview
                         </div>
                       </div>
@@ -256,28 +249,28 @@ export default function PluginsPage() {
                     <div className="p-5">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h2 className="line-clamp-1 text-lg font-bold tracking-tight text-slate-800 dark:text-[#F1F1F8] transition group-hover:text-slate-900 dark:group-hover:text-slate-900 dark:text-white">
+                          <h2 className="line-clamp-1 text-lg font-bold tracking-tight text-foreground dark:text-[var(--foreground)]  group-hover:text-foreground dark:group-hover:text-foreground dark:text-white">
                             {plugin.name}
                           </h2>
-                          <p className="mt-1 truncate text-xs font-medium text-slate-400 dark:text-[#55556A]">{plugin.id}</p>
+                          <p className="mt-1 truncate text-xs font-medium text-muted-foreground dark:text-[var(--muted-foreground)]">{plugin.id}</p>
                         </div>
-                        <Sparkles className="mt-1 h-4 w-4 shrink-0 text-[#7C3AED] dark:text-[#A78BFA] opacity-60 transition group-hover:opacity-100" />
+                        <Sparkles className="mt-1 h-4 w-4 shrink-0 text-[var(--primary)] dark:text-[var(--primary)] opacity-60  group-hover:opacity-100" />
                       </div>
 
-                      <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-5 font-medium text-slate-500 dark:text-[#9A9AB5]">
+                      <p className="mt-3 line-clamp-2 min-h-10 text-sm leading-5 font-medium text-muted-foreground dark:text-[#9A9AB5]">
                         {plugin.description || 'Reusable Skygen plugin.'}
                       </p>
 
                       <div className="mt-5 flex flex-wrap gap-2">
                         {tags.length > 0 ? (
                           tags.map((tag) => (
-                            <span key={tag} className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-[#25253A] px-2.5 py-1 text-xs font-medium text-slate-500 dark:text-[#A8A8C2] ring-1 ring-slate-200 dark:ring-white/[0.05]">
+                            <span key={tag} className="inline-flex items-center gap-1.5 rounded-full bg-muted dark:bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-muted-foreground dark:text-[#A8A8C2] ring-1 ring-slate-200 dark:ring-white/[0.05]">
                               <Tag className="h-3 w-3" />
                               {tag}
                             </span>
                           ))
                         ) : (
-                          <span className="rounded-full bg-slate-100 dark:bg-[#25253A] px-2.5 py-1 text-xs font-medium text-slate-400 dark:text-[#77778F] ring-1 ring-slate-200 dark:ring-white/[0.05]">
+                          <span className="rounded-full bg-muted dark:bg-[var(--accent)] px-2.5 py-1 text-xs font-medium text-muted-foreground dark:text-[#77778F] ring-1 ring-slate-200 dark:ring-white/[0.05]">
                             custom
                           </span>
                         )}
@@ -290,7 +283,7 @@ export default function PluginsPage() {
           )}
 
           {!loading && filtered.length === 0 && (
-            <div className="mt-16 rounded-2xl border border-dashed border-slate-200 dark:border-white/[0.1] bg-white/40 dark:bg-[#13131C] backdrop-blur-sm p-10 text-center font-medium text-slate-500 dark:text-[#8B8BAA]">
+            <div className="mt-16 rounded-sm border border-dashed border-border dark:border-white/[0.1] bg-white/40 dark:bg-[var(--card)]  p-10 text-center font-medium text-muted-foreground dark:text-[var(--muted-foreground)]">
               No plugins matched this search.
             </div>
           )}
@@ -303,7 +296,7 @@ export default function PluginsPage() {
         subtitle={selectedPlugin?.id}
         description={selectedPlugin?.description}
         kind="Plugin"
-        accent={selectedPlugin?.color || '#7C3AED'}
+        accent={'var(--primary)'}
         previewUrl={selectedPlugin ? `/preview/plugin/${encodeURIComponent(selectedPlugin.id)}?embed=1` : undefined}
         tags={selectedPlugin?.tags ?? []}
         meta={[selectedPlugin?.category, selectedPlugin?.status].filter(Boolean) as string[]}
@@ -313,7 +306,7 @@ export default function PluginsPage() {
         }}
         onUseInChat={() => selectedPlugin && openPluginInChat(selectedPlugin)}
         onRemixSource={
-          forking 
+          forking
             ? undefined // Disabled while forking
             : () => selectedPlugin && handleForkPlugin(selectedPlugin)
         }
@@ -341,7 +334,7 @@ export default function PluginsPage() {
 
       {/* Toast for error */}
       {forkError && (
-        <div className="fixed bottom-6 right-6 z-[200] max-w-sm rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200 backdrop-blur-md">
+        <div className="fixed bottom-6 right-6 z-[200] max-w-sm rounded-sm border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-200 ">
           <p className="font-semibold text-red-100">Fork Failed</p>
           <p className="mt-1">{forkError}</p>
           <button onClick={() => setForkError(null)} className="absolute right-2 top-2 text-red-300 hover:text-red-100">

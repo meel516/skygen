@@ -24,7 +24,7 @@ import {
   Zap,
   ChevronDown,
   ChevronUp,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 import { cn } from '@/lib/utils';
 
 interface SmartTemplateFormProps {
@@ -296,7 +296,7 @@ export function SmartTemplateForm({
 
     return (
       <div key={field.key} className="space-y-2">
-        <Label className="text-gray-300 flex items-center gap-2">
+        <Label className="text-muted-foreground flex items-center gap-2">
           {field.type === 'image' && <ImageIcon className="w-4 h-4 text-blue-400" />}
           {field.type === 'audio' && <Volume2 className="w-4 h-4 text-orange-400" />}
           {field.type === 'textarea' && <FileText className="w-4 h-4 text-green-400" />}
@@ -311,13 +311,13 @@ export function SmartTemplateForm({
                 value={value}
                 onChange={(e) => onChange({ ...effectiveVariables, [field.key]: e.target.value })}
                 placeholder="Enter image URL"
-                className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white flex-1"
+                className="bg-card border-border text-foreground dark:text-white flex-1"
               />
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => handleStockImage(field.key)}
-                className="border-gray-700 text-gray-300 hover:text-slate-900 dark:text-white"
+                className="border-border text-muted-foreground hover:text-foreground dark:text-white"
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
@@ -325,7 +325,7 @@ export function SmartTemplateForm({
                 type="button"
                 variant="outline"
                 onClick={() => setActiveFieldPrompt(activeFieldPrompt === field.key ? null : field.key)}
-                className="border-gray-700 text-gray-300 hover:text-slate-900 dark:text-white"
+                className="border-border text-muted-foreground hover:text-foreground dark:text-white"
               >
                 <Zap className="w-4 h-4" />
               </Button>
@@ -337,19 +337,19 @@ export function SmartTemplateForm({
                   value={promptValue}
                   onChange={(e) => setFieldPrompts({ ...fieldPrompts, [field.key]: e.target.value })}
                   placeholder="Describe the image you want..."
-                  className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white flex-1"
+                  className="bg-card border-border text-foreground dark:text-white flex-1"
                 />
                 <Button
                   onClick={() => handleGenerateField(field.key, field.type, field.label)}
                   disabled={isGeneratingThis}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-primary hover:bg-primary"
                 >
                   {isGeneratingThis ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
                 </Button>
               </div>
             )}
             {value && (
-              <div className="relative w-full h-24 bg-gray-800 rounded-lg overflow-hidden">
+              <div className="relative w-full h-24 bg-card rounded-sm overflow-hidden">
                 <img
                   src={value}
                   alt={field.label}
@@ -366,7 +366,7 @@ export function SmartTemplateForm({
                   onClick={() => onChange({ ...effectiveVariables, [field.key]: '' })}
                   className="absolute top-1 right-1 p-1 bg-white/50 dark:bg-black/50 rounded-full hover:bg-black/70"
                 >
-                  <X className="w-3 h-3 text-slate-900 dark:text-white" />
+                  <X className="w-3 h-3 text-foreground dark:text-white" />
                 </button>
               </div>
             )}
@@ -379,13 +379,13 @@ export function SmartTemplateForm({
                 value={value}
                 onChange={(e) => onChange({ ...effectiveVariables, [field.key]: e.target.value })}
                 placeholder="Audio URL"
-                className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white flex-1"
+                className="bg-card border-border text-foreground dark:text-white flex-1"
               />
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setActiveFieldPrompt(activeFieldPrompt === field.key ? null : field.key)}
-                className="border-gray-700 text-gray-300 hover:text-slate-900 dark:text-white"
+                className="border-border text-muted-foreground hover:text-foreground dark:text-white"
               >
                 {isGeneratingThis ? <Loader2 className="w-4 h-4 animate-spin" /> : <Volume2 className="w-4 h-4" />}
               </Button>
@@ -396,25 +396,25 @@ export function SmartTemplateForm({
                   value={promptValue}
                   onChange={(e) => setFieldPrompts({ ...fieldPrompts, [field.key]: e.target.value })}
                   placeholder="Enter text to convert to speech..."
-                  className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white flex-1 min-h-15"
+                  className="bg-card border-border text-foreground dark:text-white flex-1 min-h-15"
                 />
                 <Button
                   onClick={() => handleGenerateField(field.key, field.type, field.label)}
                   disabled={isGeneratingThis}
-                  className="bg-purple-600 hover:bg-purple-700 self-end"
+                  className="bg-primary hover:bg-primary self-end"
                 >
                   Generate
                 </Button>
               </div>
             )}
             {value && (
-              <div className="flex items-center gap-2 p-2 bg-gray-800 rounded-lg">
+              <div className="flex items-center gap-2 p-2 bg-card rounded-sm">
                 <Volume2 className="w-4 h-4 text-green-400" />
                 <audio controls className="flex-1 h-8">
                   <source src={value} />
                 </audio>
                 <button onClick={() => onChange({ ...effectiveVariables, [field.key]: '' })} className="p-1 hover:bg-gray-700 rounded">
-                  <X className="w-3 h-3 text-gray-400" />
+                  <X className="w-3 h-3 text-muted-foreground" />
                 </button>
               </div>
             )}
@@ -425,14 +425,14 @@ export function SmartTemplateForm({
               value={value}
               onChange={(e) => onChange({ ...effectiveVariables, [field.key]: e.target.value })}
               placeholder="Enter text..."
-              className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white min-h-20"
+              className="bg-card border-border text-foreground dark:text-white min-h-20"
             />
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={() => setActiveFieldPrompt(activeFieldPrompt === field.key ? null : field.key)}
-              className="text-purple-400 hover:text-purple-300"
+              className="text-primary hover:text-primary"
             >
               {isGeneratingThis ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
               Generate with AI
@@ -443,12 +443,12 @@ export function SmartTemplateForm({
                   value={promptValue}
                   onChange={(e) => setFieldPrompts({ ...fieldPrompts, [field.key]: e.target.value })}
                   placeholder="Describe what you want this text to say..."
-                  className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white flex-1 min-h-15"
+                  className="bg-card border-border text-foreground dark:text-white flex-1 min-h-15"
                 />
                 <Button
                   onClick={() => handleGenerateField(field.key, field.type, field.label)}
                   disabled={isGeneratingThis}
-                  className="bg-purple-600 hover:bg-purple-700 self-end"
+                  className="bg-primary hover:bg-primary self-end"
                 >
                   Generate
                 </Button>
@@ -462,14 +462,14 @@ export function SmartTemplateForm({
               value={value}
               onChange={(e) => onChange({ ...effectiveVariables, [field.key]: e.target.value })}
               placeholder="Enter text..."
-              className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white"
+              className="bg-card border-border text-foreground dark:text-white"
             />
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={() => setActiveFieldPrompt(activeFieldPrompt === field.key ? null : field.key)}
-              className="text-purple-400 hover:text-purple-300"
+              className="text-primary hover:text-primary"
             >
               {isGeneratingThis ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Wand2 className="w-4 h-4 mr-2" />}
               Generate with AI
@@ -481,12 +481,12 @@ export function SmartTemplateForm({
                   value={promptValue}
                   onChange={(e) => setFieldPrompts({ ...fieldPrompts, [field.key]: e.target.value })}
                   placeholder="Describe what you want..."
-                  className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white flex-1"
+                  className="bg-card border-border text-foreground dark:text-white flex-1"
                 />
                 <Button
                   onClick={() => handleGenerateField(field.key, field.type, field.label)}
                   disabled={isGeneratingThis}
-                  className="bg-purple-600 hover:bg-purple-700"
+                  className="bg-primary hover:bg-primary"
                 >
                   Generate
                 </Button>
@@ -504,17 +504,17 @@ export function SmartTemplateForm({
     <div className="space-y-6">
       {/* Header - Template name if available */}
       {templateName && (
-        <div className="text-lg font-semibold text-slate-900 dark:text-white">{templateName}</div>
+        <div className="text-lg font-semibold text-foreground dark:text-white">{templateName}</div>
       )}
 
       {/* AI Generate All Section */}
-      <div className="bg-linear-to-r from-purple-900/30 to-indigo-900/30 rounded-xl p-6 border border-purple-800/50">
+      <div className="bg-muted rounded-sm p-6 border border-primary/50">
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-5 h-5 text-purple-400" />
-          <span className="font-medium text-slate-900 dark:text-white">Generate Complete Story</span>
+          <Sparkles className="w-5 h-5 text-primary" />
+          <span className="font-medium text-foreground dark:text-white">Generate Complete Story</span>
         </div>
 
-        <p className="text-gray-400 text-sm mb-4">
+        <p className="text-muted-foreground text-sm mb-4">
           Describe your entire story, and AI will fill all fields at once.
         </p>
 
@@ -523,11 +523,11 @@ export function SmartTemplateForm({
             value={aiPrompt}
             onChange={(e) => setAiPrompt(e.target.value)}
             placeholder="e.g., Create a story about a hero who overcomes great challenges..."
-            className="bg-gray-800/50 border-gray-700 text-slate-900 dark:text-white placeholder:text-gray-500 min-h-20"
+            className="bg-card/50 border-border text-foreground dark:text-white placeholder:text-muted-foreground min-h-20"
           />
 
           {generationError && (
-            <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-lg">
+            <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-sm">
               {generationError}
             </div>
           )}
@@ -535,7 +535,7 @@ export function SmartTemplateForm({
           <Button
             onClick={handleGenerateAll}
             disabled={isGeneratingAll || !aiPrompt.trim()}
-            className="w-full bg-purple-600 hover:bg-purple-700"
+            className="w-full bg-primary hover:bg-primary"
           >
             {isGeneratingAll ? (
               <>
@@ -553,12 +553,12 @@ export function SmartTemplateForm({
       </div>
 
       {/* Dedicated TTS Audio Generator */}
-      <div className="bg-orange-900/20 rounded-xl p-6 border border-orange-800/50">
+      <div className="bg-orange-900/20 rounded-sm p-6 border border-orange-800/50">
         <div className="flex items-center gap-2 mb-4">
           <Volume2 className="w-5 h-5 text-orange-400" />
-          <span className="font-medium text-slate-900 dark:text-white">Generate Audio (TTS)</span>
+          <span className="font-medium text-foreground dark:text-white">Generate Audio (TTS)</span>
         </div>
-        <p className="text-gray-400 text-sm mb-4">
+        <p className="text-muted-foreground text-sm mb-4">
           Type text and generate voice audio. Copy the URL to use in any audio field.
         </p>
         <div className="space-y-3">
@@ -566,7 +566,7 @@ export function SmartTemplateForm({
             value={ttsText}
             onChange={(e) => setTtsText(e.target.value)}
             placeholder="Enter text to convert to speech..."
-            className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white min-h-20"
+            className="bg-card border-border text-foreground dark:text-white min-h-20"
           />
           <Button
             onClick={handleGenerateTTS}
@@ -586,7 +586,7 @@ export function SmartTemplateForm({
             )}
           </Button>
           {generatedAudioUrl && (
-            <div className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg">
+            <div className="flex items-center gap-2 p-3 bg-card rounded-sm">
               <Volume2 className="w-4 h-4 text-green-400" />
               <audio controls className="flex-1 h-8">
                 <source src={generatedAudioUrl} />
@@ -595,7 +595,7 @@ export function SmartTemplateForm({
                 variant="outline"
                 size="sm"
                 onClick={() => navigator.clipboard.writeText(generatedAudioUrl)}
-                className="border-gray-600 text-gray-300"
+                className="border-border text-muted-foreground"
               >
                 Copy URL
               </Button>
@@ -606,7 +606,7 @@ export function SmartTemplateForm({
 
       {/* Progress */}
       <div className="flex items-center justify-between text-sm">
-        <span className="text-gray-400">
+        <span className="text-muted-foreground">
           {filledCount}/{fields.length} fields filled
         </span>
         {filledCount === fields.length && fields.length > 0 && (
@@ -618,7 +618,7 @@ export function SmartTemplateForm({
 
       {/* All Fields */}
       <div className="space-y-4">
-        <div className="text-sm text-gray-400 mb-2">
+        <div className="text-sm text-muted-foreground mb-2">
           Or fill individual fields below:
         </div>
         {fields.map(field => renderFieldInput(field))}
@@ -629,7 +629,7 @@ export function SmartTemplateForm({
         <Button
           onClick={onSubmit}
           disabled={filledCount === 0}
-          className="bg-purple-600 hover:bg-purple-700"
+          className="bg-primary hover:bg-primary"
         >
           Use Template
           <Check className="w-4 h-4 ml-2" />

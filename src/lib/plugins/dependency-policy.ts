@@ -1,128 +1,76 @@
-import fs from 'fs';
-import path from 'path';
+import { readHostDependencyVersions } from './host-dependencies';
+import { PLUGIN_RUNTIME_PACKAGES, packageNameForImport } from './runtime-contract';
+import ts from 'typescript';
 
 const PACKAGE_NAME_RE = /^(@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*$/i;
-
-export const HOST_PROVIDED_PLUGIN_DEPS = new Set([
-  'react',
-  'react-dom',
-  'remotion',
-  '@remotion/player',
-  '@remotion/renderer',
-  'framer-motion',
-]);
-
-export const HOST_VERSIONED_PLUGIN_DEPS = new Set([
-  'three',
-  '@react-three/fiber',
-  '@react-three/drei',
-  '@react-three/postprocessing',
-  'postprocessing',
-]);
+export const HOST_PROVIDED_PLUGIN_DEPS = new Set<string>(PLUGIN_RUNTIME_PACKAGES);
+export const HOST_VERSIONED_PLUGIN_DEPS = new Set(['three', '@react-three/fiber', '@react-three/drei', '@react-three/postprocessing', 'postprocessing']);
 
 export interface NormalizedPluginDependencies {
-  /**
-   * Dependencies kept on the pending plugin/source hash. Includes host-versioned
-   * packages so preview can use the declared import intent and normalize hashes.
-   */
   dependencies: Record<string, string>;
-  /**
-   * Dependencies that should actually be installed in a build sandbox. Host
-   * singleton packages are intentionally excluded from this map.
-   */
+  /** Packages bundled into the plugin, rather than supplied by the player. */
   installDependencies: Record<string, string>;
-  /**
-   * Packages supplied by the Skygen host runtime rather than npm-installed into
-   * an individual plugin build.
-   */
   hostDependencies: Record<string, string>;
   stripped: string[];
   normalized: Array<{ name: string; from?: string; to: string }>;
 }
 
-export function normalizePluginDependencies(
-  deps: Record<string, string> | string | undefined,
-): NormalizedPluginDependencies {
-  const dependencies: Record<string, string> = {};
-  const installDependencies: Record<string, string> = {};
-  const hostDependencies: Record<string, string> = {};
-  const stripped: string[] = [];
-  const normalized: Array<{ name: string; from?: string; to: string }> = [];
-
-  let parsedDeps: Record<string, string> = {};
-  if (typeof deps === 'string') {
-    try {
-      parsedDeps = JSON.parse(deps);
-    } catch {
-      // Ignore parse errors, will just be empty
-    }
-  } else if (deps && typeof deps === 'object') {
-    parsedDeps = deps;
+export function normalizePluginDependencies(deps: Record<string, string> | string | undefined, modules?: Record<string, string>): NormalizedPluginDependencies {
+  const result: NormalizedPluginDependencies = { dependencies: {}, installDependencies: {}, hostDependencies: {}, stripped: [], normalized: [] };
+  let parsed: unknown = deps ?? {};
+  if (typeof parsed === 'string') {
+    try { parsed = JSON.parse(parsed); } catch { throw new Error('Plugin dependencies must be a JSON object.'); }
   }
-
-  for (let [name, range] of Object.entries(parsedDeps)) {
-    // Strip accidental stringified quotes from LLM payloads (e.g. `"\"@turf/turf\""`)
-    if (typeof name === 'string') name = name.replace(/^"|"$/g, '').replace(/^'|'$/g, '');
-    if (typeof range === 'string') range = range.replace(/^"|"$/g, '').replace(/^'|'$/g, '');
-
-    if (typeof name !== 'string' || typeof range !== 'string' || !PACKAGE_NAME_RE.test(name)) {
-      stripped.push(name);
-      continue;
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Plugin dependencies must be a JSON object.');
+  const declared = { ...parsed } as Record<string, unknown>;
+  for (const source of Object.values(modules ?? {})) {
+    // Parse imports without running user code or matching import-like comments.
+    for (const { fileName } of ts.preProcessFile(source, true, true).importedFiles) {
+      if (fileName.startsWith('.') || fileName.startsWith('/') || fileName.startsWith('shared/')) continue;
+      const name = packageNameForImport(fileName);
+      if (PACKAGE_NAME_RE.test(name) && declared[name] == null) declared[name] = '*';
     }
-
-    if (HOST_PROVIDED_PLUGIN_DEPS.has(name) || name.startsWith('@remotion/')) {
-      stripped.push(name);
-      continue;
-    }
-
-    if (HOST_VERSIONED_PLUGIN_DEPS.has(name)) {
-      const hostVersion = readHostDependencyVersion(name);
-      dependencies[name] = hostVersion;
-      hostDependencies[name] = hostVersion;
-      if (range !== hostVersion) {
-        normalized.push({ name, from: range, to: hostVersion });
-      }
-      continue;
-    }
-
-    dependencies[name] = range;
-    installDependencies[name] = range;
   }
-
-  return { dependencies, installDependencies, hostDependencies, stripped, normalized };
+  const host = readHostDependencyVersions();
+  for (let [name, range] of Object.entries(declared)) {
+    name = name.replace(/^["']|["']$/g, '');
+    if (typeof range === 'string') range = range.replace(/^["']|["']$/g, '').trim();
+    if (!PACKAGE_NAME_RE.test(name) || typeof range !== 'string' || !range) {
+      result.stripped.push(name);
+      continue;
+    }
+    // App-owned packages use its resolved version; new plugin-only packages
+    // retain their requested npm range and are bundled in isolation.
+    const version = host[name] ?? range;
+    if (HOST_PROVIDED_PLUGIN_DEPS.has(name) && !host[name]) {
+      throw new Error(`Cannot determine the deployed version of ${name}. Include its installed package or package-lock.json with the host app.`);
+    }
+    result.dependencies[name] = version;
+    if (version !== range) result.normalized.push({ name, from: range, to: version });
+    if (HOST_PROVIDED_PLUGIN_DEPS.has(name)) result.hostDependencies[name] = version;
+    else result.installDependencies[name] = version;
+  }
+  return result;
 }
 
-function readHostDependencyVersion(name: string): string {
-  const candidates: string[] = [];
-  if (process.env.HOST_PACKAGE_JSON) {
-    candidates.push(path.resolve(process.env.HOST_PACKAGE_JSON));
+/** Install host roots too: unlisted subpaths resolve from the same version. */
+export function getPluginBuildDependencies(deps?: Record<string, string>): Record<string, string> {
+  const host = readHostDependencyVersions();
+  const dependencies = { ...normalizePluginDependencies(deps).installDependencies };
+  for (const name of PLUGIN_RUNTIME_PACKAGES) {
+    if (!host[name]) throw new Error(`Missing exact host version for ${name}. Check the deployed package.json and installation.`);
+    dependencies[name] = host[name];
   }
-
-  let dir = process.cwd();
-  for (let i = 0; i < 8 && dir !== path.dirname(dir); i++) {
-    candidates.push(path.join(dir, 'package.json'));
-    dir = path.dirname(dir);
+  // Build tools cannot be overridden by a plugin dependency declaration.
+  for (const name of ['esbuild', 'typescript', 'buffer', 'semver']) {
+    if (!host[name]) throw new Error(`Missing locked or installed build tool: ${name}`);
+    dependencies[name] = host[name];
   }
-
-  for (const pkgPath of candidates) {
-    try {
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-      const version = pkg.dependencies?.[name] ?? pkg.devDependencies?.[name];
-      if (typeof version === 'string' && version.trim()) {
-        return version;
-      }
-    } catch {
-      // Try the next parent package.json.
-    }
-  }
-
-  return '*';
+  return dependencies;
 }
 
 export function formatDependencyPolicyChanges(result: NormalizedPluginDependencies): string[] {
-  const messages: string[] = [];
-  if (result.stripped.length > 0) {
-    messages.push(`app-provided/invalid deps kept out of plugin manifest: ${result.stripped.join(', ')}`);
-  }
+  const messages = result.normalized.map(({ name, from, to }) => `${name}: using app version ${to} (requested ${from})`);
+  if (result.stripped.length) messages.push(`Invalid dependency declarations ignored: ${result.stripped.join(', ')}`);
   return messages;
 }

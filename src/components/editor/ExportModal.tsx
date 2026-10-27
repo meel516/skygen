@@ -19,7 +19,7 @@ import {
   ExternalLink,
   Tag,
   X,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 
 type UploadState = 'idle' | 'uploading' | 'done' | 'error';
 
@@ -195,13 +195,13 @@ export function ExportModal() {
     <Dialog open={isOpen} onOpenChange={open => { if (!open) handleClose(); }}>
       <DialogContent
         className="max-w-lg max-h-[85vh] overflow-y-auto"
-        style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.08)', color: '#F1F1F8' }}
+        style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
         onInteractOutside={e => {
           if (exportJobStatus === 'processing') e.preventDefault();
         }}
       >
         <DialogHeader>
-          <DialogTitle style={{ color: '#F1F1F8' }}>
+          <DialogTitle style={{ color: 'var(--foreground)' }}>
             {exportJobStatus === 'processing' && 'Rendering Video…'}
             {exportJobStatus === 'completed' && 'Video Ready'}
             {exportJobStatus === 'failed' && 'Render Failed'}
@@ -212,13 +212,13 @@ export function ExportModal() {
         {exportJobStatus === 'processing' && (
           <div className="space-y-4 py-2">
             <div className="flex items-center gap-3">
-              <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#7c3aed' }} />
-              <span style={{ color: '#8B8BAA', fontSize: 14 }}>
+              <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--primary)' }} />
+              <span style={{ color: 'var(--muted-foreground)', fontSize: 14 }}>
                 {exportProgress > 0 ? `${exportProgress}% complete` : 'Starting render…'}
               </span>
             </div>
-            <Progress value={exportProgress} className="h-2" style={{ background: 'rgba(255,255,255,0.08)' }} />
-            <p style={{ fontSize: 12, color: '#55556A' }}>
+            <Progress value={exportProgress} className="h-2" style={{ background: 'var(--border)' }} />
+            <p style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
               This may take a minute. Don't close this tab.
             </p>
           </div>
@@ -234,8 +234,8 @@ export function ExportModal() {
 
             {/* Tabs */}
             <div
-              className="flex rounded-lg overflow-hidden"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+              className="flex rounded-sm overflow-hidden"
+              style={{ background: 'var(--border)', border: '1px solid var(--border)' }}
             >
               {([
                 { id: 'download' as const, label: 'Download', icon: Download, color: '#7c3aed' },
@@ -248,10 +248,10 @@ export function ExportModal() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-[12px] font-medium"
                     style={{
-                      background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                      color: isActive ? tab.color : '#55556A',
+                      background: isActive ? 'var(--border)' : 'transparent',
+                      color: isActive ? tab.color : 'var(--muted-foreground)',
                       borderBottom: isActive ? `2px solid ${tab.color}` : '2px solid transparent',
                     }}
                   >
@@ -268,7 +268,7 @@ export function ExportModal() {
                 <Button
                   onClick={downloadExport}
                   className="w-full gap-2"
-                  style={{ background: 'rgba(124,58,237,0.85)', color: '#fff', border: 'none' }}
+                  style={{ background: 'color-mix(in srgb, var(--primary) 85%, transparent)', color: 'var(--primary-foreground)', border: 'none' }}
                 >
                   <Download className="w-4 h-4" />
                   Download MP4
@@ -276,7 +276,7 @@ export function ExportModal() {
                 <a
                   href="/account/videos"
                   className="flex items-center gap-1 text-[12px] justify-center"
-                  style={{ color: '#55556A' }}
+                  style={{ color: 'var(--muted-foreground)' }}
                 >
                   View in My Videos <ExternalLink className="w-3 h-3" />
                 </a>
@@ -288,7 +288,7 @@ export function ExportModal() {
               <div className="space-y-3">
                 {ytUploadState === 'done' ? (
                   <div
-                    className="rounded-lg p-4 space-y-2"
+                    className="rounded-sm p-4 space-y-2"
                     style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}
                   >
                     <div className="flex items-center gap-2" style={{ color: '#22c55e' }}>
@@ -297,21 +297,21 @@ export function ExportModal() {
                     </div>
                     {youtubeUrl && (
                       <a href={youtubeUrl} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1" style={{ color: '#7c3aed', fontSize: 13 }}>
+                        className="flex items-center gap-1" style={{ color: 'var(--primary)', fontSize: 13 }}>
                         View on YouTube <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                     <Button onClick={() => setYtUploadState('idle')} variant="outline" size="sm"
-                      style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#8B8BAA', background: 'transparent', fontSize: 12 }}>
+                      style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'var(--muted-foreground)', background: 'transparent', fontSize: 12 }}>
                       Upload another
                     </Button>
                   </div>
                 ) : ytConnected === false ? (
                   <div className="text-center py-4 space-y-2">
-                    <Youtube className="w-8 h-8 mx-auto" style={{ color: '#55556A' }} />
-                    <p style={{ color: '#8B8BAA', fontSize: 13 }}>YouTube not connected</p>
+                    <Youtube className="w-8 h-8 mx-auto" style={{ color: 'var(--muted-foreground)' }} />
+                    <p style={{ color: 'var(--muted-foreground)', fontSize: 13 }}>YouTube not connected</p>
                     <a href="/api/youtube/auth"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[12px] font-medium"
                       style={{ background: 'rgba(255,0,0,0.1)', border: '1px solid rgba(255,0,0,0.25)', color: '#ff4444' }}>
                       <ExternalLink className="w-3 h-3" /> Connect YouTube
                     </a>
@@ -335,7 +335,7 @@ export function ExportModal() {
                         <Label style={labelStyle}>Privacy</Label>
                         <Select value={ytPrivacy} onValueChange={(v: any) => setYtPrivacy(v)}>
                           <SelectTrigger style={inputStyle}><SelectValue /></SelectTrigger>
-                          <SelectContent style={{ background: '#1E1E2D', border: '1px solid rgba(255,255,255,0.12)', color: '#F1F1F8' }}>
+                          <SelectContent style={{ background: 'var(--muted)', border: '1px solid rgba(255,255,255,0.12)', color: 'var(--foreground)' }}>
                             <SelectItem value="private">Private</SelectItem>
                             <SelectItem value="unlisted">Unlisted</SelectItem>
                             <SelectItem value="public">Public</SelectItem>
@@ -346,7 +346,7 @@ export function ExportModal() {
                         <Label style={labelStyle}>Category</Label>
                         <Select value={ytCategory} onValueChange={setYtCategory}>
                           <SelectTrigger style={inputStyle}><SelectValue /></SelectTrigger>
-                          <SelectContent style={{ background: '#1E1E2D', border: '1px solid rgba(255,255,255,0.12)', color: '#F1F1F8' }}>
+                          <SelectContent style={{ background: 'var(--muted)', border: '1px solid rgba(255,255,255,0.12)', color: 'var(--foreground)' }}>
                             {YOUTUBE_CATEGORIES.map(cat => (
                               <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
                             ))}
@@ -364,11 +364,11 @@ export function ExportModal() {
                         {ytTags.map(tag => (
                           <span
                             key={tag}
-                            className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px]"
-                            style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa', border: '1px solid rgba(124,58,237,0.25)' }}
+                            className="flex items-center gap-1 px-2 py-0.5 rounded-sm text-[11px]"
+                            style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)', border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)' }}
                           >
                             {tag}
-                            <button onClick={() => handleRemoveTag(tag)} className="hover:text-slate-900 dark:text-white">
+                            <button onClick={() => handleRemoveTag(tag)} className="hover:text-foreground dark:text-white">
                               <X className="w-2.5 h-2.5" />
                             </button>
                           </span>
@@ -383,11 +383,11 @@ export function ExportModal() {
                           style={{ ...inputStyle, flex: 1 }}
                         />
                         <Button onClick={handleAddTag} size="sm" variant="outline" disabled={!ytTagInput.trim()}
-                          style={{ borderColor: 'rgba(255,255,255,0.12)', color: '#8B8BAA', background: 'transparent', fontSize: 12 }}>
+                          style={{ borderColor: 'rgba(255,255,255,0.12)', color: 'var(--muted-foreground)', background: 'transparent', fontSize: 12 }}>
                           Add
                         </Button>
                       </div>
-                      <p style={{ fontSize: 11, color: '#55556A' }}>Up to 15 tags. Press Enter or comma to add.</p>
+                      <p style={{ fontSize: 11, color: 'var(--muted-foreground)' }}>Up to 15 tags. Press Enter or comma to add.</p>
                     </div>
 
                     {ytUploadState === 'error' && (
@@ -416,7 +416,7 @@ export function ExportModal() {
               <div className="space-y-3">
                 {liUploadState === 'done' ? (
                   <div
-                    className="rounded-lg p-4 space-y-2"
+                    className="rounded-sm p-4 space-y-2"
                     style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}
                   >
                     <div className="flex items-center gap-2" style={{ color: '#22c55e' }}>
@@ -425,21 +425,21 @@ export function ExportModal() {
                     </div>
                     {linkedinUrl && (
                       <a href={linkedinUrl} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1" style={{ color: '#7c3aed', fontSize: 13 }}>
+                        className="flex items-center gap-1" style={{ color: 'var(--primary)', fontSize: 13 }}>
                         View on LinkedIn <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                     <Button onClick={() => setLiUploadState('idle')} variant="outline" size="sm"
-                      style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#8B8BAA', background: 'transparent', fontSize: 12 }}>
+                      style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'var(--muted-foreground)', background: 'transparent', fontSize: 12 }}>
                       Post another
                     </Button>
                   </div>
                 ) : liConnected === false ? (
                   <div className="text-center py-4 space-y-2">
-                    <Linkedin className="w-8 h-8 mx-auto" style={{ color: '#55556A' }} />
-                    <p style={{ color: '#8B8BAA', fontSize: 13 }}>LinkedIn not connected</p>
+                    <Linkedin className="w-8 h-8 mx-auto" style={{ color: 'var(--muted-foreground)' }} />
+                    <p style={{ color: 'var(--muted-foreground)', fontSize: 13 }}>LinkedIn not connected</p>
                     <a href="/api/linkedin/auth"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[12px] font-medium"
                       style={{ background: 'rgba(10,102,194,0.1)', border: '1px solid rgba(10,102,194,0.25)', color: '#0a66c2' }}>
                       <ExternalLink className="w-3 h-3" /> Connect LinkedIn
                     </a>
@@ -461,7 +461,7 @@ export function ExportModal() {
                       <Label style={labelStyle}>Visibility</Label>
                       <Select value={liVisibility} onValueChange={(v: any) => setLiVisibility(v)}>
                         <SelectTrigger style={inputStyle}><SelectValue /></SelectTrigger>
-                        <SelectContent style={{ background: '#1E1E2D', border: '1px solid rgba(255,255,255,0.12)', color: '#F1F1F8' }}>
+                        <SelectContent style={{ background: 'var(--muted)', border: '1px solid rgba(255,255,255,0.12)', color: 'var(--foreground)' }}>
                           <SelectItem value="PUBLIC">Public</SelectItem>
                           <SelectItem value="CONNECTIONS">Connections only</SelectItem>
                         </SelectContent>
@@ -499,7 +499,7 @@ export function ExportModal() {
               <span style={{ fontSize: 14 }}>Render failed. Please try again.</span>
             </div>
             <Button onClick={handleClose} variant="outline"
-              style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#F1F1F8', background: 'transparent' }}>
+              style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'var(--foreground)', background: 'transparent' }}>
               Close
             </Button>
           </div>

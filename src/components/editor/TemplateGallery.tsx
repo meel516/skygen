@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEditorStore, UserTemplate } from '@/store/editor-store';
 import { ApiKeySettings } from './ApiKeySettings';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Globe, User, RefreshCw, Loader2, CheckCircle, ChevronRight, Edit2, Play, Square, Upload, Crown, Lock, Music, VolumeX, LogOut, Settings, Copy, LifeBuoy, Link } from 'lucide-react';
+import { ArrowLeft, Sparkles, Globe, User, RefreshCw, Loader2, CheckCircle, ChevronRight, Edit2, Play, Square, Upload, Crown, Lock, Music, VolumeX, LogOut, Settings, Copy, LifeBuoy, Link } from '@/components/ui/studio-icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Player } from '@remotion/player';
 import { DynamicVideo, getCompositionConfig } from '@/lib/video/compositions/DynamicVideo';
@@ -194,14 +194,14 @@ function ProgressDots({ step }: { step: WizardStep }) {
         <div key={label} className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
             <div className={`w-2.5 h-2.5 rounded-full transition-colors ${
-              i < current ? 'bg-purple-500' : i === current ? 'bg-purple-400 ring-2 ring-purple-400/40' : 'bg-slate-200 dark:bg-gray-700'
+              i < current ? 'bg-muted' : i === current ? 'bg-muted ring-2 ring-primary/40' : 'bg-muted dark:bg-gray-700'
             }`} />
-            <span className={`text-xs font-medium transition-colors ${i <= current ? 'text-purple-300' : 'text-gray-600'}`}>
+            <span className={`text-xs font-medium transition-colors ${i <= current ? 'text-primary' : 'text-muted-foreground'}`}>
               {label}
             </span>
           </div>
           {i < STEP_LABELS.length - 1 && (
-            <div className={`h-px w-6 ${i < current ? 'bg-purple-500' : 'bg-slate-100 dark:bg-gray-800'}`} />
+            <div className={`h-px w-6 ${i < current ? 'bg-muted' : 'bg-muted dark:bg-card'}`} />
           )}
         </div>
       ))}
@@ -232,13 +232,13 @@ function SpinnerStep({ title, subtitle, phases }: { title: string; subtitle: str
       className="flex flex-col items-center justify-center min-h-[60vh] text-center"
     >
       <div className="relative w-24 h-24 mb-8">
-        <div className="absolute inset-0 rounded-full border-4 border-slate-300 dark:border-gray-800" />
+        <div className="absolute inset-0 rounded-full border-4 border-border dark:border-border" />
         <div className="absolute inset-0 rounded-full border-4 border-t-purple-500 border-r-pink-500 border-b-transparent border-l-transparent animate-spin" />
         <div className="absolute inset-3 rounded-full border-4 border-t-pink-400 border-r-transparent border-b-transparent border-l-transparent animate-spin [animation-direction:reverse] [animation-duration:1.2s]" />
-        <div className="absolute inset-0 flex items-center justify-center text-2xl">🎬</div>
+        <div className="absolute inset-0 flex items-center justify-center text-2xl">Video</div>
       </div>
-      <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">{title}</h2>
-      <p className="text-slate-500 dark:text-gray-400 mb-6">{subtitle}</p>
+      <h2 className="text-3xl font-bold mb-2 text-foreground">{title}</h2>
+      <p className="text-muted-foreground dark:text-muted-foreground mb-6">{subtitle}</p>
       {phases && phases.length > 0 && (
         <div className="flex flex-col items-center gap-2">
           {phases.map((phase, i) => (
@@ -251,11 +251,11 @@ function SpinnerStep({ title, subtitle, phases }: { title: string; subtitle: str
               {i < currentPhase ? (
                 <CheckCircle className="w-4 h-4 text-green-400" />
               ) : i === currentPhase ? (
-                <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                <Loader2 className="w-4 h-4 text-primary animate-spin" />
               ) : (
-                <div className="w-4 h-4 rounded-full border border-slate-300 dark:border-gray-700" />
+                <div className="w-4 h-4 rounded-full border border-border dark:border-border" />
               )}
-              <span className={i <= currentPhase ? 'text-slate-700 dark:text-gray-300' : 'text-gray-600'}>{phase}</span>
+              <span className={i <= currentPhase ? 'text-foreground dark:text-muted-foreground' : 'text-muted-foreground'}>{phase}</span>
             </motion.div>
           ))}
         </div>
@@ -831,9 +831,9 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-slate-900 dark:text-white">
+    <div className="min-h-screen bg-background dark:bg-card text-foreground dark:text-white">
       {/* Header */}
-      <div className="border-b border-slate-300 dark:border-gray-800 bg-gradient-to-r from-gray-900 via-purple-900/20 to-gray-900 backdrop-blur-xl sticky top-0 z-50">
+      <div className="border-b border-border dark:border-border bg-muted sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -842,15 +842,15 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                   <Button
                     variant="ghost" size="sm"
                     onClick={() => router.push('/editor')}
-                    className="text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white"
+                    className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back
                   </Button>
-                  <div className="h-6 w-px bg-slate-200 dark:bg-gray-700" />
+                  <div className="h-6 w-px bg-muted dark:bg-gray-700" />
                 </>
               )}
-              <h1 className="text-xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold text-foreground">
                 Create Video
               </h1>
             </div>
@@ -860,16 +860,16 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(p => !p)}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-100 dark:bg-gray-800 transition-colors"
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-muted dark:bg-card"
                 >
                   {session?.user?.image ? (
                     <img src={session.user.image} alt="" className="w-7 h-7 rounded-full object-cover" />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-purple-500/20 flex items-center justify-center">
-                      <User className="w-4 h-4 text-purple-400" />
+                    <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
+                      <User className="w-4 h-4 text-primary" />
                     </div>
                   )}
-                  <span className="text-sm text-slate-700 dark:text-gray-300 hidden sm:block max-w-[120px] truncate">
+                  <span className="text-sm text-foreground dark:text-muted-foreground hidden sm:block max-w-[120px] truncate">
                     {session?.user?.name || session?.user?.email}
                   </span>
                 </button>
@@ -877,29 +877,29 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                   <>
                     {/* backdrop */}
                     <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
-                    <div className="absolute right-0 top-full mt-1 w-48 rounded-xl border border-slate-300 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xl z-50 overflow-hidden">
-                      <div className="px-3 py-2.5 border-b border-slate-300 dark:border-gray-800">
-                        <p className="text-xs font-medium text-slate-900 dark:text-white truncate">{session?.user?.name}</p>
-                        <p className="text-[11px] text-slate-600 dark:text-gray-500 truncate">{session?.user?.email}</p>
+                    <div className="absolute right-0 top-full mt-1 w-48 rounded-sm border border-border dark:border-border bg-card dark:bg-card shadow-none z-50 overflow-hidden">
+                      <div className="px-3 py-2.5 border-b border-border dark:border-border">
+                        <p className="text-xs font-medium text-foreground dark:text-white truncate">{session?.user?.name}</p>
+                        <p className="text-[11px] text-muted-foreground dark:text-muted-foreground truncate">{session?.user?.email}</p>
                       </div>
                       <div className="py-1">
                         <a
                           href="/account"
-                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-gray-300 hover:bg-slate-100 dark:bg-gray-800 hover:text-slate-900 dark:text-white transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground dark:text-muted-foreground hover:bg-muted dark:bg-card hover:text-foreground dark:text-white"
                           onClick={() => setUserMenuOpen(false)}
                         >
                           <Settings className="w-4 h-4" /> Account
                         </a>
                         <a
                           href="/support"
-                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-gray-300 hover:bg-slate-100 dark:bg-gray-800 hover:text-slate-900 dark:text-white transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-foreground dark:text-muted-foreground hover:bg-muted dark:bg-card hover:text-foreground dark:text-white"
                           onClick={() => setUserMenuOpen(false)}
                         >
                           <LifeBuoy className="w-4 h-4" /> Support
                         </a>
                         <a
                           href="/api/auth/logout"
-                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10"
                         >
                           <LogOut className="w-4 h-4" /> Sign out
                         </a>
@@ -922,28 +922,28 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
           {step === 'source' && (
             <motion.div key="source" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
               <div className="mb-10">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold mb-2 text-foreground">
                   Where do you want to start?
                 </h2>
-                <p className="text-slate-500 dark:text-gray-400">Choose a template source to continue.</p>
+                <p className="text-muted-foreground dark:text-muted-foreground">Choose a template source to continue.</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl">
                 <motion.div
-                  whileHover={{ scale: 1.02, y: -3 }} whileTap={{ scale: 0.98 }}
+
                   onClick={() => { setTemplateSource('public'); setStep('start'); }}
-                  className="group cursor-pointer bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-800 hover:border-purple-500/60 rounded-2xl p-8 transition-all"
+                  className="group cursor-pointer bg-card dark:bg-card border border-border dark:border-border hover:border-primary/60 rounded-sm p-8" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                 >
-                  <div className="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-5">
-                    <Globe className="w-7 h-7 text-purple-400" />
+                  <div className="w-14 h-14 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center mb-5">
+                    <Globe className="w-7 h-7 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-purple-200 transition-colors mb-2">Public Templates</h3>
-                  <p className="text-slate-600 dark:text-gray-500 text-sm leading-relaxed">Browse curated templates published by the team. Great starting point for any niche.</p>
-                  <div className="mt-5 text-xs text-purple-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                  <h3 className="text-xl font-bold text-foreground dark:text-white group-hover:text-primary mb-2">Public Templates</h3>
+                  <p className="text-muted-foreground dark:text-muted-foreground text-sm leading-relaxed">Browse curated templates published by the team. Great starting point for any niche.</p>
+                  <div className="mt-5 text-xs text-primary font-medium">
                     Browse {publicTemplates.length} template{publicTemplates.length !== 1 ? 's' : ''} →
                   </div>
                 </motion.div>
                 <motion.div
-                  whileHover={{ scale: 1.02, y: -3 }} whileTap={{ scale: 0.98 }}
+
                   onClick={() => {
                     if (!hasPremium) {
                       goToPremiumUpgrade();
@@ -952,20 +952,20 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                     setTemplateSource('user');
                     setStep('start');
                   }}
-                  className="group cursor-pointer bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-800 hover:border-pink-500/60 rounded-2xl p-8 transition-all"
+                  className="group cursor-pointer bg-card dark:bg-card border border-border dark:border-border hover:border-pink-500/60 rounded-sm p-8" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                 >
-                  <div className="w-14 h-14 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-5">
+                  <div className="w-14 h-14 rounded-sm bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-5">
                     {hasPremium ? <User className="w-7 h-7 text-pink-400" /> : <Lock className="w-7 h-7 text-pink-300" />}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-pink-200 transition-colors mb-2">My Templates</h3>
-                  <p className="text-slate-600 dark:text-gray-500 text-sm leading-relaxed">
+                  <h3 className="text-xl font-bold text-foreground dark:text-white group-hover:text-pink-200 mb-2">My Templates</h3>
+                  <p className="text-muted-foreground dark:text-muted-foreground text-sm leading-relaxed">
                     {hasPremium
                       ? 'Templates you have saved from the editor. Reuse your own structures with fresh AI content.'
                       : 'Premium-only workspace for saving and reusing your own templates.'}
                   </p>
                   <div className="mt-5">
                     {hasPremium ? (
-                      <div className="text-xs text-pink-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="text-xs text-pink-400 font-medium">
                         {userTemplates.length > 0 ? `${userTemplates.length} saved template${userTemplates.length !== 1 ? 's' : ''} →` : 'None saved yet →'}
                       </div>
                     ) : (
@@ -985,43 +985,43 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
           ================================================================ */}
           {step === 'start' && (
             <motion.div key="start" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
-              <button onClick={() => setStep('source')} className="flex items-center gap-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white text-sm mb-6 transition-colors">
+              <button onClick={() => setStep('source')} className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white text-sm mb-6">
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold mb-2 text-foreground">
                   {templateSource === 'public' ? 'Public Templates' : 'My Templates'}
                 </h2>
-                <p className="text-slate-500 dark:text-gray-400">
+                <p className="text-muted-foreground dark:text-muted-foreground">
                   {templateSource === 'public' ? 'Pick a template — AI will fill it with your story.' : 'Your saved templates. Select one to generate fresh content.'}
                 </p>
               </div>
               {templateSource === 'user' && !hasPremium ? (
                 <div className="text-center py-24">
-                  <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10">
+                  <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-sm border border-amber-500/20 bg-amber-500/10">
                     <Crown className="h-8 w-8 text-amber-300" />
                   </div>
-                  <p className="mb-2 text-lg font-medium text-slate-900 dark:text-white">My Templates is a Premium feature</p>
-                  <p className="mx-auto mb-6 max-w-md text-sm text-slate-500 dark:text-gray-400">
+                  <p className="mb-2 text-lg font-medium text-foreground dark:text-white">My Templates is a Premium feature</p>
+                  <p className="mx-auto mb-6 max-w-md text-sm text-muted-foreground dark:text-muted-foreground">
                     Upgrade to save your own templates and reuse them later. Free users can still browse public templates.
                   </p>
-                  <Button onClick={goToPremiumUpgrade} className="bg-purple-600 hover:bg-purple-700">
+                  <Button onClick={goToPremiumUpgrade} className="bg-primary hover:bg-primary">
                     Upgrade to Premium
                   </Button>
                 </div>
               ) : visibleTemplates.length === 0 ? (
-                <div className="text-center py-24 text-slate-600 dark:text-gray-500">
+                <div className="text-center py-24 text-muted-foreground dark:text-muted-foreground">
                   {templateSource === 'user' ? (
                     <>
-                      <User className="w-14 h-14 mx-auto mb-4 text-gray-700" />
-                      <p className="text-lg font-medium text-slate-500 dark:text-gray-400 mb-2">No saved templates yet</p>
+                      <User className="w-14 h-14 mx-auto mb-4 text-foreground" />
+                      <p className="text-lg font-medium text-muted-foreground dark:text-muted-foreground mb-2">No saved templates yet</p>
                       <p className="text-sm mb-6">Build a video in the editor and click "Save as Template" to see it here.</p>
-                      <Button onClick={() => router.push('/editor')} className="bg-purple-600 hover:bg-purple-700">Go to Editor</Button>
+                      <Button onClick={() => router.push('/editor')} className="bg-primary hover:bg-primary">Go to Editor</Button>
                     </>
                   ) : (
                     <>
-                      <Globe className="w-14 h-14 mx-auto mb-4 text-gray-700" />
-                      <p className="text-lg font-medium text-slate-500 dark:text-gray-400 mb-2">No public templates yet</p>
+                      <Globe className="w-14 h-14 mx-auto mb-4 text-foreground" />
+                      <p className="text-lg font-medium text-muted-foreground dark:text-muted-foreground mb-2">No public templates yet</p>
                       <p className="text-sm">Admins can publish templates from My Templates.</p>
                     </>
                   )}
@@ -1029,7 +1029,6 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {visibleTemplates.map((t, idx) => {
-                    const emoji = CATEGORY_EMOJI[t.category ?? ''] ?? 'T';
                     const isFreeTemplate = templateSource === 'public' && (Boolean(t.isFreeTier) || !containsPremiumBlocks(t.blocks));
                     const isLockedTemplate = !hasPremium && containsPremiumBlocks(t.blocks) && !isFreeTemplate;
                     return (
@@ -1038,10 +1037,10 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.04 }}
                         onClick={() => handleSelectTemplate(t)}
-                        className="group cursor-pointer"
+                        className="group cursor-pointer" role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                       >
-                        <div className="rounded-3xl overflow-hidden border border-slate-300 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_rgba(0,0,0,0.45)] group-hover:border-purple-500/60">
-                          <div className="relative aspect-[3/4] bg-slate-100 dark:bg-gray-800">
+                        <div className="rounded-sm overflow-hidden border border-border dark:border-border bg-card dark:bg-card shadow-none group-hover:border-primary/60">
+                          <div className="relative aspect-[3/4] bg-muted dark:bg-card">
                             {t.previewUrl ? (
                               t.previewUrl.match(/\.(mp4|webm|mov)(\?|$)/i) ? (
                                 <video src={t.previewUrl} muted loop playsInline autoPlay className="w-full h-full object-cover" />
@@ -1049,15 +1048,15 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                 <img src={t.previewUrl} alt={t.name} className="w-full h-full object-cover" />
                               )
                             ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800">
-                                <span className="text-5xl">{emoji}</span>
-                                <span className="text-xs text-slate-600 dark:text-gray-500">{t.blocks.length} blocks</span>
+                              <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-muted">
+                                <span className="text-5xl">{t.name.slice(0, 1)}</span>
+                                <span className="text-xs text-muted-foreground dark:text-muted-foreground">{t.blocks.length} blocks</span>
                               </div>
                             )}
                             {t.previewUrl && (
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                                 <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                                  <Play className="w-6 h-6 fill-white text-gray-900 ml-1" />
+                                  <Play className="w-6 h-6 fill-white text-foreground ml-1" />
                                 </div>
                               </div>
                             )}
@@ -1066,7 +1065,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                 <span
                                   className={`rounded-full px-2 py-0.5 text-[11px] border ${
                                     isFreeTemplate
-                                      ? 'border-sky-500/20 bg-sky-500/10 text-sky-200'
+                                      ? 'border-primary/20 bg-primary/10 text-primary'
                                       : 'border-amber-500/20 bg-amber-500/10 text-amber-300'
                                   }`}
                                 >
@@ -1076,7 +1075,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                               {isAdmin && templateSource === 'user' && (
                                 <button
                                   onClick={(e) => { e.stopPropagation(); makeTemplatePublic(t.id); }}
-                                  className="text-[11px] text-green-300 hover:text-green-200 transition-colors px-2 py-0.5 rounded-full bg-green-500/15 border border-green-500/30"
+                                  className="text-[11px] text-green-300 hover:text-green-200 px-2 py-0.5 rounded-full bg-green-500/15 border border-green-500/30"
                                 >
                                   Publish
                                 </button>
@@ -1085,17 +1084,17 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                             {isLockedTemplate && (
                               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/55 px-4 text-center">
                                 <Crown className="h-8 w-8 text-amber-300" />
-                                <p className="text-sm font-medium text-slate-900 dark:text-white">Premium template</p>
-                                <p className="text-xs text-slate-800 dark:text-gray-200">This template uses advanced blocks.</p>
+                                <p className="text-sm font-medium text-foreground dark:text-white">Premium template</p>
+                                <p className="text-xs text-foreground dark:text-muted-foreground">This template uses advanced blocks.</p>
                               </div>
                             )}
                           </div>
                         </div>
                         <div className="mt-3 text-center">
-                          <div className="text-base font-semibold text-slate-900 dark:text-white group-hover:text-purple-200 transition-colors truncate">
+                          <div className="text-base font-semibold text-foreground dark:text-white group-hover:text-primary truncate">
                             {t.name}
                           </div>
-                          <div className="text-xs text-slate-600 dark:text-gray-500 mt-1">
+                          <div className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                             {t.category || 'General'} - {t.blocks.length} blocks
                           </div>
                         </div>
@@ -1112,13 +1111,13 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
           ================================================================ */}
           {step === 'voice' && (
             <motion.div key="voice" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
-              <button onClick={() => { setSelectedTemplate(null); setStep('start'); }} className="flex items-center gap-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white text-sm mb-6 transition-colors">
+              <button onClick={() => { setSelectedTemplate(null); setStep('start'); }} className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white text-sm mb-6">
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
               <ProgressDots step="voice" />
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Language & Voice</h2>
-                <p className="text-slate-500 dark:text-gray-400">Choose your language, then pick a voice.</p>
+                <h2 className="text-3xl font-bold mb-2 text-foreground">Language & Voice</h2>
+                <p className="text-muted-foreground dark:text-muted-foreground">Choose your language, then pick a voice.</p>
               </div>
               {/* Language selector */}
               <div className="flex flex-wrap gap-2 mb-4">
@@ -1139,13 +1138,13 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                         setProviderFilter('all');
                       }
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-3 py-1.5 rounded-sm text-sm font-medium transition-colors ${
                       selectedLanguage === l.code
-                        ? 'bg-purple-600 text-slate-900 dark:text-white'
-                        : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white hover:bg-slate-200 dark:bg-gray-700'
+                        ? 'bg-primary text-primary-foreground dark:text-primary-foreground'
+                        : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white hover:bg-muted dark:bg-gray-700'
                     }`}
                   >
-                    {l.flag} {l.label}
+                    {l.label}
                   </button>
                 ))}
               </div>
@@ -1153,19 +1152,19 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                 {(['all', 'F', 'M'] as GenderFilter[]).map(f => (
                   <button
                     key={f} onClick={() => setGenderFilter(f)}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      genderFilter === f ? 'bg-purple-600 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white hover:bg-slate-200 dark:bg-gray-700'
+                    className={`px-4 py-1.5 rounded-sm text-sm font-medium transition-colors ${
+                      genderFilter === f ? 'bg-primary text-primary-foreground dark:text-primary-foreground' : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white hover:bg-muted dark:bg-gray-700'
                     }`}
                   >
                     {f === 'all' ? 'All' : f === 'F' ? '♀ Female' : '♂ Male'}
                   </button>
                 ))}
-                <div className="w-px bg-slate-200 dark:bg-gray-700 mx-1" />
+                <div className="w-px bg-muted dark:bg-gray-700 mx-1" />
                 {(['all', ...Array.from(new Set(voices.map(v => v.provider)))] as ProviderFilter[]).map(p => (
                   <button
                     key={p} onClick={() => setProviderFilter(p)}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      providerFilter === p ? 'bg-purple-600 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white hover:bg-slate-200 dark:bg-gray-700'
+                    className={`px-4 py-1.5 rounded-sm text-sm font-medium transition-colors ${
+                      providerFilter === p ? 'bg-primary text-primary-foreground dark:text-primary-foreground' : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white hover:bg-muted dark:bg-gray-700'
                     }`}
                   >
                     {p === 'all' ? 'All Providers' : p.charAt(0).toUpperCase() + p.slice(1)}
@@ -1182,18 +1181,18 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                   const isLockedVoice = v.premium && !hasPremium;
                   return (
                   <motion.div
-                    key={v.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                    key={v.id}
                     onClick={() => {
                       if (isLockedVoice) { goToPremiumUpgrade(); return; }
                       setSelectedVoice(v.id);
                     }}
-                    className={`cursor-pointer rounded-xl p-4 border transition-all relative ${
+                    className={`cursor-pointer rounded-sm p-4 border  relative ${
                       selectedVoice === v.id
-                        ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20'
+                        ? 'border-primary bg-primary/10 shadow-none shadow-none'
                         : isLockedVoice
-                          ? 'border-slate-300 dark:border-gray-800 bg-white dark:bg-gray-900/60 opacity-75 hover:border-yellow-500/40'
-                          : 'border-slate-300 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-purple-500/60'
-                    }`}
+                          ? 'border-border dark:border-border bg-card dark:bg-card/60 opacity-75 hover:border-yellow-500/40'
+                          : 'border-border dark:border-border bg-card dark:bg-card hover:border-primary/60'
+                    }`} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0 ${
@@ -1203,15 +1202,15 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-900 dark:text-white">{v.name}</span>
+                          <span className="font-semibold text-foreground dark:text-white">{v.name}</span>
                           <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
                             v.provider === 'elevenlabs' ? 'bg-emerald-500/15 text-emerald-400'
                               : v.provider === 'gemini' ? 'bg-amber-500/15 text-amber-400'
-                              : 'bg-sky-500/15 text-sky-400'
+                              : 'bg-primary/15 text-primary'
                           }`}>{v.provider === 'elevenlabs' ? 'EL' : v.provider === 'gemini' ? 'GM' : 'DG'}</span>
                           {isLockedVoice && <Lock className="w-3.5 h-3.5 text-yellow-400" />}
                         </div>
-                        <div className="text-slate-500 dark:text-gray-400 text-xs mt-0.5">
+                        <div className="text-muted-foreground dark:text-muted-foreground text-xs mt-0.5">
                           {v.style}{v.accent ? ` · ${v.accent}` : ''}
                           {isLockedVoice && <span className="ml-1 text-yellow-400/80">Premium</span>}
                         </div>
@@ -1222,10 +1221,10 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                           if (isLockedVoice) { goToPremiumUpgrade(); return; }
                           handleVoicePreview(v.id);
                         }}
-                        className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+                        className={`ml-auto w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0  ${
                           playingVoice === v.id
-                            ? 'bg-purple-500 text-slate-900 dark:text-white'
-                            : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:bg-slate-200 dark:bg-gray-700 hover:text-slate-900 dark:text-white'
+                            ? 'bg-primary text-primary-foreground dark:text-primary-foreground'
+                            : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:bg-gray-700 hover:text-foreground dark:text-white'
                         }`}
                       >
                         {loadingVoice === v.id ? (
@@ -1236,13 +1235,13 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                           <Play className="w-3.5 h-3.5 fill-current" />
                         )}
                       </button>
-                      {selectedVoice === v.id && <div className="w-2 h-2 rounded-full bg-purple-400 flex-shrink-0" />}
+                      {selectedVoice === v.id && <div className="w-2 h-2 rounded-full bg-muted flex-shrink-0" />}
                     </div>
                   </motion.div>
                   );
                 })}
               </div>
-              <Button onClick={() => setStep('music')} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white px-8">Continue</Button>
+              <Button onClick={() => setStep('music')} className="bg-primary text-primary-foreground dark:text-primary-foreground px-8">Continue</Button>
             </motion.div>
           )}
 
@@ -1251,54 +1250,54 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
           ================================================================ */}
           {step === 'music' && (
             <motion.div key="music" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
-              <button onClick={() => setStep('voice')} className="flex items-center gap-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white text-sm mb-6 transition-colors">
+              <button onClick={() => setStep('voice')} className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white text-sm mb-6">
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
               <ProgressDots step="music" />
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Background Music</h2>
-                <p className="text-slate-500 dark:text-gray-400">Pick a track to play softly under your narration. You can skip this or adjust later.</p>
+                <h2 className="text-3xl font-bold mb-2 text-foreground">Background Music</h2>
+                <p className="text-muted-foreground dark:text-muted-foreground">Pick a track to play softly under your narration. You can skip this or adjust later.</p>
               </div>
 
               {/* Mood filter pills */}
               <div className="flex flex-wrap gap-2 mb-6">
                 <button
                   onClick={() => setMoodFilter('all')}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    moodFilter === 'all' ? 'bg-purple-600 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white hover:bg-slate-200 dark:bg-gray-700'
+                  className={`px-4 py-1.5 rounded-sm text-sm font-medium transition-colors ${
+                    moodFilter === 'all' ? 'bg-primary text-primary-foreground dark:text-primary-foreground' : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white hover:bg-muted dark:bg-gray-700'
                   }`}
                 >All</button>
                 {ALL_MOODS.map(mood => (
                   <button
                     key={mood}
                     onClick={() => setMoodFilter(mood)}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      moodFilter === mood ? MOOD_META[mood].color.replace('/15', '/30') + ' ring-1 ring-current' : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white hover:bg-slate-200 dark:bg-gray-700'
+                    className={`px-4 py-1.5 rounded-sm text-sm font-medium transition-colors ${
+                      moodFilter === mood ? MOOD_META[mood].color.replace('/15', '/30') + 'ring-1 ring-current' : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white hover:bg-muted dark:bg-gray-700'
                     }`}
-                  >{MOOD_META[mood].emoji} {MOOD_META[mood].label}</button>
+                  >{MOOD_META[mood].label}</button>
                 ))}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8">
                 {/* No Music option */}
                 <motion.div
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+
                   onClick={() => setSelectedMusic(null)}
-                  className={`cursor-pointer rounded-xl p-4 border-2 border-dashed transition-all ${
+                  className={`cursor-pointer rounded-sm p-4 border-2 border-dashed  ${
                     selectedMusic === null
-                      ? 'border-purple-500 bg-purple-500/10'
-                      : 'border-slate-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-gray-600'
-                  }`}
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border dark:border-border bg-card dark:bg-card hover:border-border'
+                  }`} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-gray-800 flex items-center justify-center">
-                      <VolumeX className="w-5 h-5 text-slate-500 dark:text-gray-400" />
+                    <div className="w-10 h-10 rounded-full bg-muted dark:bg-card flex items-center justify-center">
+                      <VolumeX className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
                     </div>
                     <div>
-                      <span className="font-semibold text-slate-900 dark:text-white">No Music</span>
-                      <div className="text-slate-600 dark:text-gray-500 text-xs">Narration only</div>
+                      <span className="font-semibold text-foreground dark:text-white">No Music</span>
+                      <div className="text-muted-foreground dark:text-muted-foreground text-xs">Narration only</div>
                     </div>
-                    {selectedMusic === null && <div className="ml-auto w-2 h-2 rounded-full bg-purple-400" />}
+                    {selectedMusic === null && <div className="ml-auto w-2 h-2 rounded-full bg-muted" />}
                   </div>
                 </motion.div>
 
@@ -1311,35 +1310,35 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                     const mood = MOOD_META[track.mood];
                     return (
                       <motion.div
-                        key={track.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                        key={track.id}
                         onClick={() => setSelectedMusic(track)}
-                        className={`cursor-pointer rounded-xl p-4 border transition-all ${
+                        className={`cursor-pointer rounded-sm p-4 border  ${
                           isSelected
-                            ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20'
-                            : 'border-slate-300 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-purple-500/60'
-                        }`}
+                            ? 'border-primary bg-primary/10 shadow-none shadow-none'
+                            : 'border-border dark:border-border bg-card dark:bg-card hover:border-primary/60'
+                        }`} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                       >
                         <div className="flex items-center gap-3">
                           <button
                             onClick={(e) => { e.stopPropagation(); handleMusicPreview(track); }}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-                              isPlaying ? 'bg-purple-500 text-slate-900 dark:text-white' : 'bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 hover:bg-slate-200 dark:bg-gray-700 hover:text-slate-900 dark:text-white'
+                            className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0  ${
+                              isPlaying ? 'bg-primary text-primary-foreground dark:text-primary-foreground' : 'bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:bg-gray-700 hover:text-foreground dark:text-white'
                             }`}
                           >
                             {isPlaying ? <Square className="w-3 h-3 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current" />}
                           </button>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-900 dark:text-white">{track.name}</span>
+                              <span className="font-semibold text-foreground dark:text-white">{track.name}</span>
                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${mood.color}`}>
-                                {mood.emoji} {mood.label}
+                                {mood.label}
                               </span>
                             </div>
-                            <div className="text-slate-600 dark:text-gray-500 text-xs mt-0.5">
+                            <div className="text-muted-foreground dark:text-muted-foreground text-xs mt-0.5">
                               {track.artist} &middot; {formatDuration(track.duration)}
                             </div>
                           </div>
-                          {isSelected && <div className="w-2 h-2 rounded-full bg-purple-400 flex-shrink-0" />}
+                          {isSelected && <div className="w-2 h-2 rounded-full bg-muted flex-shrink-0" />}
                         </div>
                       </motion.div>
                     );
@@ -1347,10 +1346,10 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
               </div>
 
               {musicTracks.length === 0 && (
-                <p className="text-slate-600 dark:text-gray-500 text-sm mb-4">No music tracks available yet. A content manager can upload tracks in the admin panel.</p>
+                <p className="text-muted-foreground dark:text-muted-foreground text-sm mb-4">No music tracks available yet. A content manager can upload tracks in the admin panel.</p>
               )}
 
-              <Button onClick={() => setStep('arc')} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white px-8">Continue</Button>
+              <Button onClick={() => setStep('arc')} className="bg-primary text-primary-foreground dark:text-primary-foreground px-8">Continue</Button>
             </motion.div>
           )}
 
@@ -1359,20 +1358,20 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
           ================================================================ */}
           {step === 'arc' && (
             <motion.div key="arc" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
-              <button onClick={() => setStep('music')} className="flex items-center gap-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white text-sm mb-6 transition-colors">
+              <button onClick={() => setStep('music')} className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white text-sm mb-6">
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
               <ProgressDots step="arc" />
               <div className="mb-8">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Choose your narrative arc</h2>
+                  <h2 className="text-3xl font-bold mb-2 text-foreground">Choose your narrative arc</h2>
                   {!hasPremium && arcCards.some(a => a.is_premium) && (
                     <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-400 border border-yellow-500/25">
                       <Crown className="w-3 h-3" /> Premium
                     </span>
                   )}
                 </div>
-                <p className="text-slate-500 dark:text-gray-400">Pick the storytelling structure that fits your content best.</p>
+                <p className="text-muted-foreground dark:text-muted-foreground">Pick the storytelling structure that fits your content best.</p>
               </div>
               <div className="mb-8">
                 <LoopingCarousel cardWidth={150} gap={12}>
@@ -1383,40 +1382,40 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                     const isLocked = !hasPremium && a.is_premium;
                     return (
                       <motion.div
-                        key={a.id} whileHover={{ scale: isLocked ? 1 : 1.03 }} whileTap={{ scale: isLocked ? 1 : 0.97 }}
+                        key={a.id}
                         onClick={() => {
                           if (isLocked) { goToPremiumUpgrade(); return; }
                           setSelectedArc(a.id);
                         }}
-                        className={isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}
+                        className={isLocked ? 'cursor-not-allowed' : 'cursor-pointer'} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                       >
-                        <div className={`aspect-[3/4] rounded-2xl overflow-hidden border-2 transition-all relative ${
+                        <div className={`aspect-[3/4] rounded-sm overflow-hidden border-2  relative ${
                           isSelected
-                            ? 'border-purple-500 shadow-lg shadow-purple-500/20'
+                            ? 'border-primary shadow-none shadow-none'
                             : isDefaultSelected
-                              ? 'border-purple-500/50'
+                              ? 'border-primary/50'
                               : isLocked
                                 ? 'border-transparent opacity-50'
-                                : 'border-transparent hover:border-purple-500/40'
+                                : 'border-transparent hover:border-primary/40'
                         }`}>
                           {preview ? (
                             <img src={preview} alt={a.label} className="w-full h-full object-cover" />
                           ) : (
                             <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${
-                              isSelected ? 'bg-purple-500/10' : 'bg-white dark:bg-gray-900'
+                              isSelected ? 'bg-primary/10' : 'bg-card dark:bg-card'
                             }`}>
-                              <span className="text-4xl">{a.emoji}</span>
-                              <span className="text-slate-600 dark:text-gray-500 text-[10px] text-center px-2 leading-tight">{a.desc}</span>
+                              <span className="text-4xl">{a.label.slice(0, 1)}</span>
+                              <span className="text-muted-foreground dark:text-muted-foreground text-[10px] text-center px-2 leading-tight">{a.desc}</span>
                             </div>
                           )}
                           {isLocked && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl">
-                              <Lock className="w-5 h-5 text-slate-500 dark:text-gray-400" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-sm">
+                              <Lock className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
                             </div>
                           )}
                         </div>
                         <div className={`mt-2 text-center text-sm font-medium transition-colors ${
-                          isSelected ? 'text-purple-300' : isLocked ? 'text-gray-600' : 'text-slate-900 dark:text-white'
+                          isSelected ? 'text-primary' : isLocked ? 'text-muted-foreground' : 'text-foreground dark:text-white'
                         }`}>{a.label}</div>
                       </motion.div>
                     );
@@ -1426,14 +1425,14 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
               {/* Visual Style Picker */}
               <div className="mb-8 mt-4">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Choose visual style</h2>
+                  <h2 className="text-2xl font-bold text-foreground">Choose visual style</h2>
                   {!hasPremium && styleCards.some(s => s.is_premium) && (
                     <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-400 border border-yellow-500/25">
                       <Crown className="w-3 h-3" /> Premium
                     </span>
                   )}
                 </div>
-                <p className="text-slate-500 dark:text-gray-400 text-sm mt-2">
+                <p className="text-muted-foreground dark:text-muted-foreground text-sm mt-2">
                   {hasPremium
                     ? 'Pick an art style for consistent visuals across all images.'
                     : 'Auto-detect is free. Upgrade to Premium to unlock premium visual styles.'}
@@ -1448,40 +1447,40 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                     const isLocked = !hasPremium && s.is_premium;
                     return (
                       <motion.div
-                        key={s.id} whileHover={{ scale: isLocked ? 1 : 1.03 }} whileTap={{ scale: isLocked ? 1 : 0.97 }}
+                        key={s.id}
                         onClick={() => {
                           if (isLocked) { goToPremiumUpgrade(); return; }
                           setSelectedVisualStyle(s.id);
                         }}
-                        className={isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}
+                        className={isLocked ? 'cursor-not-allowed' : 'cursor-pointer'} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.currentTarget.click(); } }}
                       >
-                        <div className={`aspect-[3/4] rounded-2xl overflow-hidden border-2 transition-all relative ${
+                        <div className={`aspect-[3/4] rounded-sm overflow-hidden border-2  relative ${
                           isSelected
-                            ? 'border-purple-500 shadow-lg shadow-purple-500/20'
+                            ? 'border-primary shadow-none shadow-none'
                             : isDefaultSelected
-                              ? 'border-purple-500/50'
+                              ? 'border-primary/50'
                               : isLocked
                                 ? 'border-transparent opacity-50'
-                                : 'border-transparent hover:border-purple-500/40'
+                                : 'border-transparent hover:border-primary/40'
                         }`}>
                           {preview ? (
                             <img src={preview} alt={s.label} className="w-full h-full object-cover" />
                           ) : (
                             <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${
-                              isSelected ? 'bg-purple-500/10' : 'bg-white dark:bg-gray-900'
+                              isSelected ? 'bg-primary/10' : 'bg-card dark:bg-card'
                             }`}>
-                              <span className="text-4xl">{s.emoji}</span>
-                              <span className="text-slate-600 dark:text-gray-500 text-[10px] text-center px-2 leading-tight">{s.desc}</span>
+                              <span className="text-4xl">{s.label.slice(0, 1)}</span>
+                              <span className="text-muted-foreground dark:text-muted-foreground text-[10px] text-center px-2 leading-tight">{s.desc}</span>
                             </div>
                           )}
                           {isLocked && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl">
-                              <Lock className="w-5 h-5 text-slate-500 dark:text-gray-400" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-sm">
+                              <Lock className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
                             </div>
                           )}
                         </div>
                         <div className={`mt-2 text-center text-sm font-medium transition-colors ${
-                          isSelected ? 'text-purple-300' : isLocked ? 'text-gray-600' : 'text-slate-900 dark:text-white'
+                          isSelected ? 'text-primary' : isLocked ? 'text-muted-foreground' : 'text-foreground dark:text-white'
                         }`}>{s.label}</div>
                       </motion.div>
                     );
@@ -1493,10 +1492,10 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                   value={customVisualPrompt} onChange={e => setCustomVisualPrompt(e.target.value)}
                   placeholder="e.g. Dark gothic art with muted colors, cathedral-like architecture, stained glass lighting effects..."
                   rows={3}
-                  className="w-full bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder:text-gray-600 mb-4"
+                  className="w-full bg-card dark:bg-card border border-border dark:border-border text-foreground dark:text-white rounded-sm px-4 py-3 text-sm resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-muted-foreground mb-4"
                 />
               )}
-              <Button onClick={() => setStep('story')} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white px-8">Continue</Button>
+              <Button onClick={() => setStep('story')} className="bg-primary text-primary-foreground dark:text-primary-foreground px-8">Continue</Button>
             </motion.div>
           )}
 
@@ -1505,48 +1504,48 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
           ================================================================ */}
           {step === 'story' && (
             <motion.div key="story" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
-              <button onClick={() => setStep('arc')} className="flex items-center gap-2 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white text-sm mb-6 transition-colors">
+              <button onClick={() => setStep('arc')} className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white text-sm mb-6">
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
               <ProgressDots step="story" />
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Tell your story</h2>
-                <p className="text-slate-500 dark:text-gray-400">Describe what your video should be about.</p>
+                <h2 className="text-3xl font-bold mb-2 text-foreground">Tell your story</h2>
+                <p className="text-muted-foreground dark:text-muted-foreground">Describe what your video should be about.</p>
               </div>
               <div className="max-w-2xl space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">What should your video be about?</label>
+                  <label className="block text-sm font-medium text-foreground dark:text-muted-foreground mb-2">What should your video be about?</label>
                   <textarea
                     value={prompt} onChange={e => setPrompt(e.target.value)}
                     placeholder="e.g. The rise of Lionel Messi from a poor kid in Rosario to becoming the greatest footballer of all time..."
                     rows={6}
-                    className="w-full bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 placeholder:text-gray-600 min-h-[140px]"
+                    className="w-full bg-card dark:bg-card border border-border dark:border-border text-foreground dark:text-white rounded-sm px-4 py-3 text-sm resize-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-muted-foreground min-h-[140px]"
                   />
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs">
                   {selectedTemplate?.name && (
-                    <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 border border-slate-300 dark:border-gray-700">📁 {selectedTemplate.name}</span>
+                    <span className="px-2.5 py-1 rounded-full bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground border border-border dark:border-border">📁 {selectedTemplate.name}</span>
                   )}
                   {selectedArc && (
-                    <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 border border-slate-300 dark:border-gray-700">
+                    <span className="px-2.5 py-1 rounded-full bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground border border-border dark:border-border">
                       {arcCards.find(a => a.id === selectedArc)?.emoji} {arcCards.find(a => a.id === selectedArc)?.label ?? selectedArc}
                     </span>
                   )}
-                  <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 border border-slate-300 dark:border-gray-700">
+                  <span className="px-2.5 py-1 rounded-full bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground border border-border dark:border-border">
                     🎙 {voices.find(v => v.id === selectedVoice)?.name ?? selectedVoice}
                   </span>
                   {selectedVisualStyle && (
-                    <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-gray-800 text-slate-500 dark:text-gray-400 border border-slate-300 dark:border-gray-700">
+                    <span className="px-2.5 py-1 rounded-full bg-muted dark:bg-card text-muted-foreground dark:text-muted-foreground border border-border dark:border-border">
                       {styleCards.find(s => s.id === selectedVisualStyle)?.emoji} {styleCards.find(s => s.id === selectedVisualStyle)?.label ?? selectedVisualStyle}
                     </span>
                   )}
                 </div>
                 {error && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>
+                  <div className="p-3 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>
                 )}
                 <Button
                   onClick={handleGenerate} disabled={!prompt.trim()}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white py-3 text-base font-semibold shadow-lg shadow-purple-500/30 disabled:opacity-50"
+                  className="w-full bg-primary text-primary-foreground dark:text-primary-foreground py-3 text-base font-semibold shadow-none shadow-none disabled:opacity-50"
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
                   Generate Video
@@ -1569,15 +1568,15 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
             <motion.div key="review_story" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
               <ProgressDots step="review_story" />
               <div className="mb-6">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Review your story</h2>
-                <p className="text-slate-500 dark:text-gray-400">The AI planned {narrativePlan.length} blocks. Edit any narration script before generating images.</p>
+                <h2 className="text-3xl font-bold mb-2 text-foreground">Review your story</h2>
+                <p className="text-muted-foreground dark:text-muted-foreground">The AI planned {narrativePlan.length} blocks. Edit any narration script before generating images.</p>
                 <div className="flex items-center gap-3 mt-3 flex-wrap">
                   {wizardArc && (
-                    <span className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium">
+                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium">
                       Arc: {wizardArc}
                     </span>
                   )}
-                  <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-gray-800 border border-slate-300 dark:border-gray-700 text-slate-500 dark:text-gray-400 text-xs">
+                  <span className="px-3 py-1 rounded-full bg-muted dark:bg-card border border-border dark:border-border text-muted-foreground dark:text-muted-foreground text-xs">
                     {narrativePlan.length} blocks
                   </span>
                   {engagementScore !== null && (
@@ -1598,43 +1597,43 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                     key={i}
                     initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-800 rounded-xl p-5"
+                    className="bg-card dark:bg-card border border-border dark:border-border rounded-sm p-5"
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xs font-bold text-slate-600 dark:text-gray-500">Block {i + 1}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 text-xs font-medium border border-purple-500/20">
+                      <span className="text-xs font-bold text-muted-foreground dark:text-muted-foreground">Block {i + 1}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-xs font-medium border border-primary/20">
                         {brief.narrativeRole}
                       </span>
                     </div>
-                    <p className="text-slate-900 dark:text-white font-semibold text-sm mb-3">{brief.keyMessage}</p>
+                    <p className="text-foreground dark:text-white font-semibold text-sm mb-3">{brief.keyMessage}</p>
                     <div className="relative">
                       <div className="flex items-center gap-1.5 mb-1.5">
-                        <Edit2 className="w-3 h-3 text-slate-600 dark:text-gray-500" />
-                        <span className="text-xs text-slate-600 dark:text-gray-500">Narration script</span>
+                        <Edit2 className="w-3 h-3 text-muted-foreground dark:text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground dark:text-muted-foreground">Narration script</span>
                       </div>
                       <textarea
                         value={editedScripts[i] !== undefined ? editedScripts[i] : brief.spokenScript}
                         onChange={e => setEditedScripts(prev => ({ ...prev, [i]: e.target.value }))}
                         rows={3}
-                        className="w-full bg-slate-100 dark:bg-gray-800 border border-slate-300 dark:border-gray-700 focus:border-purple-500 text-slate-800 dark:text-gray-200 text-sm rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-purple-500"
+                        className="w-full bg-muted dark:bg-card border border-border dark:border-border focus:border-primary text-foreground dark:text-muted-foreground text-sm rounded-sm px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                   </motion.div>
                 ))}
               </div>
 
-              {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>}
+              {error && <div className="mb-4 p-3 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>}
 
               <div className="flex gap-3">
                 <Button
                   onClick={handleConfirmStory}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white px-8"
+                  className="bg-primary text-primary-foreground dark:text-primary-foreground px-8"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Confirm & Generate Images
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
-                <Button variant="ghost" onClick={() => setStep('story')} className="text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white">
+                <Button variant="ghost" onClick={() => setStep('story')} className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white">
                   <ArrowLeft className="w-4 h-4 mr-2" /> Edit Story
                 </Button>
               </div>
@@ -1655,7 +1654,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
             <motion.div key="review_images" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
               <ProgressDots step="review_images" />
               <div className="mb-6">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Review media</h2>
+                <h2 className="text-3xl font-bold mb-2 text-foreground">Review media</h2>
                 <div className="flex items-center gap-3 mt-1">
                   {imageItems.length > 0 && (
                     <span className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-xs font-medium">
@@ -1667,7 +1666,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                       {videoItems.length} video{videoItems.length !== 1 ? 's' : ''}
                     </span>
                   )}
-                  <span className="text-slate-600 dark:text-gray-500 text-xs">Click any item to edit its prompt and regenerate</span>
+                  <span className="text-muted-foreground dark:text-muted-foreground text-xs">Click any item to edit its prompt and regenerate</span>
                 </div>
               </div>
 
@@ -1685,38 +1684,38 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                           key={key}
                           initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: videoItems.indexOf(item) * 0.04 }}
-                          className="bg-white dark:bg-gray-900 border border-blue-800/30 rounded-xl overflow-hidden"
+                          className="bg-card dark:bg-card border border-blue-800/30 rounded-sm overflow-hidden"
                         >
-                          <div className="relative aspect-video bg-slate-100 dark:bg-gray-800">
+                          <div className="relative aspect-video bg-muted dark:bg-card">
                             {item.url ? (
                               <video src={item.url} controls className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs text-center p-2">
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs text-center p-2">
                                 No video generated
                               </div>
                             )}
                             {isLoading && (
-                              <div className="absolute inset-0 bg-white dark:bg-gray-900/80 flex flex-col items-center justify-center gap-2">
+                              <div className="absolute inset-0 bg-card dark:bg-card/80 flex flex-col items-center justify-center gap-2">
                                 <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
                                 <span className="text-xs text-blue-300">Generating video (may take a few minutes)...</span>
                               </div>
                             )}
-                            <span className="absolute top-1.5 left-1.5 text-xs bg-blue-600/80 text-slate-900 dark:text-white px-1.5 py-0.5 rounded-full">video</span>
+                            <span className="absolute top-1.5 left-1.5 text-xs bg-blue-600/80 text-foreground dark:text-white px-1.5 py-0.5 rounded-full">video</span>
                           </div>
                           <div className="p-2.5">
-                            <p className="text-xs text-slate-600 dark:text-gray-500 truncate mb-2">Block {item.blockIdx + 1} · {item.fieldPath}</p>
+                            <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate mb-2">Block {item.blockIdx + 1} · {item.fieldPath}</p>
                             {/* Scene prompt — always visible, editable */}
                             <textarea
                               value={regenPrompts[key] ?? item.description}
                               onChange={e => setRegenPrompts(prev => ({ ...prev, [key]: e.target.value }))}
                               rows={3}
-                              className="w-full bg-slate-100 dark:bg-gray-800 border border-slate-300 dark:border-gray-700 text-slate-800 dark:text-gray-200 text-xs rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-blue-500 mb-1.5"
+                              className="w-full bg-muted dark:bg-card border border-border dark:border-border text-foreground dark:text-muted-foreground text-xs rounded-sm px-2 py-1.5 resize-none focus:outline-none focus:border-blue-500 mb-1.5"
                             />
                             {/* Visual style guide — read-only, shown when available */}
                             {wizardVisualStyleGuide && (
                               <div className="mb-2">
-                                <p className="text-xs text-purple-400/70 mb-0.5">Visual style (auto-prepended):</p>
-                                <div className="w-full bg-white dark:bg-gray-900 border border-purple-800/30 text-slate-500 dark:text-gray-400 text-xs rounded-lg px-2 py-1.5 max-h-16 overflow-y-auto leading-relaxed">
+                                <p className="text-xs text-primary/70 mb-0.5">Visual style (auto-prepended):</p>
+                                <div className="w-full bg-card dark:bg-card border border-primary/30 text-muted-foreground dark:text-muted-foreground text-xs rounded-sm px-2 py-1.5 max-h-16 overflow-y-auto leading-relaxed">
                                   {wizardVisualStyleGuide}
                                 </div>
                               </div>
@@ -1729,7 +1728,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                   navigator.clipboard.writeText(full);
                                 }}
                                 disabled={isLoading}
-                                className="flex-1 text-xs py-1.5 rounded-lg bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:bg-gray-700 text-slate-700 dark:text-gray-300 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                className="flex-1 text-xs py-1.5 rounded-sm bg-muted dark:bg-card hover:bg-muted dark:bg-gray-700 text-foreground dark:text-muted-foreground disabled:opacity-50 flex items-center justify-center gap-1"
                                 title="Copy full prompt (style + scene)"
                               >
                                 <Copy className="w-3 h-3" />
@@ -1738,7 +1737,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                               <button
                                 onClick={() => handleRegenerateVideo(key)}
                                 disabled={isLoading}
-                                className="flex-1 text-xs py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                className="flex-1 text-xs py-1.5 rounded-sm bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 disabled:opacity-50 flex items-center justify-center gap-1"
                               >
                                 <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                                 Regen
@@ -1749,7 +1748,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                   videoUploadRef.current?.click();
                                 }}
                                 disabled={isLoading}
-                                className="flex-1 text-xs py-1.5 rounded-lg bg-green-600/20 hover:bg-green-600/40 text-green-300 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                className="flex-1 text-xs py-1.5 rounded-sm bg-green-600/20 hover:bg-green-600/40 text-green-300 disabled:opacity-50 flex items-center justify-center gap-1"
                               >
                                 <Upload className="w-3 h-3" />
                                 Upload
@@ -1760,7 +1759,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                   setVideoUrlInputValue('');
                                 }}
                                 disabled={isLoading}
-                                className="flex-1 text-xs py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                className="flex-1 text-xs py-1.5 rounded-sm bg-primary/20 hover:bg-primary/40 text-primary disabled:opacity-50 flex items-center justify-center gap-1"
                               >
                                 <Link className="w-3 h-3" />
                                 URL
@@ -1774,11 +1773,11 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                   onChange={e => setVideoUrlInputValue(e.target.value)}
                                   onKeyDown={e => e.key === 'Enter' && handleSetVideoUrl(key, videoUrlInputValue)}
                                   placeholder="Paste video URL…"
-                                  className="flex-1 text-xs px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-gray-800 border border-gray-600 text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                                  className="flex-1 text-xs px-2 py-1.5 rounded-sm bg-muted dark:bg-card border border-border text-foreground dark:text-white placeholder-gray-500 focus:outline-none focus:border-primary"
                                 />
                                 <button
                                   onClick={() => handleSetVideoUrl(key, videoUrlInputValue)}
-                                  className="text-xs px-2.5 py-1.5 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 transition-colors"
+                                  className="text-xs px-2.5 py-1.5 rounded-sm bg-primary/30 hover:bg-primary/50 text-primary"
                                 >
                                   Set
                                 </button>
@@ -1821,39 +1820,39 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                           key={key}
                           initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: imageItems.indexOf(item) * 0.04 }}
-                          className="bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-800 rounded-xl overflow-hidden"
+                          className="bg-card dark:bg-card border border-border dark:border-border rounded-sm overflow-hidden"
                         >
-                          <div className="relative aspect-[3/4] bg-slate-100 dark:bg-gray-800">
+                          <div className="relative aspect-[3/4] bg-muted dark:bg-card">
                             {item.url && !item.url.includes('picsum') ? (
                               <img src={item.url} alt="" className="w-full h-full object-cover" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs text-center p-2">
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs text-center p-2">
                                 {item.url.includes('picsum') ? 'Placeholder' : 'No image'}
                               </div>
                             )}
                             {isLoading && (
-                              <div className="absolute inset-0 bg-white dark:bg-gray-900/80 flex items-center justify-center">
-                                <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
+                              <div className="absolute inset-0 bg-card dark:bg-card/80 flex items-center justify-center">
+                                <Loader2 className="w-8 h-8 text-primary animate-spin" />
                               </div>
                             )}
                             {item.removeBackground && (
-                              <span className="absolute top-1.5 right-1.5 text-xs bg-blue-500/80 text-slate-900 dark:text-white px-1.5 py-0.5 rounded-full">no bg</span>
+                              <span className="absolute top-1.5 right-1.5 text-xs bg-blue-500/80 text-foreground dark:text-white px-1.5 py-0.5 rounded-full">no bg</span>
                             )}
                           </div>
                           <div className="p-2.5">
-                            <p className="text-xs text-slate-600 dark:text-gray-500 truncate mb-2">Block {item.blockIdx + 1} · {item.fieldPath}</p>
+                            <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate mb-2">Block {item.blockIdx + 1} · {item.fieldPath}</p>
                             {/* Scene prompt — always visible, editable */}
                             <textarea
                               value={regenPrompts[key] ?? item.description}
                               onChange={e => setRegenPrompts(prev => ({ ...prev, [key]: e.target.value }))}
                               rows={3}
-                              className="w-full bg-slate-100 dark:bg-gray-800 border border-slate-300 dark:border-gray-700 text-slate-800 dark:text-gray-200 text-xs rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-purple-500 mb-1.5"
+                              className="w-full bg-muted dark:bg-card border border-border dark:border-border text-foreground dark:text-muted-foreground text-xs rounded-sm px-2 py-1.5 resize-none focus:outline-none focus:border-primary mb-1.5"
                             />
                             {/* Visual style guide — read-only, shown when available */}
                             {wizardVisualStyleGuide && (
                               <div className="mb-2">
-                                <p className="text-xs text-purple-400/70 mb-0.5">Visual style (auto-prepended):</p>
-                                <div className="w-full bg-white dark:bg-gray-900 border border-purple-800/30 text-slate-500 dark:text-gray-400 text-xs rounded-lg px-2 py-1.5 max-h-16 overflow-y-auto leading-relaxed">
+                                <p className="text-xs text-primary/70 mb-0.5">Visual style (auto-prepended):</p>
+                                <div className="w-full bg-card dark:bg-card border border-primary/30 text-muted-foreground dark:text-muted-foreground text-xs rounded-sm px-2 py-1.5 max-h-16 overflow-y-auto leading-relaxed">
                                   {wizardVisualStyleGuide}
                                 </div>
                               </div>
@@ -1866,7 +1865,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                                   navigator.clipboard.writeText(full);
                                 }}
                                 disabled={isLoading}
-                                className="flex-1 text-xs py-1.5 rounded-lg bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:bg-gray-700 text-slate-700 dark:text-gray-300 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                className="flex-1 text-xs py-1.5 rounded-sm bg-muted dark:bg-card hover:bg-muted dark:bg-gray-700 text-foreground dark:text-muted-foreground disabled:opacity-50 flex items-center justify-center gap-1"
                                 title="Copy full prompt (style + scene)"
                               >
                                 <Copy className="w-3 h-3" />
@@ -1875,13 +1874,13 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                               <button
                                 onClick={() => handleRegenerateImage(key)}
                                 disabled={isLoading}
-                                className="flex-1 text-xs py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                className="flex-1 text-xs py-1.5 rounded-sm bg-primary/20 hover:bg-primary/40 text-primary disabled:opacity-50 flex items-center justify-center gap-1"
                               >
                                 <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                                 Regen
                               </button>
                               <label
-                                className={`flex-1 text-xs py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 transition-colors flex items-center justify-center gap-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
+                                className={`flex-1 text-xs py-1.5 rounded-sm bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 transition-colors flex items-center justify-center gap-1 cursor-pointer ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}
                                 title="Upload your own image"
                               >
                                 <Upload className="w-3 h-3" />
@@ -1902,18 +1901,18 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                 </div>
               )}
 
-              {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>}
+              {error && <div className="mb-4 p-3 rounded-sm bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{error}</div>}
 
               <div className="flex gap-3">
                 <Button
                   onClick={handleConfirmImages}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white px-8"
+                  className="bg-primary text-primary-foreground dark:text-primary-foreground px-8"
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Looks good, continue
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
-                <Button variant="ghost" onClick={() => setStep('review_story')} className="text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white">
+                <Button variant="ghost" onClick={() => setStep('review_story')} className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white">
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
               </div>
@@ -1934,14 +1933,14 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
             <motion.div key="preview" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={{ duration: 0.2 }}>
               <ProgressDots step="preview" />
               <div className="mb-6">
-                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">Your video is ready!</h2>
-                <p className="text-slate-500 dark:text-gray-400">Preview below. Open in the editor to make adjustments, or start over.</p>
+                <h2 className="text-3xl font-bold mb-2 text-foreground">Your video is ready!</h2>
+                <p className="text-muted-foreground dark:text-muted-foreground">Preview below. Open in the editor to make adjustments, or start over.</p>
               </div>
 
               <div className="flex flex-col items-center gap-6 mb-8">
                 {/* Remotion Player */}
                 {previewConfig && previewPlan ? (
-                  <div className="rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20 border border-slate-300 dark:border-gray-800">
+                  <div className="rounded-sm overflow-hidden shadow-none shadow-none border border-border dark:border-border">
                     <Player
                       component={DynamicVideo}
                       inputProps={{ input: finalPayload, plan: previewPlan } as any}
@@ -1955,7 +1954,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                     />
                   </div>
                 ) : (
-                  <div className="w-[270px] h-[480px] rounded-2xl bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-800 flex items-center justify-center text-slate-600 dark:text-gray-500 text-sm">
+                  <div className="w-[270px] h-[480px] rounded-sm bg-card dark:bg-card border border-border dark:border-border flex items-center justify-center text-muted-foreground dark:text-muted-foreground text-sm">
                     Preview unavailable
                   </div>
                 )}
@@ -1964,7 +1963,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                 <div className="flex gap-3">
                   <Button
                     onClick={handleOpenInEditor}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-slate-900 dark:text-white px-8 py-3 text-base font-semibold"
+                    className="bg-primary text-primary-foreground dark:text-primary-foreground px-8 py-3 text-base font-semibold"
                   >
                     <Sparkles className="w-5 h-5 mr-2" />
                     Open in Editor
@@ -1972,7 +1971,7 @@ export function TemplateGallery({ embedded }: { embedded?: boolean } = {}) {
                   <Button
                     variant="ghost"
                     onClick={handleStartOver}
-                    className="text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:text-white px-6"
+                    className="text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:text-white px-6"
                   >
                     Start Over
                   </Button>

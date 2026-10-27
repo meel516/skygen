@@ -1,4 +1,4 @@
-import { Video } from 'lucide-react';
+import { Video } from '@/components/ui/studio-icons';
 import Link from 'next/link';
 
 export const metadata = {
@@ -8,16 +8,16 @@ export const metadata = {
 
 export default function TermsOfService() {
   return (
-    <div className="min-h-screen" style={{ background: '#0A0A0F', color: '#F1F1F8' }}>
+    <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Navbar */}
       <nav
         className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 border-b"
-        style={{ background: 'rgba(10,10,15,0.9)', borderColor: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}
+        style={{ background: 'var(--background)', borderColor: 'var(--border)', backdropFilter: 'none' }}
       >
         <Link href="/" className="flex items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #7C3AED, #0EA5E9)' }}
+            className="w-8 h-8 rounded-sm flex items-center justify-center"
+            style={{ background: 'var(--primary)' }}
           >
             <Video className="w-4 h-4 text-white" />
           </div>
@@ -25,8 +25,8 @@ export default function TermsOfService() {
         </Link>
         <Link
           href="/"
-          className="text-[13px] transition-colors"
-          style={{ color: '#8B8BAA' }}
+          className="text-[13px] "
+          style={{ color: 'var(--muted-foreground)' }}
         >
           ← Back to home
         </Link>
@@ -35,14 +35,14 @@ export default function TermsOfService() {
       {/* Content */}
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
-        <p className="text-[13px] mb-10" style={{ color: '#55556A' }}>
+        <p className="text-[13px] mb-10" style={{ color: 'var(--muted-foreground)' }}>
           Last updated: March 18, 2026
         </p>
 
-        <div className="space-y-10 text-[14px] leading-relaxed" style={{ color: '#8B8BAA' }}>
+        <div className="space-y-10 text-[14px] leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>1. Acceptance of Terms</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>1. Acceptance of Terms</h2>
             <p>
               By accessing or using SKYGEN ("the Service"), you agree to be bound by these Terms of
               Service. If you do not agree to these terms, please do not use SKYGEN.
@@ -54,7 +54,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>2. Description of Service</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>2. Description of Service</h2>
             <p>
               SKYGEN is an AI-powered video creation platform that allows users to generate video
               scripts, build videos from animated content blocks, and export or publish them to
@@ -64,7 +64,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>3. Account and Authentication</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>3. Account and Authentication</h2>
             <p>
               SKYGEN uses Google OAuth for authentication. By signing in, you authorize us to
               access your basic Google profile information (name, email, profile picture). You are
@@ -73,7 +73,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>4. YouTube Integration</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>4. YouTube Integration</h2>
             <p className="mb-3">
               SKYGEN offers an optional integration with YouTube via the YouTube Data API v3. When
               you connect your YouTube account:
@@ -89,7 +89,7 @@ export default function TermsOfService() {
                   href="https://www.youtube.com/t/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   YouTube's Terms of Service
@@ -99,7 +99,7 @@ export default function TermsOfService() {
                   href="https://support.google.com/youtube/answer/2801973"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   YouTube's Community Guidelines
@@ -111,7 +111,7 @@ export default function TermsOfService() {
                   href="https://myaccount.google.com/permissions"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   Google Account Permissions
@@ -123,7 +123,7 @@ export default function TermsOfService() {
                   href="https://developers.google.com/youtube/terms/api-services-terms-of-service"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   YouTube API Services Terms of Service
@@ -133,7 +133,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>5. Acceptable Use</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>5. Acceptable Use</h2>
             <p className="mb-3">You agree not to use SKYGEN to:</p>
             <ul className="space-y-2 list-disc list-inside">
               <li>Create, distribute, or upload content that is illegal, harmful, threatening, abusive, defamatory, or otherwise objectionable</li>
@@ -146,7 +146,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>6. Content Ownership</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>6. Content Ownership</h2>
             <p>
               You retain full ownership of the videos and content you create using SKYGEN.
               By using the Service, you grant SKYGEN a limited, non-exclusive license to store
@@ -159,7 +159,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>7. AI-Generated Content</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>7. AI-Generated Content</h2>
             <p>
               SKYGEN uses artificial intelligence to generate video scripts and other content
               suggestions. AI-generated content may not always be accurate, appropriate, or
@@ -169,7 +169,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>8. Disclaimer of Warranties</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>8. Disclaimer of Warranties</h2>
             <p>
               SKYGEN is provided "as is" without any warranties of any kind, either express or
               implied, including but not limited to warranties of merchantability, fitness for a
@@ -179,7 +179,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>9. Limitation of Liability</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>9. Limitation of Liability</h2>
             <p>
               To the maximum extent permitted by applicable law, SKYGEN and its operators shall
               not be liable for any indirect, incidental, special, consequential, or punitive damages
@@ -189,7 +189,7 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>10. Termination</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>10. Termination</h2>
             <p>
               We reserve the right to suspend or terminate your access to SKYGEN at any time,
               with or without cause, and with or without notice. Upon termination, your right to
@@ -198,14 +198,14 @@ export default function TermsOfService() {
             <p className="mt-3">
               You may stop using the Service at any time. To request deletion of your account
               and data, contact us at{' '}
-              <a href="mailto:md.saleem516@gmail.com" style={{ color: '#A78BFA' }} className="hover:underline">
+              <a href="mailto:md.saleem516@gmail.com" style={{ color: 'var(--primary)' }} className="hover:underline">
                 md.saleem516@gmail.com
               </a>.
             </p>
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>11. Changes to Terms</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>11. Changes to Terms</h2>
             <p>
               We reserve the right to modify these Terms of Service at any time. We will indicate
               the date of the last update at the top of this page. Continued use of SKYGEN after
@@ -214,10 +214,10 @@ export default function TermsOfService() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>12. Contact</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>12. Contact</h2>
             <p>
               If you have any questions about these Terms of Service, please contact us at{' '}
-              <a href="mailto:md.saleem516@gmail.com" style={{ color: '#A78BFA' }} className="hover:underline">
+              <a href="mailto:md.saleem516@gmail.com" style={{ color: 'var(--primary)' }} className="hover:underline">
                 md.saleem516@gmail.com
               </a>.
             </p>
@@ -226,9 +226,9 @@ export default function TermsOfService() {
         </div>
 
         {/* Footer links */}
-        <div className="mt-16 pt-8 flex items-center gap-6 text-[12px]" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: '#55556A' }}>
-          <Link href="/" className="hover:text-[#8B8BAA] transition-colors">Home</Link>
-          <Link href="/privacy" className="hover:text-[#8B8BAA] transition-colors">Privacy Policy</Link>
+        <div className="mt-16 pt-8 flex items-center gap-6 text-[12px]" style={{ borderTop: '1px solid var(--border)', color: 'var(--muted-foreground)' }}>
+          <Link href="/" className="hover:text-[var(--muted-foreground)] ">Home</Link>
+          <Link href="/privacy" className="hover:text-[var(--muted-foreground)] ">Privacy Policy</Link>
           <span>© 2026 SKYGEN</span>
         </div>
       </div>

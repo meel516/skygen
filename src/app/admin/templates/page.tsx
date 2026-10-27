@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2 } from '@/components/ui/studio-icons'
 
 interface Template {
   id: string
@@ -145,7 +145,7 @@ export default function AdminTemplatesPage() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Templates</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsDialogOpen(true)}>
+          <Button className="bg-primary hover:bg-primary" onClick={() => setIsDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Template
           </Button>
@@ -165,10 +165,10 @@ export default function AdminTemplatesPage() {
                   const file = e.target.files?.[0] ?? null
                   setJsonFile(file)
                 }}
-                className="block w-full text-sm text-gray-300 file:mr-4 file:rounded-md file:border-0 file:bg-gray-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700"
+                className="block w-full text-sm text-muted-foreground file:mr-4 file:rounded-sm file:border-0 file:bg-card file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-700"
               />
               {jsonFile && (
-                <div className="text-xs text-gray-400">Selected: {jsonFile.name}</div>
+                <div className="text-xs text-muted-foreground">Selected: {jsonFile.name}</div>
               )}
               {submitError && (
                 <div className="text-sm text-red-400">{submitError}</div>
@@ -189,7 +189,7 @@ export default function AdminTemplatesPage() {
         {templates.map((template) => (
           <div
             key={template.id}
-            className="bg-gray-900 rounded-xl border border-gray-800 p-4"
+            className="bg-card rounded-sm border border-border p-4"
           >
             <div className="flex items-start justify-between mb-2 gap-2">
               <h3 className="font-semibold text-white">{template.name}</h3>
@@ -198,7 +198,7 @@ export default function AdminTemplatesPage() {
                   className={`px-2 py-1 rounded text-xs ${
                     template.isPublic
                       ? "bg-green-500/20 text-green-400"
-                      : "bg-gray-700 text-gray-400"
+                      : "bg-gray-700 text-muted-foreground"
                   }`}
                 >
                   {template.isPublic ? "Public" : "Private"}
@@ -206,7 +206,7 @@ export default function AdminTemplatesPage() {
                 <span
                   className={`px-2 py-1 rounded text-xs ${
                     template.isFreeTier
-                      ? "bg-sky-500/20 text-sky-300"
+                      ? "bg-primary/20 text-primary"
                       : "bg-amber-500/20 text-amber-300"
                   }`}
                 >
@@ -214,10 +214,10 @@ export default function AdminTemplatesPage() {
                 </span>
               </div>
             </div>
-            <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+            <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
               {template.description || "No description"}
             </p>
-            <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+            <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
               <span>{template.category}</span>
               <span>{template.type}</span>
             </div>
@@ -226,7 +226,7 @@ export default function AdminTemplatesPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => togglePublic(template)}
-                className="text-gray-400 hover:text-white"
+                className="text-muted-foreground hover:text-white"
               >
                 {template.isPublic ? "Make Private" : "Make Public"}
               </Button>
@@ -234,7 +234,7 @@ export default function AdminTemplatesPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => toggleFreeTier(template)}
-                className="text-sky-300 hover:text-sky-200"
+                className="text-primary hover:text-primary"
               >
                 {template.isFreeTier ? "Make Premium" : "Allow Free Users"}
               </Button>

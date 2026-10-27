@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Youtube, Upload, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Youtube, Upload, Loader2, CheckCircle, AlertCircle } from '@/components/ui/studio-icons';
 
 interface YouTubeUploadProps {
   videoBlob: Blob;
@@ -82,7 +82,7 @@ export function YouTubeUpload({ videoBlob, onSuccess }: YouTubeUploadProps) {
 
   if (uploadStatus === 'success') {
     return (
-      <div className="flex flex-col items-center gap-3 p-4 bg-green-50 rounded-lg">
+      <div className="flex flex-col items-center gap-3 p-4 bg-green-50 rounded-sm">
         <CheckCircle className="w-8 h-8 text-green-600" />
         <p className="text-green-700 font-medium">Video uploaded to YouTube!</p>
         {youtubeUrl && (
@@ -100,9 +100,9 @@ export function YouTubeUpload({ videoBlob, onSuccess }: YouTubeUploadProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 bg-background rounded-sm">
       <div className="flex items-center justify-between">
-        <span className="font-medium text-gray-700">Upload to YouTube</span>
+        <span className="font-medium text-foreground">Upload to YouTube</span>
         {isConnected && !statusLoading && (
           <span className="text-xs text-green-600 flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> Connected
@@ -116,19 +116,19 @@ export function YouTubeUpload({ videoBlob, onSuccess }: YouTubeUploadProps) {
           placeholder="Video title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="px-3 py-2 border rounded-md text-sm"
+          className="px-3 py-2 border rounded-sm text-sm"
         />
         <textarea
           placeholder="Description (optional)"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="px-3 py-2 border rounded-md text-sm"
+          className="px-3 py-2 border rounded-sm text-sm"
           rows={2}
         />
         <select
           value={privacy}
           onChange={(e) => setPrivacy(e.target.value as 'private' | 'public' | 'unlisted')}
-          className="px-3 py-2 border rounded-md text-sm"
+          className="px-3 py-2 border rounded-sm text-sm"
         >
           <option value="private">Private</option>
           <option value="unlisted">Unlisted</option>
@@ -147,7 +147,7 @@ export function YouTubeUpload({ videoBlob, onSuccess }: YouTubeUploadProps) {
         <Button
           onClick={handleConnectYouTube}
           disabled={statusLoading}
-          className="bg-red-600 hover:bg-red-700 text-slate-900 dark:text-white"
+          className="bg-red-600 hover:bg-red-700 text-foreground dark:text-white"
         >
           <Youtube className="w-4 h-4 mr-2" />
           {statusLoading ? 'Checking…' : 'Connect YouTube'}
@@ -156,7 +156,7 @@ export function YouTubeUpload({ videoBlob, onSuccess }: YouTubeUploadProps) {
         <Button
           onClick={handleUpload}
           disabled={isUploading || !title}
-          className="bg-red-600 hover:bg-red-700 text-slate-900 dark:text-white"
+          className="bg-red-600 hover:bg-red-700 text-foreground dark:text-white"
         >
           {isUploading ? (
             <>

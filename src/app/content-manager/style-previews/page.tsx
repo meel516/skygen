@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ImageUploader } from '@/components/content-manager/ImageUploader';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from '@/components/ui/studio-icons';
 
 const VISUAL_STYLES = [
   { id: '_auto',         label: 'Auto-detect' },
@@ -94,7 +94,7 @@ export default function StylePreviewsPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>;
+    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (
@@ -103,17 +103,17 @@ export default function StylePreviewsPage() {
       <div className="mb-12">
         <div className="mb-6">
           <h2 className="text-2xl font-bold">Visual Style Previews</h2>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Upload preview images for each art style. These show as image cards in the wizard instead of emoji icons.
           </p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {VISUAL_STYLES.map(({ id, label }) => (
-            <div key={id} className="bg-gray-900/50 rounded-lg border border-gray-800 p-4 space-y-3">
+            <div key={id} className="bg-card/50 rounded-sm border border-border p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-white">{label}</span>
-                <span className="text-[10px] text-gray-600 font-mono">{id}</span>
+                <span className="text-[10px] text-muted-foreground font-mono">{id}</span>
               </div>
               <ImageUploader
                 value={stylePreviews[id] || undefined}
@@ -133,17 +133,17 @@ export default function StylePreviewsPage() {
       <div>
         <div className="mb-6">
           <h2 className="text-2xl font-bold">Story Arc Previews</h2>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Upload preview images for each narrative arc. These show as image cards in the wizard instead of emoji icons.
           </p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {STORY_ARCS.map(({ id, label }) => (
-            <div key={id} className="bg-gray-900/50 rounded-lg border border-gray-800 p-4 space-y-3">
+            <div key={id} className="bg-card/50 rounded-sm border border-border p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-white">{label}</span>
-                <span className="text-[10px] text-gray-600 font-mono">{id}</span>
+                <span className="text-[10px] text-muted-foreground font-mono">{id}</span>
               </div>
               <ImageUploader
                 value={arcPreviews[id] || undefined}

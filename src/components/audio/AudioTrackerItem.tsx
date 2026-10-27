@@ -20,7 +20,7 @@ import {
   ChevronUp,
   Play,
   Pause
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 
 interface AudioTrackItemProps {
   track: AudioTrack;
@@ -105,17 +105,17 @@ export default function AudioTrackItem({
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      className="border border-gray-700/50 rounded-lg bg-gray-800/40 overflow-hidden"
+      className="border border-border/50 rounded-sm bg-card/40 overflow-hidden"
     >
       {/* HEADER */}
-      <div className="flex items-center gap-2 p-3 bg-gray-800/60">
-        <GripVertical className="w-4 h-4 text-gray-500 cursor-grab active:cursor-grabbing" />
+      <div className="flex items-center gap-2 p-3 bg-card/60">
+        <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab active:cursor-grabbing" />
 
         {/* Preview */}
         <button
           onClick={onPlayPreview}
           disabled={!track.src}
-          className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors disabled:opacity-40"
+          className="w-7 h-7 flex items-center justify-center rounded-full bg-primary/20 text-primary hover:bg-primary/30 disabled:opacity-40"
         >
           {isPlaying ? (
             <Pause className="w-3.5 h-3.5" />
@@ -127,7 +127,7 @@ export default function AudioTrackItem({
         {/* Name */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <Music className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+            <Music className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
             <span className="text-sm text-white font-medium truncate">
               {track.name}
             </span>
@@ -156,7 +156,7 @@ export default function AudioTrackItem({
 
           <Badge
             variant="outline"
-            className="text-[10px] px-1.5 py-0 h-5 border-gray-600 text-gray-400"
+            className="text-[10px] px-1.5 py-0 h-5 border-border text-muted-foreground"
           >
             {Math.round(track.volume * 100)}%
           </Badge>
@@ -168,7 +168,7 @@ export default function AudioTrackItem({
           className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
             track.muted
               ? 'text-red-400 hover:text-red-300'
-              : 'text-gray-400 hover:text-white'
+              : 'text-muted-foreground hover:text-white'
           }`}
         >
           {track.muted ? (
@@ -181,7 +181,7 @@ export default function AudioTrackItem({
         {/* Expand */}
         <button
           onClick={onToggleExpand}
-          className="w-7 h-7 flex items-center justify-center rounded text-gray-400 hover:text-white transition-colors"
+          className="w-7 h-7 flex items-center justify-center rounded text-muted-foreground hover:text-white"
         >
           {isExpanded ? (
             <ChevronUp className="w-4 h-4" />
@@ -193,7 +193,7 @@ export default function AudioTrackItem({
         {/* Delete */}
         <button
           onClick={handleRemove}
-          className="w-7 h-7 flex items-center justify-center rounded text-gray-400 hover:text-red-400 transition-colors"
+          className="w-7 h-7 flex items-center justify-center rounded text-muted-foreground hover:text-red-400"
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -209,32 +209,32 @@ export default function AudioTrackItem({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="p-3 space-y-4 border-t border-gray-700/50">
+            <div className="p-3 space-y-4 border-t border-border/50">
               {/* Name */}
               <div className="space-y-1.5">
-                <Label className="text-xs text-gray-400">Track Name</Label>
+                <Label className="text-xs text-muted-foreground">Track Name</Label>
                 <Input
                   value={track.name}
                   onChange={handleNameChange}
-                  className="bg-gray-800/50 border-gray-700/50 text-white h-8 text-xs"
+                  className="bg-card/50 border-border/50 text-white h-8 text-xs"
                 />
               </div>
 
               {/* URL */}
               <div className="space-y-1.5">
-                <Label className="text-xs text-gray-400">Audio URL</Label>
+                <Label className="text-xs text-muted-foreground">Audio URL</Label>
                 <Input
                   value={track.src}
                   onChange={handleSrcChange}
-                  className="bg-gray-800/50 border-gray-700/50 text-white h-8 text-xs"
+                  className="bg-card/50 border-border/50 text-white h-8 text-xs"
                 />
               </div>
 
               {/* Volume */}
               <div className="space-y-1.5">
                 <div className="flex justify-between">
-                  <Label className="text-xs text-gray-400">Volume</Label>
-                  <span className="text-xs text-gray-500">
+                  <Label className="text-xs text-muted-foreground">Volume</Label>
+                  <span className="text-xs text-muted-foreground">
                     {Math.round(track.volume * 100)}%
                   </span>
                 </div>
@@ -250,11 +250,11 @@ export default function AudioTrackItem({
               {/* Start Time */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs text-gray-400 flex items-center gap-1">
+                  <Label className="text-xs text-muted-foreground flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     Start Time
                   </Label>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {track.startTime}s
                   </span>
                 </div>
@@ -270,7 +270,7 @@ export default function AudioTrackItem({
               {/* Fade Controls */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-400">Fade In</Label>
+                  <Label className="text-xs text-muted-foreground">Fade In</Label>
                   <Slider
                     value={[track.fadeIn]}
                     min={0}
@@ -281,7 +281,7 @@ export default function AudioTrackItem({
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-400">Fade Out</Label>
+                  <Label className="text-xs text-muted-foreground">Fade Out</Label>
                   <Slider
                     value={[track.fadeOut]}
                     min={0}
@@ -294,7 +294,7 @@ export default function AudioTrackItem({
 
               {/* Loop Toggle */}
               <div className="flex items-center justify-between pt-1">
-                <Label className="text-xs text-gray-400">Loop Audio</Label>
+                <Label className="text-xs text-muted-foreground">Loop Audio</Label>
                 <Switch
                   checked={track.loop}
                   onCheckedChange={handleToggleLoop}

@@ -13,7 +13,7 @@ import {
   MessageCircle, Users, Share2, MousePointer, Hourglass, Clock,
   Grid3X3, Undo2, Redo2, DollarSign, Globe, GitBranch, Crown,
   FileCode2, Network,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/hooks/use-toast';
 import { hasPremiumAccess, isPremiumBlockType } from '@/lib/roles';
@@ -110,7 +110,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               onSelect={() => handleSelect(() => handleAddBlock(type))}
               className="flex items-center gap-2"
             >
-              <Icon className="w-4 h-4 text-slate-600 dark:text-[#8B8BAA]" />
+              <Icon className="w-4 h-4 text-muted-foreground dark:text-[var(--muted-foreground)]" />
               <span className="flex-1">{label}</span>
               {isPremiumBlockType(type) && !hasPremium && (
                 <span className="inline-flex items-center gap-1 text-[10px] text-amber-300">
@@ -129,7 +129,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             onSelect={() => handleSelect(undo)}
             className="flex items-center gap-2"
           >
-            <Undo2 className="w-4 h-4 text-slate-600 dark:text-[#8B8BAA]" />
+            <Undo2 className="w-4 h-4 text-muted-foreground dark:text-[var(--muted-foreground)]" />
             Undo
           </CommandItem>
           <CommandItem
@@ -138,7 +138,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             onSelect={() => handleSelect(redo)}
             className="flex items-center gap-2"
           >
-            <Redo2 className="w-4 h-4 text-slate-600 dark:text-[#8B8BAA]" />
+            <Redo2 className="w-4 h-4 text-muted-foreground dark:text-[var(--muted-foreground)]" />
             Redo
           </CommandItem>
         </CommandGroup>

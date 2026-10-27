@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
   const grantType  = body.get('grant_type') ?? '';
   const code       = body.get('code') ?? '';
   const clientId   = body.get('client_id') ?? '';
+  const codeVerifier = body.get('code_verifier') ?? '';
 
   if (grantType !== 'authorization_code') {
     return NextResponse.json(
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const accessToken = await exchangeCode(code);
+  const accessToken = await exchangeCode(code, codeVerifier);
 
   if (!accessToken) {
     return NextResponse.json(

@@ -90,6 +90,9 @@ export function useClientRender() {
           durationInFrames: params.durationInFrames,
         },
         inputProps: params.inputProps,
+        // Allow slow remote media to load and decode before a frame times out.
+        // This is a per-frame wait limit; the user can still cancel the export.
+        delayRenderTimeoutInMilliseconds: 120_000,
         container: 'webm',
         signal: abortRef.current.signal,
         onProgress: ({ progress: p }) => setProgress(p),

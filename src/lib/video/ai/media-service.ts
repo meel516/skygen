@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { generateTTS } from './deepgram-tts';
+import { getAudioDeliveryUrl } from './audio-delivery-url';
 import { generateVideoUrl } from './veo-video';
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -11,8 +12,8 @@ import { randomUUID } from 'crypto';
 
 // ── Provider configuration (env vars or defaults) ──────────────────────────
 
-const CF_ACCOUNT_ID        = () => process.env.CF_ACCOUNT_ID        || '';
-const CF_API_TOKEN         = () => process.env.CF_API_TOKEN          || '';
+const CF_ACCOUNT_ID        = () => process.env.CF_ACCOUNT_ID        || 'b878fc219459718a59845347272b20fa';
+const CF_API_TOKEN         = () => process.env.CF_API_TOKEN          || 'cfut_pqzbocksXk5wMBMTyRIRs4UNDMn1pnlbWsivdxfld5f618c8';
 const RUNWARE_API_KEY      = () => process.env.RUNWARE_API_KEY       || '';
 const BG_REMOVAL_WEBHOOK   = () => process.env.BG_REMOVAL_WEBHOOK   || 'https://salru.duckdns.org/webhook/1b6b383a-696d-471d-9196-e2dca29e50d3';
 const BG_REMOVAL_API_URL   = () => process.env.BG_REMOVAL_API_URL   || 'https://sybppqk12a.execute-api.us-east-1.amazonaws.com/remove-bg-asset';
@@ -465,7 +466,7 @@ async function uploadAudioToS3(base64DataUri: string): Promise<string> {
     );
 
     console.log(`[media:audio:s3] ✅ uploaded to S3: s3://${bucket}/${key}`);
-    return signedUrl;
+    return await getAudioDeliveryUrl(signedUrl);
   } catch (e: any) {
     console.error(`[media:audio:s3] ❌ ${e.message} — falling back to base64`);
     return base64DataUri;
@@ -474,8 +475,8 @@ async function uploadAudioToS3(base64DataUri: string): Promise<string> {
 
 /**
  * Generate speech audio from text.
- * Generates audio via TTS provider, then uploads to S3 for a signed URL.
- * Returns S3 signed URL or empty string on failure.
+ * Generates audio via TTS provider, then uploads to S3 for a delivery URL.
+ * Public objects use plain URLs; private objects retain signed URLs.
  */
 export async function generateAudio(text: string, voice?: string): Promise<string> {
   if (!text?.trim()) return '';
@@ -483,7 +484,7 @@ export async function generateAudio(text: string, voice?: string): Promise<strin
     const base64 = await generateTTS(text, voice || DEFAULT_TTS_VOICE);
     if (!base64) return '';
     
-    // Upload to S3 and return signed URL
+    // Upload to S3 and resolve the delivery URL.
     return await uploadAudioToS3(base64);
   } catch (e: any) {
     console.error('[media:audio] ❌', e.message);

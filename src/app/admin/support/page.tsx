@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ChevronRight, UserCheck } from 'lucide-react';
+import { Loader2, ChevronRight, UserCheck } from '@/components/ui/studio-icons';
 
 const STATUS_TABS = ['all', 'open', 'in_progress', 'resolved', 'closed'];
 
@@ -79,15 +79,15 @@ export default function AdminSupportPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-gray-900 rounded-xl p-1 w-fit">
+      <div className="flex gap-1 mb-5 bg-card rounded-sm p-1 w-fit">
         {STATUS_TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${
+            className={`px-3 py-1.5 rounded-sm text-sm font-medium capitalize transition-colors ${
               activeTab === tab
                 ? 'bg-gray-700 text-white'
-                : 'text-gray-400 hover:text-white'
+                : 'text-muted-foreground hover:text-white'
             }`}
           >
             {tab.replace('_', ' ')}
@@ -97,15 +97,15 @@ export default function AdminSupportPage() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
       ) : tickets.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">No tickets found</div>
+        <div className="text-center py-16 text-muted-foreground">No tickets found</div>
       ) : (
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+        <div className="bg-card border border-border rounded-sm overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-800 text-gray-400 text-xs uppercase">
+              <tr className="border-b border-border text-muted-foreground text-xs uppercase">
                 <th className="text-left px-4 py-3">User</th>
                 <th className="text-left px-4 py-3">Subject</th>
                 <th className="text-left px-4 py-3">Priority</th>
@@ -117,33 +117,33 @@ export default function AdminSupportPage() {
             </thead>
             <tbody>
               {tickets.map((t, i) => (
-                <tr key={t.id} className={`border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors ${i === tickets.length - 1 ? 'border-b-0' : ''}`}>
+                <tr key={t.id} className={`border-b border-border/50 hover:bg-muted/30 transition-colors ${i === tickets.length - 1 ? 'border-b-0' : ''}`}>
                   <td className="px-4 py-3">
                     <p className="font-medium text-white truncate max-w-[140px]">{t.name || t.email}</p>
-                    <p className="text-xs text-gray-500 truncate max-w-[140px]">{t.email}</p>
+                    <p className="text-xs text-muted-foreground truncate max-w-[140px]">{t.email}</p>
                   </td>
                   <td className="px-4 py-3">
                     <p className="text-white truncate max-w-[200px]">{t.subject}</p>
                     {t.last_message && (
-                      <p className="text-xs text-gray-500 truncate max-w-[200px]">
+                      <p className="text-xs text-muted-foreground truncate max-w-[200px]">
                         {t.last_sender_role === 'admin' ? '↩ ' : ''}{t.last_message}
                       </p>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`capitalize font-medium ${PRIORITY_COLORS[t.priority] ?? 'text-gray-400'}`}>
+                    <span className={`capitalize font-medium ${PRIORITY_COLORS[t.priority] ?? 'text-muted-foreground'}`}>
                       {t.priority}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[t.status] ?? 'bg-gray-700 text-gray-300'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[t.status] ?? 'bg-gray-700 text-muted-foreground'}`}>
                       {t.status.replace('_', ' ')}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
-                    {t.assigned_name ?? <span className="text-gray-600">Unassigned</span>}
+                  <td className="px-4 py-3 text-muted-foreground text-xs">
+                    {t.assigned_name ?? <span className="text-muted-foreground">Unassigned</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
+                  <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
                     {new Date(t.updated_at).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
@@ -152,7 +152,7 @@ export default function AdminSupportPage() {
                         <button
                           onClick={() => handlePickup(t.id)}
                           disabled={pickingUp === t.id}
-                          className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 transition-colors disabled:opacity-50"
+                          className="flex items-center gap-1 text-xs px-2 py-1 rounded-sm bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 disabled:opacity-50"
                         >
                           {pickingUp === t.id
                             ? <Loader2 className="w-3 h-3 animate-spin" />
@@ -162,7 +162,7 @@ export default function AdminSupportPage() {
                       )}
                       <button
                         onClick={() => router.push(`/admin/support/${t.id}`)}
-                        className="p-1.5 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                        className="p-1.5 rounded-sm hover:bg-gray-700 text-muted-foreground hover:text-white"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>

@@ -1,5 +1,6 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
+import Credentials from "next-auth/providers/credentials"
 import { syncUser } from "@/lib/user-sync"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -7,6 +8,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
       clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+    }),
+    Credentials({
+      name: "Reviewer Account",
+      credentials: {
+        username: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        // Dedicated test account for OpenAI reviewers
+        if (
+          credentials?.username === "openai_reviewer@skygen.salru.in" &&
+          credentials?.password === "SkygenReview2026!"
+        ) {
+          return {
+            id: "openai_reviewer_1",
+            name: "OpenAI Reviewer",
+            email: "openai_reviewer@skygen.salru.in",
+            image: "https://www.gravatar.com/avatar/?d=mp",
+          }
+        }
+        return null
+      }
     }),
   ],
   callbacks: {

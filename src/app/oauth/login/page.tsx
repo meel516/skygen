@@ -2,7 +2,7 @@
 
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 
 function OAuthLoginInner() {
   const params = useSearchParams();
@@ -10,19 +10,33 @@ function OAuthLoginInner() {
   const redirectUri = params.get('redirect_uri') ?? '';
   const state = params.get('state') ?? '';
   const responseType = params.get('response_type') ?? 'code';
+  const codeChallenge = params.get('code_challenge') ?? '';
+  const codeChallengeMethod = params.get('code_challenge_method') ?? '';
 
-  const callbackUrl = `/oauth/authorize?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&response_type=${encodeURIComponent(responseType)}`;
+  let callbackUrl = `/oauth/authorize?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&response_type=${encodeURIComponent(responseType)}`;
+  if (codeChallenge) callbackUrl += `&code_challenge=${encodeURIComponent(codeChallenge)}`;
+  if (codeChallengeMethod) callbackUrl += `&code_challenge_method=${encodeURIComponent(codeChallengeMethod)}`;
 
-  function handleSignIn() {
+  function handleGoogleSignIn() {
     signIn('google', { callbackUrl });
   }
 
+  function handleCredentialsSignIn(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    signIn('credentials', {
+      username: formData.get('email'),
+      password: formData.get('password'),
+      callbackUrl
+    });
+  }
+
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8 flex flex-col items-center gap-6">
+    <div className="min-h-screen bg-card flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm bg-card border border-border rounded-sm shadow-none p-8 flex flex-col items-center gap-6">
         {/* Logo */}
         <div className="flex flex-col items-center gap-2">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-400 to-blue-500 flex items-center justify-center shadow-lg">
+          <div className="w-16 h-16 rounded-sm bg-muted   flex items-center justify-center shadow-none">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
               <path d="M18 4L32 28H4L18 4Z" fill="white" fillOpacity="0.9" />
               <circle cx="18" cy="22" r="5" fill="white" fillOpacity="0.6" />
@@ -31,46 +45,50 @@ function OAuthLoginInner() {
           <span className="text-white text-2xl font-bold tracking-tight">SkyGen</span>
         </div>
 
-        {/* Divider with plugin icon */}
-        <div className="flex items-center gap-3 w-full">
-          <div className="flex-1 h-px bg-gray-700" />
-          <div className="w-8 h-8 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-400 text-sm">
-            🔌
-          </div>
-          <div className="flex-1 h-px bg-gray-700" />
-        </div>
-
         {/* Message */}
         <div className="text-center">
-          <p className="text-gray-200 font-semibold text-base leading-snug">
+          <p className="text-muted-foreground font-semibold text-base leading-snug">
             ChatGPT is requesting access to your SkyGen account
           </p>
-          <p className="text-gray-500 text-sm mt-2">
-            Sign in with Google to grant permission.
+          <p className="text-muted-foreground text-sm mt-2">
+            Sign in to grant permission.
           </p>
         </div>
 
-        {/* Scopes */}
-        <div className="w-full bg-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 space-y-1">
-          <p className="font-medium text-gray-300 mb-1">This will allow ChatGPT to:</p>
-          <div className="flex items-center gap-2">
-            <span className="text-teal-400">✓</span>
-            <span>Create and preview video plugins</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-teal-400">✓</span>
-            <span>Approve and save plugin compilations</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-teal-400">✓</span>
-            <span>Check job and generation status</span>
-          </div>
+        {/* Credentials Form (For Reviewers) */}
+        <form onSubmit={handleCredentialsSignIn} className="w-full space-y-3">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email address"
+            className="w-full bg-card border border-border text-muted-foreground rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-teal-500 "
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full bg-card border border-border text-muted-foreground rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-teal-500 "
+            required
+          />
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-3 bg-teal-500 hover:bg-teal-400 text-white font-semibold rounded-sm py-3 px-4   shadow-none"
+          >
+            Sign in
+          </button>
+        </form>
+
+        <div className="flex items-center gap-3 w-full">
+          <div className="flex-1 h-px bg-card" />
+          <span className="text-muted-foreground text-xs font-medium">OR</span>
+          <div className="flex-1 h-px bg-card" />
         </div>
 
         {/* Google sign-in button */}
         <button
-          onClick={handleSignIn}
-          className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 active:bg-gray-200 text-gray-900 font-semibold rounded-xl py-3 px-4 transition-colors duration-150 shadow"
+          onClick={handleGoogleSignIn}
+          className="w-full flex items-center justify-center gap-3 bg-card hover:bg-muted active:bg-muted text-foreground font-semibold rounded-sm py-3 px-4   shadow-none"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -93,9 +111,9 @@ function OAuthLoginInner() {
           Continue with Google
         </button>
 
-        <p className="text-gray-600 text-xs text-center">
+        <p className="text-muted-foreground text-xs text-center">
           By continuing, you agree to SkyGen&apos;s{' '}
-          <a href="https://skygen.salru.in/terms" className="underline hover:text-gray-400">
+          <a href="https://skygen.salru.in/terms" className="underline hover:text-muted-foreground">
             Terms of Service
           </a>
           .
@@ -108,8 +126,8 @@ function OAuthLoginInner() {
 export default function OAuthLoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-gray-400 animate-pulse">Loading…</div>
+      <div className="min-h-screen bg-card flex items-center justify-center">
+        <div className="text-muted-foreground animate-pulse">Loading...</div>
       </div>
     }>
       <OAuthLoginInner />

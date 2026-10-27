@@ -1,4 +1,5 @@
 'use client';
+import { WorkspaceSkeleton } from '@/components/app/WorkspaceSkeleton';
 
 import { TemplateGallery } from '@/components/editor/TemplateGallery';
 import { AppShell } from '@/components/app/AppShell';
@@ -16,13 +17,7 @@ export default function TemplatesPage() {
     }
   }, [status, router]);
 
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="text-slate-900 dark:text-white">Loading...</div>
-      </div>
-    );
-  }
+  if (status === 'loading') return <WorkspaceSkeleton />;
 
   if (status === 'unauthenticated') {
     return null;

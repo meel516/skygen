@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Loader2 } from 'lucide-react';
+import { Upload, X, Loader2 } from '@/components/ui/studio-icons';
 
 interface ImageUploaderProps {
   value?: string;
@@ -40,17 +40,17 @@ export function ImageUploader({ value, onChange, label, accept = 'image/*' }: Im
 
   return (
     <div className="space-y-2">
-      {label && <label className="text-sm text-gray-400">{label}</label>}
+      {label && <label className="text-sm text-muted-foreground">{label}</label>}
       {value ? (
         <div className="relative group">
           <img
             src={value}
             alt="Uploaded"
-            className="w-full h-32 object-contain rounded-lg border border-gray-700 bg-gray-800/50"
+            className="w-full h-32 object-contain rounded-sm border border-border bg-card/50"
           />
           <button
             onClick={() => onChange(null)}
-            className="absolute top-2 right-2 p-1 bg-red-500/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-2 right-2 p-1 bg-red-500/80 rounded-full opacity-100"
           >
             <X className="w-3 h-3 text-white" />
           </button>
@@ -61,16 +61,16 @@ export function ImageUploader({ value, onChange, label, accept = 'image/*' }: Im
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          className={`flex flex-col items-center justify-center h-32 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
-            dragOver ? 'border-blue-500 bg-blue-500/10' : 'border-gray-700 hover:border-gray-500 bg-gray-800/30'
+          className={`flex flex-col items-center justify-center h-32 rounded-sm border-2 border-dashed cursor-pointer transition-colors ${
+            dragOver ? 'border-blue-500 bg-blue-500/10' : 'border-border hover:border-border bg-card/30'
           }`}
         >
           {uploading ? (
-            <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+            <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
           ) : (
             <>
-              <Upload className="w-6 h-6 text-gray-500 mb-2" />
-              <span className="text-xs text-gray-500">Drop image or click to upload</span>
+              <Upload className="w-6 h-6 text-muted-foreground mb-2" />
+              <span className="text-xs text-muted-foreground">Drop image or click to upload</span>
             </>
           )}
         </div>

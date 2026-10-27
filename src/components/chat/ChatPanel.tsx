@@ -7,13 +7,9 @@ import { SelectionChips } from './SelectionChips';
 import { useToast } from '@/hooks/use-toast';
 import {
   PaperPlaneTilt,
-  Sparkle,
   MagicWand,
   ArrowCounterClockwise,
   CircleNotch,
-  FilmSlate,
-  ChartBar,
-  CubeFocus,
   Image as ImageIcon,
   X,
   Stop,
@@ -179,23 +175,17 @@ export function ChatPanel() {
   const isGenerating = generationStatus === 'running';
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-[#0A0A0F] text-slate-900 dark:text-[#F1F1F8] transition-colors">
+    <div className="flex flex-col h-full bg-background dark:bg-[var(--background)] text-foreground dark:text-[var(--foreground)]">
       {/* Header */}
       <div
-        className="flex items-center justify-between px-5 py-3.5 border-b shrink-0 border-slate-200 dark:border-white/[0.06] transition-colors"
+        className="flex items-center justify-between px-5 py-3.5 border-b shrink-0 border-border dark:border-white/[0.06]"
       >
         <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #7C3AED, #0EA5E9)' }}
-          >
-            <Sparkle weight="fill" size={16} className="text-white" />
-          </div>
           <div>
-            <div className="text-sm font-semibold text-slate-900 dark:text-[#F1F1F8]">
+            <div className="text-sm font-semibold text-foreground dark:text-[var(--foreground)]">
               Video Agent
             </div>
-            <div className="text-[11px]" style={{ color: isStreaming ? '#A78BFA' : '#55556A' }}>
+            <div className="text-[11px]" style={{ color: isStreaming ? 'var(--primary)' : 'var(--muted-foreground)' }}>
               {isGenerating
                 ? 'Generating your video…'
                 : isStreaming
@@ -206,7 +196,7 @@ export function ChatPanel() {
         </div>
         <button
           onClick={reset}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition-colors bg-white hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 dark:bg-white/[0.04] dark:hover:bg-white/[0.08] dark:border-white/[0.07] dark:text-[#55556A] dark:hover:text-[#F1F1F8]"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-xs bg-card hover:bg-muted border border-border text-muted-foreground hover:text-foreground dark:bg-white/[0.04] dark:hover:bg-white/[0.08] dark:border-white/[0.07] dark:text-[var(--muted-foreground)] dark:hover:text-[var(--foreground)]"
           title="New session"
         >
           <ArrowCounterClockwise weight="bold" size={14} />
@@ -215,7 +205,7 @@ export function ChatPanel() {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-5 min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.07) transparent' }}>
+      <div className="flex-1 overflow-y-auto px-4 py-5 min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--border) transparent' }}>
         {!hasMessages && <WelcomeScreen onQuickAction={handleQuickAction} />}
         {hasMessages && (
           <>
@@ -249,11 +239,11 @@ export function ChatPanel() {
               <img
                 src={attachmentPreview}
                 alt="attachment"
-                className="h-16 w-16 rounded-lg object-cover"
-                style={{ border: '1px solid rgba(124,58,237,0.4)' }}
+                className="h-16 w-16 rounded-sm object-cover"
+                style={{ border: '1px solid color-mix(in srgb, var(--primary) 40%, transparent)' }}
               />
               {isUploading && (
-                <div className="absolute inset-0 rounded-lg flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                <div className="absolute inset-0 rounded-sm flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
                   <CircleNotch weight="bold" size={16} className="animate-spin text-white" />
                 </div>
               )}
@@ -270,10 +260,10 @@ export function ChatPanel() {
           )}
 
           <div
-            className="rounded-2xl overflow-hidden"
+            className="rounded-sm overflow-hidden"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: `1px solid ${attachmentUrl ? 'rgba(124,58,237,0.35)' : 'rgba(255,255,255,0.09)'}`,
+              background: 'var(--card)',
+              border: `1px solid ${attachmentUrl ? 'color-mix(in srgb, var(--primary) 35%, transparent)' : 'var(--border)'}`,
             }}
           >
             <textarea
@@ -281,10 +271,11 @@ export function ChatPanel() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Describe your video, or ask the agent to change anything…"
+              aria-label="Video brief"
+              placeholder="Describe your video, or ask for a change…"
               rows={2}
               className="w-full bg-transparent text-sm resize-none outline-none placeholder-gray-600 px-4 pt-3 pb-2"
-              style={{ color: '#F1F1F8', maxHeight: 140 }}
+              style={{ color: 'var(--foreground)', maxHeight: 140 }}
             />
             <div className="flex items-center justify-between px-3 pb-2.5 pt-1">
               <div className="flex items-center gap-2">
@@ -292,11 +283,11 @@ export function ChatPanel() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isStreaming || isUploading}
                   title="Attach reference image for plugin creation"
-                  className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors disabled:opacity-30"
+                  className="flex items-center justify-center w-7 h-7 rounded-sm disabled:opacity-30"
                   style={{
-                    background: attachmentUrl ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.05)',
-                    border: `1px solid ${attachmentUrl ? 'rgba(124,58,237,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                    color: attachmentUrl ? '#A78BFA' : '#55556A',
+                    background: attachmentUrl ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'var(--border)',
+                    border: `1px solid ${attachmentUrl ? 'color-mix(in srgb, var(--primary) 40%, transparent)' : 'var(--border)'}`,
+                    color: attachmentUrl ? 'var(--primary)' : 'var(--muted-foreground)',
                   }}
                 >
                   <ImageIcon weight="bold" size={14} />
@@ -304,39 +295,37 @@ export function ChatPanel() {
                 <button
                   onClick={handleEnhancePrompt}
                   disabled={isStreaming || isEnhancing || !input.trim()}
-                  title="Magic Enhance Prompt"
-                  className="flex items-center justify-center w-7 h-7 rounded-lg transition-all disabled:opacity-30"
+                  title="Refine brief" aria-label="Refine brief"
+                  className="flex items-center justify-center w-7 h-7 rounded-sm disabled:opacity-30"
                   style={{
                     background: input.trim()
-                      ? 'linear-gradient(135deg, rgba(14,165,233,0.15), rgba(124,58,237,0.15))'
-                      : 'rgba(255,255,255,0.05)',
+                      ? 'var(--studio-accent-wash)'
+                      : 'var(--card)',
                     border: input.trim()
-                      ? '1px solid rgba(124,58,237,0.35)'
-                      : '1px solid rgba(255,255,255,0.08)',
-                    color: input.trim() ? '#A78BFA' : '#55556A',
-                    boxShadow: input.trim()
-                      ? '0 0 8px rgba(124,58,237,0.15)'
-                      : 'none',
+                      ? '1px solid color-mix(in srgb, var(--primary) 35%, transparent)'
+                      : '1px solid var(--border)',
+                    color: input.trim() ? 'var(--primary)' : 'var(--muted-foreground)',
+                    boxShadow: 'none',
                   }}
                 >
                   {isEnhancing ? (
-                    <CircleNotch weight="bold" size={14} className="animate-spin text-[#A78BFA]" />
+                    <CircleNotch weight="bold" size={14} className="animate-spin text-[var(--primary)]" />
                   ) : (
                     <MagicWand weight="bold" size={14} />
                   )}
                 </button>
-                <span className="text-[11px]" style={{ color: '#3A3A50' }}>
+                <span className="text-[11px]" style={{ color: 'var(--muted-foreground)' }}>
                   Shift+Enter for new line
                 </span>
               </div>
               {isStreaming ? (
                 <button
                   onClick={stopStreaming}
-                  className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold transition-all"
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-semibold"
                   style={{
-                    background: 'linear-gradient(135deg, #DC2626, #B91C1C)',
-                    color: '#fff',
-                    boxShadow: '0 0 16px rgba(220,38,38,0.35)',
+                    background: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
+                    boxShadow: 'none',
                   }}
                   title="Stop the agent. The video keeps whatever was already generated."
                 >
@@ -346,13 +335,13 @@ export function ChatPanel() {
                 <button
                   onClick={handleSend}
                   disabled={!input.trim()}
-                  className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold transition-all disabled:opacity-30"
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-sm text-xs font-semibold disabled:opacity-30"
                   style={{
                     background: input.trim()
-                      ? 'linear-gradient(135deg, #7C3AED, #6D28D9)'
-                      : 'rgba(255,255,255,0.06)',
-                    color: input.trim() ? '#fff' : '#55556A',
-                    boxShadow: input.trim() ? '0 0 16px rgba(124,58,237,0.35)' : 'none',
+                      ? 'var(--primary)'
+                      : 'var(--border)',
+                    color: input.trim() ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
+                    boxShadow: 'none',
                   }}
                 >
                   <PaperPlaneTilt weight="fill" size={14} />Generate
@@ -369,93 +358,15 @@ export function ChatPanel() {
 // ─── Welcome screen ────────────────────────────────────────────────────────
 
 function WelcomeScreen({ onQuickAction }: { onQuickAction: (s: string) => void }) {
-  return (
-    <div className="flex flex-col h-full justify-center py-6 px-2">
-      {/* Hero */}
-      <div className="text-center mb-8">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-          style={{
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.25), rgba(14,165,233,0.18))',
-            border: '1px solid rgba(124,58,237,0.25)',
-          }}
-        >
-          <Sparkle weight="duotone" size={28} style={{ color: '#A78BFA' }} />
-        </div>
-        <h2 className="text-lg font-bold mb-1.5" style={{ color: '#F1F1F8' }}>
-          What should we create?
-        </h2>
-        <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: '#6B6B8A' }}>
-          Describe your idea. The agent picks the story arc, visual style, narration, and images automatically.
-        </p>
-      </div>
-
-      {/* Quick-start cards */}
-      <div className="flex flex-col gap-2.5">
-        <QuickCard
-          icon={<FilmSlate weight="duotone" size={16} />}
-          title="Motivational reel"
-          description="Never give up — cinematic style, dramatic arc"
-          color="violet"
-          onClick={() => onQuickAction(
-            'Create a short motivational video about never giving up. Choose everything for me — arc, style, voice. Just make it awesome!'
-          )}
-        />
-        <QuickCard
-          icon={<ChartBar weight="duotone" size={16} />}
-          title="Product demo"
-          description="SaaS dashboard with stats, charts & CTA"
-          color="cyan"
-          onClick={() => onQuickAction(
-            'Create a product demo video for a SaaS analytics dashboard. Show key features with stats and charts.'
-          )}
-        />
-        <QuickCard
-          icon={<CubeFocus weight="duotone" size={16} />}
-          title="Custom 3D block"
-          description="Globe visualization plugin with live data"
-          color="orange"
-          onClick={() => onQuickAction(
-            'I need a custom 3D globe visualization block showing global revenue data points. Can you create that as a plugin and include it in a business video?'
-          )}
-        />
-      </div>
-
-      <p className="text-center text-[11px] mt-6" style={{ color: '#3A3A50' }}>
-        Or just type anything — the agent will figure it out
-      </p>
-    </div>
-  );
-}
-
-function QuickCard({
-  icon, title, description, color, onClick,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  color: 'violet' | 'cyan' | 'orange';
-  onClick: () => void;
-}) {
-  const palette = {
-    violet: { bg: 'rgba(124,58,237,0.08)', border: 'rgba(124,58,237,0.18)', hoverBorder: 'rgba(124,58,237,0.4)', icon: '#A78BFA' },
-    cyan:   { bg: 'rgba(6,182,212,0.07)',  border: 'rgba(6,182,212,0.18)',  hoverBorder: 'rgba(6,182,212,0.4)',  icon: '#67E8F9' },
-    orange: { bg: 'rgba(251,146,60,0.07)', border: 'rgba(251,146,60,0.18)', hoverBorder: 'rgba(251,146,60,0.4)', icon: '#FDB97D' },
-  }[color];
-
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-start gap-3 px-4 py-3 rounded-xl text-left transition-all group w-full"
-      style={{ background: palette.bg, border: `1px solid ${palette.border}` }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = palette.hoverBorder; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = palette.border; }}
-    >
-      <div className="mt-0.5 shrink-0" style={{ color: palette.icon }}>{icon}</div>
-      <div>
-        <div className="text-sm font-medium mb-0.5" style={{ color: '#E2E2F0' }}>{title}</div>
-        <div className="text-xs" style={{ color: '#6B6B8A' }}>{description}</div>
-      </div>
-    </button>
-  );
+  const starters = [
+    { title: 'Introduce a product', detail: 'A clear story with features, numbers, and a call to action.', prompt: 'Create a product demo video for a SaaS analytics dashboard. Show key features with stats and charts.' },
+    { title: 'Tell a short story', detail: 'A narrated reel with a strong opening and a thoughtful ending.', prompt: 'Create a short motivational video about never giving up. Choose a story arc, visual style, and voice.' },
+    { title: 'Visualize an idea', detail: 'An editable motion graphic built around your subject.', prompt: 'Create an editable motion graphic that explains a complex idea with clear typography and animated data.' },
+  ];
+  return <div className="chat-welcome">
+    <span className="studio-eyebrow">A new conversation</span>
+    <h2>What's the story?</h2>
+    <p>Describe the video you have in mind. Add a reference, choose a direction, and refine it as you go.</p>
+    {starters.map((item, index) => <button className="chat-starter" key={item.title} onClick={() => onQuickAction(item.prompt)}><span>0{index + 1}</span><span><strong>{item.title}</strong><small>{item.detail}</small></span></button>)}
+  </div>;
 }

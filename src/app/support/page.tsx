@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Loader2, LifeBuoy, ChevronRight } from 'lucide-react';
+import { Loader2, LifeBuoy, ChevronRight } from '@/components/ui/studio-icons';
 
 const PRIORITY_LABELS: Record<string, string> = {
   low: 'Low',
@@ -81,44 +81,44 @@ export default function SupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-card text-white">
       <div className="max-w-2xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center">
-            <LifeBuoy className="w-5 h-5 text-purple-400" />
+          <div className="w-10 h-10 rounded-sm bg-primary/20 flex items-center justify-center">
+            <LifeBuoy className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">Support</h1>
-            <p className="text-gray-400 text-sm">Submit a ticket and we'll get back to you</p>
+            <p className="text-muted-foreground text-sm">Submit a ticket and we'll get back to you</p>
           </div>
         </div>
 
         {/* Create ticket form */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
+        <div className="bg-card border border-border rounded-sm p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">New Ticket</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Guest fields */}
             {!session?.user && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-gray-400 mb-1 block">Your Email *</label>
+                  <label className="text-xs text-muted-foreground mb-1 block">Your Email *</label>
                   <input
                     type="email"
                     value={guestEmail}
                     onChange={e => setGuestEmail(e.target.value)}
                     required
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                    className="w-full bg-card border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
                     placeholder="you@example.com"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-400 mb-1 block">Your Name</label>
+                  <label className="text-xs text-muted-foreground mb-1 block">Your Name</label>
                   <input
                     type="text"
                     value={guestName}
                     onChange={e => setGuestName(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                    className="w-full bg-card border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
                     placeholder="Optional"
                   />
                 </div>
@@ -126,41 +126,41 @@ export default function SupportPage() {
             )}
 
             {session?.user && (
-              <div className="text-sm text-gray-400 bg-gray-800/50 rounded-lg px-3 py-2">
+              <div className="text-sm text-muted-foreground bg-card/50 rounded-sm px-3 py-2">
                 Submitting as <span className="text-white font-medium">{session.user.email}</span>
               </div>
             )}
 
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Subject *</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Subject *</label>
               <input
                 type="text"
                 value={subject}
                 onChange={e => setSubject(e.target.value)}
                 required
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                className="w-full bg-card border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
                 placeholder="Brief description of your issue"
               />
             </div>
 
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Message *</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Message *</label>
               <textarea
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 required
                 rows={5}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500 resize-none"
+                className="w-full bg-card border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-primary resize-none"
                 placeholder="Describe your issue in detail..."
               />
             </div>
 
             <div>
-              <label className="text-xs text-gray-400 mb-1 block">Priority</label>
+              <label className="text-xs text-muted-foreground mb-1 block">Priority</label>
               <select
                 value={priority}
                 onChange={e => setPriority(e.target.value)}
-                className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+                className="bg-card border border-border rounded-sm px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
               >
                 {Object.entries(PRIORITY_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>{v}</option>
@@ -173,7 +173,7 @@ export default function SupportPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-primary hover:bg-primary disabled:opacity-50 text-white font-medium py-2.5 rounded-sm  flex items-center justify-center gap-2"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {submitting ? 'Submitting...' : 'Submit Ticket'}
@@ -187,32 +187,32 @@ export default function SupportPage() {
             <h2 className="text-lg font-semibold mb-3">Your Tickets</h2>
             {loadingTickets ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-5 h-5 animate-spin text-gray-500" />
+                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
               </div>
             ) : tickets.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-8">No tickets yet</p>
+              <p className="text-muted-foreground text-sm text-center py-8">No tickets yet</p>
             ) : (
               <div className="space-y-2">
                 {tickets.map(t => (
                   <button
                     key={t.id}
                     onClick={() => router.push(`/support/${t.id}`)}
-                    className="w-full bg-gray-900 border border-gray-800 hover:border-gray-700 rounded-xl p-4 text-left transition-colors flex items-center gap-3"
+                    className="w-full bg-card border border-border hover:border-border rounded-sm p-4 text-left  flex items-center gap-3"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium text-sm truncate">{t.subject}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLORS[t.status] ?? 'bg-gray-700 text-gray-300'}`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLORS[t.status] ?? 'bg-gray-700 text-muted-foreground'}`}>
                           {t.status.replace('_', ' ')}
                         </span>
                       </div>
                       {t.last_message && (
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-xs text-muted-foreground truncate">
                           {t.last_sender_role === 'admin' ? '💬 Support: ' : ''}{t.last_message}
                         </p>
                       )}
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-600 shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
                   </button>
                 ))}
               </div>

@@ -1,7 +1,10 @@
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { formatDependencyPolicyChanges, normalizePluginDependencies } from './dependency-policy';
+import { formatDependencyPolicyChanges, normalizePluginDependencies, getPluginBuildDependencies } from './dependency-policy';
+import { findHostPackageJson, readHostDependencyVersions } from './host-dependencies';
+import { PLUGIN_RUNTIME_IMPORTS, PLUGIN_RUNTIME_PACKAGES, pluginRuntimeExternals } from './runtime-contract';
+import { PluginBuildError, pluginBuildFailure, runPluginBuildCommand } from './build-errors';
 
 // ============================================================================
 // HOST-VERSION COMPATIBILITY
@@ -11,126 +14,43 @@ import { formatDependencyPolicyChanges, normalizePluginDependencies } from './de
 // builds fine but crashes at runtime (e.g. ReactCurrentOwner on React 18 libs
 // rendered by a React 19 host).
 //
-// We resolve host versions from the repo's package.json — the single source of
-// truth — and validate every plugin dep (direct + transitive) against them in
+// We resolve exact host versions from the installed app or its lockfile,
+// and validate bundled plugin deps (direct + transitive) against them in
 // the sandbox after `npm install`. Incompatibilities hard-fail with an
 // actionable message naming the offending dep, its peer range, and the host
 // version.
 // ============================================================================
 
-const HOST_PEER_PACKAGES = new Set([
-  'react',
-  'react-dom',
-  'react-reconciler',
-  'remotion',
-  '@types/react',
-  '@types/react-dom',
-]);
-
-interface HostVersions {
-  react: string;
-  reactDom: string;
-  remotion: string;
-}
-
-let _hostVersionsCache: HostVersions | null = null;
+type HostVersions = Record<string, string>;
 
 function readHostVersions(): HostVersions {
-  if (_hostVersionsCache) return _hostVersionsCache;
-
-  // Walk up from cwd looking for a package.json that actually declares
-  // react/react-dom/remotion as dependencies. On the Mastra VPS the cwd is
-  // .../mastra-server (which has only @mastra/* deps), but the host app's
-  // package.json sits one or two levels up and owns the real versions.
-  // Allow an explicit override via env for unusual layouts.
-  const candidates: string[] = [];
-  if (process.env.HOST_PACKAGE_JSON) {
-    candidates.push(path.resolve(process.env.HOST_PACKAGE_JSON));
-  }
-  let dir = process.cwd();
-  for (let i = 0; i < 6 && dir !== path.dirname(dir); i++) {
-    candidates.push(path.join(dir, 'package.json'));
-    dir = path.dirname(dir);
-  }
-
-  let lastError: string | null = null;
-  for (const rootPkgPath of candidates) {
-    let pkg: any = {};
-    try {
-      pkg = JSON.parse(fs.readFileSync(rootPkgPath, 'utf-8'));
-    } catch (e: any) {
-      lastError = `${rootPkgPath}: ${e?.message ?? 'unreadable'}`;
-      continue;
-    }
-    const deps = pkg.dependencies ?? {};
-    const react = deps['react'];
-    const reactDom = deps['react-dom'];
-    const remotion = deps['remotion'];
-    if (react && reactDom && remotion) {
-      _hostVersionsCache = { react, reactDom, remotion };
-      return _hostVersionsCache;
-    }
-    lastError = `${rootPkgPath}: missing react/react-dom/remotion in dependencies`;
-  }
-
-  throw new Error(
-    'sandbox-builder: could not find a host package.json with react/react-dom/remotion versions ' +
-    `(checked: ${candidates.join(', ')}). Last error: ${lastError ?? 'unknown'}. ` +
-    'Set HOST_PACKAGE_JSON to the absolute path of the Next.js app package.json.',
+  const installed = readHostDependencyVersions();
+  return Object.fromEntries(
+    [...PLUGIN_RUNTIME_PACKAGES, 'react-reconciler']
+      .filter(name => installed[name])
+      .map(name => [name, installed[name]]),
   );
 }
 
-/**
- * Minimal semver `satisfies` covering the range shapes npm peerDependencies
- * actually use: exact, ^, ~, *, >=, <=, >, <, and || unions. Returns true if
- * `version` satisfies `range`. On an unparseable token we fail OPEN (return
- * true) so unknown syntax doesn't block builds — the host-owned packages we
- * care about always use plain ranges.
- *
- * NOTE: This helper is serialized into the sandbox build script (see
- * buildWithVercelSandbox). The canonical implementation lives there; this
- * host-side copy is intentionally removed to avoid dead code. The sandbox
- * version is the one that runs against the installed node_modules tree.
- */
-// (semver helpers inlined into the sandbox build script below.)
-
 // ============================================================================
-// SANDBOX BUILDER — Compiles AI-generated plugin code in Vercel Sandbox
+// SANDBOX BUILDER — Compiles AI-generated plugin code in E2B Sandbox
 //
 // Security: AI-generated plugin code is UNTRUSTED. It must NOT run on the
-// host server. Vercel Sandbox provides isolated microVMs where esbuild
+// host server. E2B Sandbox provides isolated microVMs where esbuild
 // can safely compile arbitrary code without risk to the host.
 //
-// Fallback: If @vercel/sandbox is unavailable (local dev, non-Vercel),
-// falls back to local esbuild with a warning.
+// Local fallback requires ALLOW_LOCAL_PLUGIN_BUILD=true, or explicitly
+// disabling the sandbox for development with USE_SANDBOX_BUILDER=false.
 //
 // ─── Env var ────────────────────────────────────────────────────────────────
 //   USE_SANDBOX_BUILDER (default: "true")
-//     "true"  → build in Vercel Sandbox microVM, fallback to local on failure.
+//     "true"  → build in E2B Sandbox; local fallback requires explicit opt-in.
 //     "false" → skip the sandbox entirely and always build locally.
 //               DEV ONLY — AI-generated code is untrusted. Never disable in
 //               production or on any machine that processes real user prompts.
 // ============================================================================
 
-const EXTERNALS = [
-  'react',
-  'react-dom',
-  'react-dom/client',
-  'react/jsx-runtime',
-  'react/jsx-dev-runtime',
-  'remotion',
-  '@remotion/player',
-  '@remotion/renderer',
-  '@remotion/media-utils',
-  '@remotion/sfx',
-  '@remotion/three',
-  '@remotion/lottie',
-  'three',
-  '@react-three/fiber',
-  '@react-three/drei',
-  '@react-three/postprocessing',
-  'postprocessing',
-];
+const EXTERNALS = PLUGIN_RUNTIME_IMPORTS;
 const BUFFER_SHIM = `
 const encoder = new TextEncoder();
 function from(value, encoding) {
@@ -202,25 +122,13 @@ function shouldAllowLocalBuild(): boolean {
   return process.env.ALLOW_LOCAL_PLUGIN_BUILD === 'true' || process.env.USE_SANDBOX_BUILDER === 'false';
 }
 
-/**
- * True when the host has Vercel Sandbox credentials configured. When false,
- * the sandbox path is skipped entirely (instead of throwing) and we fall
- * through to a local esbuild. This is the expected mode on a self-hosted
- * Mastra server (VPS) where the operator has NOT provisioned Vercel
- * Sandbox creds — the source validators (validatePluginSource +
- * checkPluginCompatibility) already gate out dangerous patterns.
- */
+/** Whether the isolated E2B build service is configured. */
 function hasSandboxCredentials(): boolean {
-  return Boolean(process.env.E2B_API_KEY || 'e2b_4d4e8b7ef35bd3a37a3d77bf839b38a98e6b3b71');
-}
-
-function formatSandboxErrors(errors: string[]): string {
-  if (errors.length === 0) return 'No sandbox provider was attempted.';
-  return errors.map((error, index) => `${index + 1}. ${error}`).join('\n');
+  return Boolean(process.env.E2B_API_KEY);
 }
 
 /**
- * Build a plugin from source code inside a Vercel Sandbox microVM.
+ * Build a plugin from source code inside an E2B Sandbox microVM.
  * This is the PRIMARY build path — AI-generated code is untrusted and
  * MUST be compiled in isolation.
  */
@@ -236,7 +144,7 @@ export async function buildPluginInSandbox(params: {
   const { pluginId, sceneCode, schemaJson } = params;
   const modules = normalizePluginModules(sceneCode, params.modules);
   const useSandbox = process.env.USE_SANDBOX_BUILDER !== 'false';
-  const depPolicy = normalizePluginDependencies(params.dependencies);
+  const depPolicy = normalizePluginDependencies(params.dependencies, modules);
   const safeDeps = depPolicy.installDependencies;
   for (const message of formatDependencyPolicyChanges(depPolicy)) {
     console.warn(`[sandbox-builder] ${message}`);
@@ -266,15 +174,10 @@ export async function buildPluginInSandbox(params: {
 
   const hostVersions = readHostVersions();
 
-  // Skip the sandbox path entirely when creds are missing — common on
-  // self-hosted Mastra (VPS). Previously this threw and aborted the save,
-  // causing the agent to report "built" while no row landed in the plugins
-  // table. The validators above already gate out dangerous source.
+  // Cloud builds require configured credentials; local builds must be opted into.
   const sandboxAvailable = useSandbox && hasSandboxCredentials();
 
   if (sandboxAvailable) {
-    const errors: string[] = [];
-
     try {
       const result = await buildWithE2BSandbox(pluginId, sceneCode, schemaJson, {
         ...params,
@@ -286,24 +189,15 @@ export async function buildPluginInSandbox(params: {
       });
       enforceBundleSize(result);
       return { bundleContent: result, builtInSandbox: true };
-    } catch (e: any) {
-      const details = e?.details;
-      const message = `sandbox: ${e?.message ?? e}${details ? `\n${JSON.stringify(details)}` : ''}`;
-      errors.push(message);
-      console.warn(`[sandbox-builder] E2B sandbox failed: ${e?.message ?? e}`, details ? { details } : '');
+    } catch (error) {
+      const failure = new PluginBuildError(pluginBuildFailure(error, 'setup'));
+      // Build/install errors must reach the preview, even when local fallback
+      // is enabled. A second build could hide the dependency failure.
+      if (error instanceof PluginBuildError || !shouldAllowLocalBuild()) throw failure;
+      console.warn(`[sandbox-builder] ${failure.message}`);
     }
-
-    if (!shouldAllowLocalBuild()) {
-      throw new Error(
-        `Sandbox builder failed. Local fallback is disabled for safety.\n${formatSandboxErrors(errors)}\n` +
-        'Configure E2B sandbox credentials on the Mastra server.',
-      );
-    }
-  } else if (useSandbox && !hasSandboxCredentials()) {
-    console.warn(
-      '[sandbox-builder] E2B Sandbox credentials not configured (E2B_API_KEY) — ' +
-      'falling through to local esbuild. Set ALLOW_LOCAL_PLUGIN_BUILD=false to hard-fail instead.',
-    );
+  } else if (useSandbox && !shouldAllowLocalBuild()) {
+    throw new Error('Set E2B_API_KEY to build plugins in the sandbox. For local development, explicitly set USE_SANDBOX_BUILDER=false.');
   }
   // Fallback: local esbuild
   console.warn('[sandbox-builder] ⚠️ Building plugin LOCALLY — AI-generated code is untrusted!');
@@ -355,7 +249,7 @@ async function buildWithE2BSandbox(
   // Dynamic import so the module is only loaded when actually used
   const { Sandbox } = await import('@e2b/code-interpreter');
 
-  const ROOT = process.cwd();
+  const ROOT = path.dirname(findHostPackageJson());
   const sharedUtils = params.sharedUtilsPath || path.join(ROOT, 'shared', 'plugin-utils', 'index.ts');
   const sharedTypes = params.sharedTypesPath || path.join(ROOT, 'shared', 'plugin-types', 'index.ts');
 
@@ -371,14 +265,15 @@ async function buildWithE2BSandbox(
     version: '0.0.0',
     private: true,
     type: 'module',
-    dependencies: { esbuild: '^0.25.0', typescript: '^5.0.0', buffer: '^6.0.3', ...(params.dependencies ?? {}) },
+    dependencies: getPluginBuildDependencies(params.dependencies),
   }, null, 2);
 
   const hostVersionsJson = JSON.stringify(params.hostVersions ?? readHostVersions());
-  const hostPeerPackagesJson = JSON.stringify([...HOST_PEER_PACKAGES]);
+  const hostPeerPackagesJson = JSON.stringify(Object.keys(params.hostVersions ?? readHostVersions()));
 
   const buildScript = `
 import esbuild from 'esbuild';
+import semver from 'semver';
 import { execFileSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
@@ -416,62 +311,6 @@ try {
 const HOST_VERSIONS = ${hostVersionsJson};
 const HOST_PEER_PACKAGES = new Set(${hostPeerPackagesJson});
 
-function satisfiesSingle(major, minor, patch, range) {
-  if (range === '' || range === '*') return true;
-  return range.split(/\\s+/).filter(Boolean).every((comp) => satisfiesComparator(major, minor, patch, comp));
-}
-function satisfiesComparator(major, minor, patch, comp) {
-  let op = '';
-  let verPart = comp;
-  const m = comp.match(/^(>=|<=|>|<|\\^|~|=)?\\s*(.+)$/);
-  if (m) { op = m[1] ?? ''; verPart = m[2]; }
-  if (verPart === '*' || verPart === 'x' || verPart === 'X') return true;
-  const [rM, rMn = '0', rP = '0'] = verPart.split('.');
-  if (rM === '*' || rM === 'x' || rM === 'X') return true;
-  const cM = parseInt(rM, 10), cMn = parseInt(rMn, 10), cP = parseInt(rP, 10);
-  if (Number.isNaN(cM)) return true;
-  const minorWild = rMn === '*' || rMn === 'x' || rMn === 'X';
-  const patchWild = rP === '*' || rP === 'x' || rP === 'X';
-  switch (op) {
-    case '^':
-      if (cM > 0) return major === cM && (minor > cMn || (minor === cMn && patch >= cP));
-      if (cMn > 0) return major === 0 && minor === cMn && patch >= cP;
-      return major === 0 && minor === 0 && patch >= cP;
-    case '~':
-      return major === cM && minor === cMn && (patchWild || patch >= cP);
-    case '>=':
-      return [major, minor, patch] >= [cM, cMn, cP]
-        ? true
-        : (major > cM || (major === cM && (minor > cMn || (minor === cMn && patch >= cP))));
-    case '<=':
-      return major < cM || (major === cM && (minor < cMn || (minor === cMn && patch <= cP)));
-    case '>':
-      return major > cM || (major === cM && (minor > cMn || (minor === cMn && patch > cP)));
-    case '<':
-      return major < cM || (major === cM && (minor < cMn || (minor === cMn && patch < cP)));
-    case '=':
-    case '':
-      if (minorWild) return major === cM;
-      if (patchWild) return major === cM && minor === cMn;
-      return major === cM && minor === cMn && patch === cP;
-    default:
-      return true;
-  }
-}
-function satisfies(version, range) {
-  const clean = version.replace(/^[^0-9]+/, '');
-  const [major, minor = 0, patch = 0] = clean.split('.').map((n) => parseInt(n, 10));
-  if (Number.isNaN(major)) return true;
-  return range.split('||').some((alt) => satisfiesSingle(major, minor, patch, alt.trim()));
-}
-
-function hostVersionFor(peerName) {
-  if (peerName === 'react' || peerName === '@types/react') return HOST_VERSIONS.react;
-  if (peerName === 'react-dom' || peerName === '@types/react-dom' || peerName === 'react-reconciler') return HOST_VERSIONS.reactDom;
-  if (peerName === 'remotion' || peerName.startsWith('@remotion/')) return HOST_VERSIONS.remotion;
-  return null;
-}
-
 const peerErrors = [];
 const nmRoot = path.join('${CWD}', 'node_modules');
 function walkNodeModules(dir, seen) {
@@ -501,13 +340,15 @@ function inspectPkg(pkgPath, seen) {
   seen.add(pkgPath);
   let pkg;
   try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')); } catch { return; }
+  // Validate bundled libraries against the deployed runtime, not the app against itself.
+  if (HOST_VERSIONS[pkg.name] === pkg.version) return;
   const peers = pkg.peerDependencies ?? {};
   const pkgId = (pkg.name ?? '?') + '@' + (pkg.version ?? '?');
   for (const [peerName, peerRange] of Object.entries(peers)) {
-    if (!HOST_PEER_PACKAGES.has(peerName) && !(peerName === '@types/react') && !(peerName.startsWith('@remotion/'))) continue;
-    const hostVersion = hostVersionFor(peerName);
+    if (!HOST_PEER_PACKAGES.has(peerName)) continue;
+    const hostVersion = HOST_VERSIONS[peerName];
     if (!hostVersion) continue;
-    if (!satisfies(hostVersion, peerRange)) {
+    if (!semver.satisfies(hostVersion, peerRange)) {
       peerErrors.push(
         'Plugin dep "' + pkgId + '" requires peer ' + peerName + '@' + peerRange +
         ' but host runs ' + peerName + '@' + hostVersion + '. ' +
@@ -522,8 +363,6 @@ function inspectPkg(pkgPath, seen) {
 }
 const seen = new Set();
 walkNodeModules(nmRoot, seen);
-// Also walk top-level @types scope for @types/react compat
-walkNodeModules(path.join(nmRoot, '@types'), seen);
 
 if (peerErrors.length > 0) {
   process.stdout.write(JSON.stringify({ success: false, peerDepErrors: peerErrors }));
@@ -546,13 +385,13 @@ await esbuild.build({
   outfile,
   format: 'cjs',
   bundle: true,
-  external: ${JSON.stringify(EXTERNALS)},
+  // Exact runtime imports are external; unlisted subpaths get bundled.
   target: ['chrome90'],
   platform: 'browser',
   // Polyfill Buffer for dependencies that reference it (e.g. three, uuid)
   inject: [path.join(srcDir, 'buffer-shim.js')],
   define: { global: 'globalThis' },
-  plugins: [aliasPlugin],
+  plugins: [aliasPlugin, (${pluginRuntimeExternals.toString()})(${JSON.stringify(EXTERNALS)})],
   sourcemap: false,
   minify: false,
 });
@@ -562,7 +401,7 @@ process.stdout.write(JSON.stringify({ success: true, bundleContent }));
 `;
 
   const sandbox = await Sandbox.create({
-    apiKey: process.env.E2B_API_KEY || 'e2b_4d4e8b7ef35bd3a37a3d77bf839b38a98e6b3b71',
+    apiKey: process.env.E2B_API_KEY,
     timeoutMs: 120_000,
   });
 
@@ -584,24 +423,16 @@ process.stdout.write(JSON.stringify({ success: true, bundleContent }));
       sandbox.files.write(`${CWD}/src/buffer-shim.js`, BUFFER_SHIM),
     ]);
 
-    const install = await sandbox.commands.run('npm install --legacy-peer-deps --no-audit --no-fund --loglevel=error', { cwd: CWD });
-    if (install.error || install.exitCode !== 0) {
-      throw new Error(
-        `Sandbox npm install failed (exit ${install.exitCode})\nstdout: ${install.stdout}\nstderr: ${install.stderr}`,
-      );
-    }
-
-    const build = await sandbox.commands.run('node build.mjs', { cwd: CWD });
+    const run = (command: string) => sandbox.commands.run(command, { cwd: CWD });
+    await runPluginBuildCommand(run, 'npm install --legacy-peer-deps --no-audit --no-fund --loglevel=error', 'install');
+    const build = await runPluginBuildCommand(run, 'node build.mjs', 'build');
     const stdout = build.stdout;
     const stderr = build.stderr;
 
-    if (build.error || build.exitCode !== 0) {
-      throw new Error(
-        `Sandbox build failed (exit ${build.exitCode})\nstdout: ${stdout}\nstderr: ${stderr}`,
-      );
+    let output;
+    try { output = JSON.parse(stdout); } catch {
+      throw new PluginBuildError({ stage: 'build', message: 'Sandbox returned invalid build output.', command: 'node build.mjs', stdout, stderr });
     }
-
-    const output = JSON.parse(stdout);
     if (!output.success) {
       let errMsg: string;
       if (output.peerDepErrors && output.peerDepErrors.length > 0) {
@@ -613,25 +444,26 @@ process.stdout.write(JSON.stringify({ success: true, bundleContent }));
       } else {
         errMsg = `Sandbox build reported failure: ${stderr}`;
       }
-      throw new Error(errMsg);
+      throw new PluginBuildError({ stage: output.peerDepErrors?.length ? 'compatibility' : 'build', message: errMsg, command: 'node build.mjs', stderr });
     }
 
     return output.bundleContent;
   } finally {
-    await sandbox.kill();
+    // Cleanup must never replace an install/compiler failure and its logs.
+    try { await sandbox.kill(); } catch { console.warn('[sandbox-builder] Sandbox cleanup failed.'); }
   }
 }
 
 /**
  * Fallback: Build locally with esbuild.
- * Only used when Vercel Sandbox is unavailable (local dev).
+ * Only used when E2B Sandbox is unavailable (local dev).
  */
 export async function buildWithLocalEsbuild(
   pluginId: string,
   sceneCode: string,
   params: { sharedUtilsPath?: string; sharedTypesPath?: string; modules?: PluginModuleMap },
 ): Promise<string> {
-  const ROOT = process.cwd();
+  const ROOT = path.dirname(findHostPackageJson());
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `plugin-local-${pluginId}-`));
 
   try {
@@ -668,13 +500,14 @@ export async function buildWithLocalEsbuild(
       outfile,
       format: 'cjs',
       bundle: true,
-      external: EXTERNALS,
+      nodePaths: [path.join(ROOT, 'node_modules')],
+      absWorkingDir: ROOT,
       target: ['chrome90'],
       platform: 'browser',
       // Polyfill Buffer for dependencies that reference it (e.g. three, uuid)
       inject: [path.join(srcDir, 'buffer-shim.js')],
       define: { global: 'globalThis' },
-      plugins: [aliasPlugin],
+      plugins: [aliasPlugin, pluginRuntimeExternals(EXTERNALS)],
       sourcemap: false,
       minify: false,
     });

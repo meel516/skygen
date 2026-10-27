@@ -40,8 +40,8 @@ export interface CreatePluginInput {
   /**
    * npm dependencies the plugin source imports (package → semver). Merged
    * into the sandbox's package.json so esbuild can inline them into the
-   * bundle. react / remotion / @remotion/* / framer-motion are always
-   * stripped (handled by the sandbox builder).
+   * bundle. The exact imports in PLUGIN_RUNTIME_IMPORTS are
+   * externalized and supplied by both players; other imports are bundled.
    */
   dependencies?: Record<string, string>;
   userId?: string | null;
@@ -126,7 +126,7 @@ export async function createPluginFromSource(input: CreatePluginInput): Promise<
   }
 
   const schemaString = typeof schemaJson === 'string' ? schemaJson : JSON.stringify(schemaJson);
-  const depPolicy = normalizePluginDependencies(dependencies);
+  const depPolicy = normalizePluginDependencies(dependencies, sourceModules);
   const depPolicyWarnings = formatDependencyPolicyChanges(depPolicy);
   for (const message of depPolicyWarnings) {
     console.warn(`[create-plugin] ${message}`);
@@ -158,7 +158,7 @@ export async function createPluginFromSource(input: CreatePluginInput): Promise<
       sceneCode: effectiveSceneCode,
       modules: sourceModules,
       schemaJson: schemaString,
-      dependencies: depPolicy.installDependencies,
+      dependencies: depPolicy.dependencies,
     });
 
     const s3Key = `plugins/${normalizedId}/bundle.cjs.js`;
@@ -167,7 +167,7 @@ export async function createPluginFromSource(input: CreatePluginInput): Promise<
     const sourceJson = JSON.stringify({
       sceneCode: effectiveSceneCode,
       modules: sourceModules,
-      dependencies,
+      dependencies: depPolicy.dependencies,
     });
     const sourceS3Key = `plugins/${normalizedId}/source.json`;
     await uploadToS3(sourceS3Key, sourceJson, 'application/json');

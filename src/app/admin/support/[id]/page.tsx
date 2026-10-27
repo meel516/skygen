@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, use } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Send, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, Send, ArrowLeft, CheckCircle, XCircle } from '@/components/ui/studio-icons';
 
 const STATUS_OPTIONS = ['open', 'in_progress', 'resolved', 'closed'];
 const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'urgent'];
@@ -103,42 +103,42 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (!ticket) {
-    return <div className="p-6 text-gray-400">Ticket not found</div>;
+    return <div className="p-6 text-muted-foreground">Ticket not found</div>;
   }
 
   return (
     <div className="flex flex-col h-screen">
       {/* Header */}
-      <div className="border-b border-gray-800 bg-gray-900 px-4 py-3 flex items-center gap-3 shrink-0">
-        <button onClick={() => router.push('/admin/support')} className="text-gray-400 hover:text-white transition-colors">
+      <div className="border-b border-border bg-card px-4 py-3 flex items-center gap-3 shrink-0">
+        <button onClick={() => router.push('/admin/support')} className="text-muted-foreground hover:text-white">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-sm truncate">{ticket.subject}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLORS[ticket.status] ?? 'bg-gray-700 text-gray-300'}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLORS[ticket.status] ?? 'bg-gray-700 text-muted-foreground'}`}>
               {ticket.status.replace('_', ' ')}
             </span>
           </div>
-          <p className="text-xs text-gray-500">{ticket.name || ticket.email} · #{id.slice(0, 8)}</p>
+          <p className="text-xs text-muted-foreground">{ticket.name || ticket.email} · #{id.slice(0, 8)}</p>
         </div>
 
         {/* Controls */}
         <div className="flex items-center gap-2 shrink-0">
-          {saving && <Loader2 className="w-3 h-3 animate-spin text-gray-400" />}
+          {saving && <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />}
           <select
             value={ticket.priority}
             onChange={e => {
               setTicket(t => t ? { ...t, priority: e.target.value } : t);
               updateTicket({ priority: e.target.value });
             }}
-            className="bg-gray-800 border border-gray-700 text-xs text-white rounded-lg px-2 py-1 focus:outline-none capitalize"
+            className="bg-card border border-border text-xs text-white rounded-sm px-2 py-1 focus:outline-none capitalize"
           >
             {PRIORITY_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
@@ -148,19 +148,19 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
               setTicket(t => t ? { ...t, status: e.target.value } : t);
               updateTicket({ status: e.target.value });
             }}
-            className="bg-gray-800 border border-gray-700 text-xs text-white rounded-lg px-2 py-1 focus:outline-none capitalize"
+            className="bg-card border border-border text-xs text-white rounded-sm px-2 py-1 focus:outline-none capitalize"
           >
             {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
           </select>
           <button
             onClick={() => updateTicket({ status: 'resolved' })}
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 transition-colors"
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded-sm bg-green-500/10 hover:bg-green-500/20 text-green-400"
           >
             <CheckCircle className="w-3 h-3" /> Resolve
           </button>
           <button
             onClick={() => updateTicket({ status: 'closed' })}
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors"
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded-sm bg-gray-700 hover:bg-gray-600 text-muted-foreground"
           >
             <XCircle className="w-3 h-3" /> Close
           </button>
@@ -173,12 +173,12 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
           const isAdmin = m.sender_role === 'admin';
           return (
             <div key={m.id} className={`flex ${isAdmin ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${isAdmin ? 'bg-purple-600 text-white rounded-br-sm' : 'bg-gray-800 text-gray-100 rounded-bl-sm'}`}>
+              <div className={`max-w-[75%] rounded-sm px-4 py-2.5 ${isAdmin ? 'bg-muted text-white rounded-br-sm' : 'bg-card text-muted-foreground rounded-bl-sm'}`}>
                 {!isAdmin && (
                   <p className="text-xs font-semibold text-blue-400 mb-1">{m.sender_name || ticket.email}</p>
                 )}
                 <p className="text-sm whitespace-pre-wrap">{m.message}</p>
-                <p className={`text-xs mt-1 ${isAdmin ? 'text-purple-200' : 'text-gray-500'}`}>
+                <p className={`text-xs mt-1 ${isAdmin ? 'text-primary' : 'text-muted-foreground'}`}>
                   {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -189,10 +189,10 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-800 bg-gray-900 px-4 py-3 shrink-0">
+      <div className="border-t border-border bg-card px-4 py-3 shrink-0">
         <div className="max-w-3xl mx-auto">
           {ticket.status === 'closed' ? (
-            <p className="text-center text-sm text-gray-500">This ticket is closed.</p>
+            <p className="text-center text-sm text-muted-foreground">This ticket is closed.</p>
           ) : (
             <form onSubmit={handleSend} className="flex gap-2">
               <input
@@ -201,12 +201,12 @@ export default function AdminSupportTicketPage({ params }: { params: Promise<{ i
                 onChange={e => setNewMessage(e.target.value)}
                 placeholder="Reply as support..."
                 disabled={sending}
-                className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500 disabled:opacity-50"
+                className="flex-1 bg-card border border-border rounded-sm px-4 py-2 text-sm text-white focus:outline-none focus:border-primary disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={sending || !newMessage.trim()}
-                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl px-4 py-2 transition-colors"
+                className="bg-primary hover:bg-primary disabled:opacity-50 text-primary-foreground rounded-sm px-4 py-2"
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>

@@ -97,45 +97,43 @@ export function ConversationSidebar() {
     <aside
       className="hidden xl:flex w-[236px] shrink-0 border-r flex-col min-h-0"
       style={{
-        background: '#0D0D14',
-        borderColor: 'rgba(255,255,255,0.06)',
+        background: 'var(--background)',
+        borderColor: 'var(--border)',
       }}
     >
       <div
         className="h-[61px] px-3 flex items-center justify-between border-b shrink-0"
-        style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+        style={{ borderColor: 'var(--border)' }}
       >
         <div className="flex items-center gap-2 min-w-0">
-          <ChatCircleText weight="duotone" size={17} style={{ color: '#A78BFA' }} />
-          <span className="text-xs font-semibold truncate" style={{ color: '#D8D8E8' }}>
+          <ChatCircleText weight="duotone" size={17} style={{ color: 'var(--primary)' }} />
+          <span className="text-xs font-semibold truncate" style={{ color: 'var(--foreground)' }}>
             Conversations
           </span>
         </div>
         <button
           onClick={handleNewThread}
-          className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors disabled:opacity-40"
+          className="w-8 h-8 rounded-sm flex items-center justify-center disabled:opacity-40"
           title="New conversation"
           style={{
-            background: 'rgba(124,58,237,0.16)',
-            border: '1px solid rgba(124,58,237,0.28)',
-            color: '#C4B5FD',
+            background: 'color-mix(in srgb, var(--primary) 16%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--primary) 28%, transparent)',
+            color: 'var(--primary)',
           }}
         >
           <Plus weight="bold" size={15} />
         </button>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto p-2" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.08) transparent' }}>
+      <div className="flex-1 min-h-0 overflow-y-auto p-2" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--border) transparent' }}>
         {isLoading && !hasThreads && (
-          <div className="h-full flex items-center justify-center">
-            <CircleNotch weight="bold" size={18} className="animate-spin" style={{ color: '#6B6B8A' }} />
-          </div>
+          <div role="status" aria-label="Loading conversations" className="space-y-4 p-3"><div className="h-12 bg-muted" /><div className="h-12 bg-muted" /><div className="h-12 bg-muted" /></div>
         )}
 
         {!isLoading && !hasThreads && (
           <div className="h-full flex flex-col items-center justify-center text-center px-4">
-            <NotePencil weight="duotone" size={28} style={{ color: '#55556A' }} />
-            <p className="text-xs mt-3 leading-relaxed" style={{ color: '#6B6B8A' }}>
+            <NotePencil weight="duotone" size={28} style={{ color: 'var(--muted-foreground)' }} />
+            <p className="text-xs mt-3 leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
               Your saved chats will appear here.
             </p>
           </div>
@@ -150,23 +148,23 @@ export function ConversationSidebar() {
                 <button
                   key={thread.id}
                   onClick={() => handleSelectThread(thread.id)}
-                  className="w-full text-left rounded-lg px-3 py-2.5 transition-colors disabled:opacity-50"
+                  className="w-full text-left rounded-sm px-3 py-2.5 disabled:opacity-50"
                   title={thread.title}
                   style={{
-                    background: active ? 'rgba(124,58,237,0.16)' : 'transparent',
-                    border: active ? '1px solid rgba(124,58,237,0.28)' : '1px solid transparent',
-                    color: '#E2E2F0',
+                    background: active ? 'color-mix(in srgb, var(--primary) 16%, transparent)' : 'transparent',
+                    border: active ? '1px solid color-mix(in srgb, var(--primary) 28%, transparent)' : '1px solid transparent',
+                    color: 'var(--foreground)',
                   }}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <span className="text-xs font-medium truncate">
                       {thread.title}
                     </span>
-                    <span className="text-[10px] shrink-0" style={{ color: active ? '#C4B5FD' : '#55556A' }}>
+                    <span className="text-[10px] shrink-0" style={{ color: active ? 'var(--primary)' : 'var(--muted-foreground)' }}>
                       {loading ? '...' : formatRelativeTime(thread.updatedAt)}
                     </span>
                   </div>
-                  <div className="text-[11px] leading-snug line-clamp-2" style={{ color: '#6B6B8A' }}>
+                  <div className="text-[11px] leading-snug line-clamp-2" style={{ color: 'var(--muted-foreground)' }}>
                     {thread.lastMessage || `${thread.messageCount} messages`}
                   </div>
                 </button>

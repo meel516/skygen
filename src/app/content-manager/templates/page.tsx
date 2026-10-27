@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from '@/components/ui/studio-icons';
 
 interface Template {
   id: string;
@@ -39,31 +39,31 @@ export default function TemplatesPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>;
+    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (
     <div>
       <div className="mb-8">
         <h2 className="text-2xl font-bold">Public Templates</h2>
-        <p className="text-sm text-gray-400 mt-1">Manage template visibility, categories, and preview URLs.</p>
+        <p className="text-sm text-muted-foreground mt-1">Manage template visibility, categories, and preview URLs.</p>
       </div>
 
       {templates.length === 0 ? (
-        <p className="text-gray-500 text-center py-12">No templates found.</p>
+        <p className="text-muted-foreground text-center py-12">No templates found.</p>
       ) : (
         <div className="space-y-3">
           {templates.map((template) => (
             <div
               key={template.id}
-              className="bg-gray-900/50 rounded-lg border border-gray-800 p-4 flex items-center gap-4"
+              className="bg-card/50 rounded-sm border border-border p-4 flex items-center gap-4"
             >
               <button
                 onClick={() => updateTemplate(template.id, { isPublic: !template.isPublic })}
-                className={`p-2 rounded-lg transition-colors ${
+                className={`p-2 rounded-sm transition-colors ${
                   template.isPublic
                     ? 'bg-green-500/20 text-green-400'
-                    : 'bg-gray-800 text-gray-500'
+                    : 'bg-card text-muted-foreground'
                 }`}
                 title={template.isPublic ? 'Public — click to hide' : 'Hidden — click to publish'}
               >
@@ -72,13 +72,13 @@ export default function TemplatesPage() {
 
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-white truncate">{template.name}</div>
-                <div className="text-xs text-gray-500">{template.description || 'No description'}</div>
+                <div className="text-xs text-muted-foreground">{template.description || 'No description'}</div>
               </div>
 
               <select
                 value={template.category || 'general'}
                 onChange={(e) => updateTemplate(template.id, { category: e.target.value })}
-                className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white"
+                className="bg-card border border-border rounded-sm px-3 py-1.5 text-sm text-white"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -88,7 +88,7 @@ export default function TemplatesPage() {
               <input
                 value={template.previewUrl || ''}
                 onChange={(e) => updateTemplate(template.id, { previewUrl: e.target.value })}
-                className="w-48 bg-gray-800/50 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white"
+                className="w-48 bg-card/50 border border-border rounded-sm px-3 py-1.5 text-sm text-white"
                 placeholder="Preview URL"
               />
 

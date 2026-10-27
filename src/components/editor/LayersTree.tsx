@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronRight, Type, Image as ImageIcon, Video as VideoIcon, Square, Layers as LayersIcon } from 'lucide-react';
+import { ChevronRight, Type, Image as ImageIcon, Video as VideoIcon, Square, Layers as LayersIcon } from '@/components/ui/studio-icons';
 import { classifyElement, computePathFromBlockRoot, type ElementKind } from '@/lib/editor/element-path';
 import { usePortalContainer } from './SubElementPopover';
 
@@ -108,13 +108,13 @@ export function LayersTree({ blockRoot, selectedId, onSelectLayer, onClose }: Pr
         right: 12,
         width: 240,
         maxHeight: 'calc(100vh - 24px)',
-        background: '#1E1E2D',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: 'var(--muted)',
+        border: '1px solid var(--border)',
         borderRadius: 10,
-        color: '#F1F1F8',
+        color: 'var(--foreground)',
         fontSize: 11,
         zIndex: 9998,
-        boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
+        boxShadow: 'none',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -125,20 +125,20 @@ export function LayersTree({ blockRoot, selectedId, onSelectLayer, onClose }: Pr
       <div
         style={{
           padding: '10px 12px',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          borderBottom: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <LayersIcon size={13} style={{ color: '#A78BFA' }} />
+          <LayersIcon size={13} style={{ color: 'var(--primary)' }} />
           <span style={{ fontWeight: 600 }}>Layers</span>
-          <span style={{ color: '#8B8BAA', fontSize: 10 }}>({nodes.length})</span>
+          <span style={{ color: 'var(--muted-foreground)', fontSize: 10 }}>({nodes.length})</span>
         </div>
         <button
           onClick={onClose}
-          style={{ background: 'transparent', border: 'none', color: '#8B8BAA', cursor: 'pointer', fontSize: 14, padding: 0 }}
+          style={{ background: 'transparent', border: 'none', color: 'var(--muted-foreground)', cursor: 'pointer', fontSize: 14, padding: 0 }}
           aria-label="Close layers"
         >
           ×
@@ -147,12 +147,12 @@ export function LayersTree({ blockRoot, selectedId, onSelectLayer, onClose }: Pr
 
       <div style={{ flex: 1, overflowY: 'auto', padding: 4 }}>
         {!blockRoot && (
-          <div style={{ padding: 16, textAlign: 'center', color: '#8B8BAA', fontSize: 11 }}>
+          <div style={{ padding: 16, textAlign: 'center', color: 'var(--muted-foreground)', fontSize: 11 }}>
             Click an element in the preview to see its layers.
           </div>
         )}
         {blockRoot && visible.length === 0 && (
-          <div style={{ padding: 16, textAlign: 'center', color: '#8B8BAA', fontSize: 11 }}>
+          <div style={{ padding: 16, textAlign: 'center', color: 'var(--muted-foreground)', fontSize: 11 }}>
             No editable layers found.
           </div>
         )}
@@ -172,15 +172,11 @@ export function LayersTree({ blockRoot, selectedId, onSelectLayer, onClose }: Pr
                 paddingLeft: 6 + n.depth * 12,
                 cursor: 'pointer',
                 borderRadius: 4,
-                background: isSelected ? 'rgba(167,139,250,0.18)' : 'transparent',
-                color: isSelected ? '#fff' : '#C8C8DA',
+                background: isSelected ? 'color-mix(in srgb, var(--primary) 18%, transparent)' : 'transparent',
+                color: isSelected ? 'var(--primary-foreground)' : '#C8C8DA',
               }}
-              onMouseEnter={(e) => {
-                if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-              }}
-              onMouseLeave={(e) => {
-                if (!isSelected) e.currentTarget.style.background = 'transparent';
-              }}
+
+
             >
               {n.hasChildren ? (
                 <span
@@ -193,7 +189,7 @@ export function LayersTree({ blockRoot, selectedId, onSelectLayer, onClose }: Pr
                     display: 'inline-flex',
                     transform: expanded[n.elementId] ? 'rotate(90deg)' : 'none',
                     transition: 'transform 100ms',
-                    color: '#8B8BAA',
+                    color: 'var(--muted-foreground)',
                   }}
                 >
                   <ChevronRight size={10} />
@@ -201,7 +197,7 @@ export function LayersTree({ blockRoot, selectedId, onSelectLayer, onClose }: Pr
               ) : (
                 <span style={{ width: 12 }} />
               )}
-              <Icon size={11} style={{ color: isSelected ? '#A78BFA' : '#8B8BAA', flexShrink: 0 }} />
+              <Icon size={11} style={{ color: isSelected ? 'var(--primary)' : 'var(--muted-foreground)', flexShrink: 0 }} />
               <span
                 style={{
                   whiteSpace: 'nowrap',

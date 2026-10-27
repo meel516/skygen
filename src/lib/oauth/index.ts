@@ -23,12 +23,14 @@ export async function storeCode(
   code: string,
   clientId: string,
   userId: string,
-  redirectUri: string
+  redirectUri: string,
+  codeChallenge?: string,
+  codeChallengeMethod?: string
 ): Promise<void> {
   await db.query(
-    `INSERT INTO oauth_authorization_codes (code, client_id, user_id, redirect_uri, expires_at)
-     VALUES ($1, $2, $3, $4, NOW() + INTERVAL '10 minutes')`,
-    [code, clientId, userId, redirectUri]
+    `INSERT INTO oauth_authorization_codes (code, client_id, user_id, redirect_uri, code_challenge, code_challenge_method, expires_at)
+     VALUES ($1, $2, $3, $4, $5, $6, NOW() + INTERVAL '10 minutes')`,
+    [code, clientId, userId, redirectUri, codeChallenge || null, codeChallengeMethod || null]
   );
 }
 
@@ -37,10 +39,10 @@ export async function storeCode(
  * Deletes the code, creates an access token with 90-day expiry.
  * Returns the new token string, or null if the code is invalid/expired.
  */
-export async function exchangeCode(code: string): Promise<string | null> {
-  // Look up the code — must exist and not be expired
+export async function exchangeCode(code: string, codeVerifier?: string): Promise<string | null> {
+  // Look up the code – must exist and not be expired
   const codeResult = await db.query(
-    `SELECT client_id, user_id, redirect_uri, scope
+    `SELECT client_id, user_id, redirect_uri, scope, code_challenge, code_challenge_method
      FROM oauth_authorization_codes
      WHERE code = $1 AND expires_at > NOW()`,
     [code]
@@ -48,7 +50,19 @@ export async function exchangeCode(code: string): Promise<string | null> {
 
   if (codeResult.rows.length === 0) return null;
 
-  const { client_id, user_id, scope } = codeResult.rows[0];
+  const row = codeResult.rows[0];
+
+  // Validate PKCE if it was provided during authorization
+  if (row.code_challenge && row.code_challenge_method === 'S256') {
+    if (!codeVerifier) return null;
+    const crypto = require('crypto');
+    const hash = crypto.createHash('sha256').update(codeVerifier).digest('base64url');
+    if (hash !== row.code_challenge) return null;
+  } else if (row.code_challenge && row.code_challenge_method === 'plain') {
+    if (codeVerifier !== row.code_challenge) return null;
+  }
+
+  const { client_id, user_id, scope } = row;
 
   // Delete the used code (single-use)
   await db.query(

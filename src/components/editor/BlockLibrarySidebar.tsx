@@ -21,7 +21,7 @@ import {
   Hourglass, CloudSun, Box, TrendingUp, Layers, Heart, Search, Crown,
   DollarSign, Globe, GitBranch, Briefcase, FileCode2, Network, Puzzle,
   Upload, Loader2,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 
 const BLOCK_CATEGORIES = [
   {
@@ -219,17 +219,17 @@ export function BlockLibrarySidebar() {
 
   return (
     <TooltipProvider delayDuration={400}>
-      <div className="h-full flex flex-col overflow-hidden bg-slate-50 dark:bg-[#13131C] transition-colors" style={{ width: 280 }}>
+      <div className="h-full flex flex-col overflow-hidden bg-background dark:bg-[var(--card)]" style={{ width: 280 }}>
         {/* Search + category pills */}
-        <div className="px-3 pt-3 pb-2.5 flex-shrink-0 space-y-2 border-b border-slate-200 dark:border-white/[0.07]">
+        <div className="px-3 pt-3 pb-2.5 flex-shrink-0 space-y-2 border-b border-border dark:border-white/[0.07]">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#55556A]" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--muted-foreground)]" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search blocks…"
-              className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] outline-none transition-all bg-slate-200 dark:bg-white/[0.05] border border-slate-300 dark:border-white/[0.07] text-[#F1F1F8] focus:border-purple-500"
+              className="w-full h-8 pl-8 pr-3 rounded-sm text-[12px] outline-none bg-muted dark:bg-white/[0.05] border border-border dark:border-white/[0.07] text-[var(--foreground)] focus:border-primary"
 
             />
           </div>
@@ -240,10 +240,10 @@ export function BlockLibrarySidebar() {
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={cn(
-                  'px-2 py-0.5 rounded-full text-[10px] font-medium transition-all',
+                  'px-2 py-0.5 rounded-full text-[10px] font-medium',
                   activeCategory === cat
-                    ? 'bg-[#7C3AED]/25 text-[#7C3AED] ring-1 ring-[#7C3AED]/30'
-                    : 'bg-slate-200 dark:bg-white/[0.05] text-[#55556A] hover:text-slate-600 dark:text-[#8B8BAA]'
+                    ? 'bg-[var(--primary)]/25 text-[var(--primary)] ring-1 ring-[var(--primary)]/30'
+                    : 'bg-muted dark:bg-white/[0.05] text-[var(--muted-foreground)] hover:text-muted-foreground dark:text-[var(--muted-foreground)]'
                 )}
               >
                 {cat}
@@ -258,8 +258,8 @@ export function BlockLibrarySidebar() {
             {recentBlocks.length > 0 && !searchQuery && activeCategory === 'All' && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 px-1">
-                  <Sparkles className="w-3 h-3" style={{ color: '#55556A' }} />
-                  <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#55556A' }}>
+                  <Sparkles className="w-3 h-3" style={{ color: 'var(--muted-foreground)' }} />
+                  <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted-foreground)' }}>
                     Recently Used
                   </span>
                 </div>
@@ -271,16 +271,16 @@ export function BlockLibrarySidebar() {
                       <Tooltip key={block.type}>
                         <TooltipTrigger asChild>
                           <motion.button
-                            whileHover={{ scale: 1.04 }}
-                            whileTap={{ scale: 0.96 }}
+
+
                             onClick={() => handleAddBlock(block.type)}
-                            className="flex flex-col items-center gap-1 p-1.5 rounded-lg transition-all group bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06]"
+                            className="flex flex-col items-center gap-1 p-1.5 rounded-sm group bg-muted dark:bg-white/[0.04] border border-border dark:border-white/[0.06]"
                           >
-                            <div className={`w-7 h-7 rounded-md bg-gradient-to-br ${block.gradient} flex items-center justify-center transition-transform group-hover:scale-105 overflow-hidden relative`}>
+                            <div className={`w-7 h-7 rounded-sm bg-muted ${block.gradient} flex items-center justify-center  group-hover:scale-105 overflow-hidden relative`}>
                               {blockThumbnails[block.type] ? (
                                 <img src={blockThumbnails[block.type]} alt={block.label} className="w-full h-full object-cover" />
                               ) : (
-                                <Icon className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
+                                <Icon className="w-3.5 h-3.5 text-foreground dark:text-white" />
                               )}
                               {isLocked && (
                                 <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
@@ -289,10 +289,10 @@ export function BlockLibrarySidebar() {
                               )}
                             </div>
                             <span className="text-[9px] leading-none text-center line-clamp-1"
-                              style={{ color: '#55556A' }}>{block.label}</span>
+                              style={{ color: 'var(--muted-foreground)' }}>{block.label}</span>
                           </motion.button>
                         </TooltipTrigger>
-                        <TooltipContent side="bottom" className="text-[11px] bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07] text-[#8B8BAA]">
+                        <TooltipContent side="bottom" className="text-[11px] bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07] text-[var(--muted-foreground)]">
                           {isLocked ? `${block.description} • Premium` : block.description}
                         </TooltipContent>
                       </Tooltip>
@@ -315,12 +315,12 @@ export function BlockLibrarySidebar() {
                 >
                   {/* Category header */}
                   <div className="flex items-center gap-2 px-1">
-                    <CatIcon className="w-3 h-3" style={{ color: '#55556A' }} />
-                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#55556A' }}>
+                    <CatIcon className="w-3 h-3" style={{ color: 'var(--muted-foreground)' }} />
+                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted-foreground)' }}>
                       {category.name}
                     </span>
-                    <div className="flex-1 h-px bg-slate-200 dark:bg-white/[0.05]" />
-                    <span className="text-[9px]" style={{ color: '#55556A' }}>{category.blocks.length}</span>
+                    <div className="flex-1 h-px bg-muted dark:bg-white/[0.05]" />
+                    <span className="text-[9px]" style={{ color: 'var(--muted-foreground)' }}>{category.blocks.length}</span>
                   </div>
 
                   {/* Blocks grid */}
@@ -335,18 +335,18 @@ export function BlockLibrarySidebar() {
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: catIndex * 0.04 + index * 0.015 }}
-                              whileHover={{ scale: 1.03 }}
-                              whileTap={{ scale: 0.97 }}
+
+
                               onClick={() => handleAddBlock(blockType.type)}
-                              className={cn("flex flex-col items-center gap-1.5 p-2.5 rounded-lg transition-all group cursor-pointer border",
-                                isLocked ? 'bg-slate-50 dark:bg-white/[0.025] border-slate-200 dark:border-white/[0.05]' : 'bg-slate-100 dark:bg-white/[0.03] border-slate-200 dark:border-white/[0.05] hover:bg-slate-200 dark:hover:bg-[#25253A] hover:border-slate-300 dark:hover:border-white/[0.12]'
+                              className={cn("flex flex-col items-center gap-1.5 p-2.5 rounded-sm group cursor-pointer border",
+                                isLocked ? 'bg-background dark:bg-white/[0.025] border-border dark:border-white/[0.05]' : 'bg-muted dark:bg-white/[0.03] border-border dark:border-white/[0.05] hover:bg-muted dark:hover:bg-[var(--accent)] hover:border-border dark:hover:border-white/[0.12]'
                               )}
                             >
-                              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${blockType.gradient} flex items-center justify-center shadow-md transition-shadow group-hover:shadow-lg overflow-hidden relative`}>
+                              <div className={`w-8 h-8 rounded-sm bg-muted ${blockType.gradient} flex items-center justify-center shadow-none transition-shadow group-hover:shadow-none overflow-hidden relative`}>
                                 {blockThumbnails[blockType.type] ? (
                                   <img src={blockThumbnails[blockType.type]} alt={blockType.label} className="w-full h-full object-cover" />
                                 ) : (
-                                  <Icon className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
+                                  <Icon className="w-3.5 h-3.5 text-foreground dark:text-white" />
                                 )}
                                 {isLocked && (
                                   <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
@@ -354,8 +354,8 @@ export function BlockLibrarySidebar() {
                                   </div>
                                 )}
                               </div>
-                              <span className="text-[10px] font-medium leading-none text-center line-clamp-1 transition-colors"
-                                style={{ color: '#8B8BAA' }}>
+                              <span className="text-[10px] font-medium leading-none text-center line-clamp-1"
+                                style={{ color: 'var(--muted-foreground)' }}>
                                 {blockType.label}
                               </span>
                               {isLocked && (
@@ -367,7 +367,7 @@ export function BlockLibrarySidebar() {
                           </TooltipTrigger>
                           <TooltipContent
                             side="right"
-                            className="text-[11px] bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07] text-[#8B8BAA]"
+                            className="text-[11px] bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07] text-[var(--muted-foreground)]"
                           >
                             {isLocked ? `${blockType.description} • Upgrade to Premium` : blockType.description}
                           </TooltipContent>
@@ -387,12 +387,12 @@ export function BlockLibrarySidebar() {
                 className="space-y-2"
               >
                 <div className="flex items-center gap-2 px-1">
-                  <Puzzle className="w-3 h-3" style={{ color: '#7C3AED' }} />
-                  <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#7C3AED' }}>
+                  <Puzzle className="w-3 h-3" style={{ color: 'var(--primary)' }} />
+                  <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--primary)' }}>
                     Custom Plugins
                   </span>
-                  <div className="flex-1 h-px" style={{ background: 'rgba(124,58,237,0.2)' }} />
-                  <span className="text-[9px]" style={{ color: '#55556A' }}>{installedPlugins.length}</span>
+                  <div className="flex-1 h-px" style={{ background: 'color-mix(in srgb, var(--primary) 20%, transparent)' }} />
+                  <span className="text-[9px]" style={{ color: 'var(--muted-foreground)' }}>{installedPlugins.length}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {installedPlugins
@@ -408,24 +408,24 @@ export function BlockLibrarySidebar() {
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.015 }}
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
+
+
                           onClick={() => handleAddPluginBlock(plugin)}
-                          className="flex flex-col items-center gap-1.5 p-2.5 rounded-lg transition-all group cursor-pointer bg-purple-500/5 dark:bg-purple-500/10 border border-purple-500/10 dark:border-purple-500/20 hover:bg-purple-500/10 dark:hover:bg-purple-500/20 hover:border-purple-500/20 dark:hover:border-purple-500/40"
+                          className="flex flex-col items-center gap-1.5 p-2.5 rounded-sm group cursor-pointer bg-primary/5 dark:bg-primary/10 border border-primary/10 dark:border-primary/20 hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary/20 dark:hover:border-primary/40"
                         >
                           <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center shadow-md"
-                            style={{ background: plugin.color ?? '#7C3AED' }}
+                            className="w-8 h-8 rounded-sm flex items-center justify-center shadow-none"
+                            style={{ background: plugin.color ?? 'var(--primary)' }}
                           >
-                            <Puzzle className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
+                            <Puzzle className="w-3.5 h-3.5 text-foreground dark:text-white" />
                           </div>
                           <span className="text-[10px] font-medium leading-none text-center line-clamp-1"
-                            style={{ color: '#8B8BAA' }}>
+                            style={{ color: 'var(--muted-foreground)' }}>
                             {plugin.name}
                           </span>
                         </motion.button>
                       </TooltipTrigger>
-                      <TooltipContent side="right" className="text-[11px] bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07] text-[#8B8BAA]">
+                      <TooltipContent side="right" className="text-[11px] bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07] text-[var(--muted-foreground)]">
                         {plugin.description ?? plugin.name}
                       </TooltipContent>
                     </Tooltip>
@@ -436,15 +436,15 @@ export function BlockLibrarySidebar() {
 
             {filteredCategories.length === 0 && installedPlugins.length === 0 && (
               <div className="flex flex-col items-center justify-center py-12 gap-2">
-                <Search className="w-6 h-6" style={{ color: '#55556A' }} />
-                <p className="text-xs" style={{ color: '#55556A' }}>No blocks match "{searchQuery}"</p>
+                <Search className="w-6 h-6" style={{ color: 'var(--muted-foreground)' }} />
+                <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>No blocks match "{searchQuery}"</p>
               </div>
             )}
           </div>
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-3 border-t border-slate-200 dark:border-white/[0.07] flex-shrink-0 flex flex-col gap-2">
+        <div className="p-3 border-t border-border dark:border-white/[0.07] flex-shrink-0 flex flex-col gap-2">
           {/* Install Plugin button */}
           <input
             ref={fileInputRef}
@@ -456,11 +456,11 @@ export function BlockLibrarySidebar() {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={installing}
-            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-medium transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-sm text-[11px] font-medium"
             style={{
-              background: 'rgba(124,58,237,0.12)',
-              border: '1px solid rgba(124,58,237,0.3)',
-              color: installing ? '#55556A' : '#A78BFA',
+              background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+              border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
+              color: installing ? 'var(--muted-foreground)' : 'var(--primary)',
               cursor: installing ? 'not-allowed' : 'pointer',
             }}
           >
@@ -470,8 +470,8 @@ export function BlockLibrarySidebar() {
             }
           </button>
           <div className="flex items-center justify-center gap-1.5">
-            <Zap className="w-3 h-3" style={{ color: '#7C3AED' }} />
-            <span className="text-[10px]" style={{ color: '#55556A' }}>
+            <Zap className="w-3 h-3" style={{ color: 'var(--primary)' }} />
+            <span className="text-[10px]" style={{ color: 'var(--muted-foreground)' }}>
               {TOTAL_BLOCKS + installedPlugins.length} blocks · {BLOCK_CATEGORIES.length} categories{installedPlugins.length > 0 ? ` · ${installedPlugins.length} plugins` : ''}
             </span>
           </div>

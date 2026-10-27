@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ImageUploader } from '@/components/content-manager/ImageUploader';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2 } from '@/components/ui/studio-icons';
 
 interface BrandingConfig {
   appName: string;
@@ -48,7 +48,7 @@ export default function BrandingPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>;
+    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (
@@ -58,7 +58,7 @@ export default function BrandingPage() {
         <button
           onClick={save}
           disabled={saving}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-sm text-sm font-medium"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Save
@@ -67,11 +67,11 @@ export default function BrandingPage() {
 
       <div className="space-y-6">
         <div>
-          <label className="block text-sm text-gray-400 mb-1">App Name</label>
+          <label className="block text-sm text-muted-foreground mb-1">App Name</label>
           <input
             value={config.appName}
             onChange={(e) => setConfig({ ...config, appName: e.target.value })}
-            className="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white"
+            className="w-full bg-card/50 border border-border rounded-sm px-4 py-2.5 text-white"
             placeholder="SKYGEN"
           />
         </div>
@@ -91,7 +91,7 @@ export default function BrandingPage() {
 
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Primary Color</label>
+            <label className="block text-sm text-muted-foreground mb-1">Primary Color</label>
             <div className="flex items-center gap-3">
               <input
                 type="color"
@@ -102,12 +102,12 @@ export default function BrandingPage() {
               <input
                 value={config.primaryColor}
                 onChange={(e) => setConfig({ ...config, primaryColor: e.target.value })}
-                className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white font-mono text-sm"
+                className="flex-1 bg-card/50 border border-border rounded-sm px-4 py-2.5 text-white font-mono text-sm"
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Secondary Color</label>
+            <label className="block text-sm text-muted-foreground mb-1">Secondary Color</label>
             <div className="flex items-center gap-3">
               <input
                 type="color"
@@ -118,22 +118,22 @@ export default function BrandingPage() {
               <input
                 value={config.secondaryColor}
                 onChange={(e) => setConfig({ ...config, secondaryColor: e.target.value })}
-                className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white font-mono text-sm"
+                className="flex-1 bg-card/50 border border-border rounded-sm px-4 py-2.5 text-white font-mono text-sm"
               />
             </div>
           </div>
         </div>
 
         {/* Live Preview */}
-        <div className="rounded-lg border border-gray-700 p-6 bg-gray-900/50">
-          <p className="text-xs text-gray-500 mb-3">Preview</p>
+        <div className="rounded-sm border border-border p-6 bg-card/50">
+          <p className="text-xs text-muted-foreground mb-3">Preview</p>
           <div className="flex items-center gap-3">
             {config.logoUrl ? (
               <img src={config.logoUrl} alt="Logo" className="w-8 h-8 object-contain" />
             ) : (
-              <div className="w-8 h-8 rounded-lg" style={{ background: `linear-gradient(135deg, ${config.primaryColor}, ${config.secondaryColor})` }} />
+              <div className="w-8 h-8 rounded-sm" style={{ background: 'var(--studio-accent-wash)' }} />
             )}
-            <span className="text-lg font-bold" style={{ background: `linear-gradient(135deg, ${config.primaryColor}, ${config.secondaryColor})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <span className="text-lg font-bold" style={{ background: 'var(--studio-accent-wash)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               {config.appName || 'SKYGEN'}
             </span>
           </div>

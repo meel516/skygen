@@ -17,7 +17,7 @@ import {
   FileVideo,
   Unlink,
   Linkedin,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 
 interface ExportPanelProps {
   videoBlob?: Blob | null;
@@ -221,7 +221,7 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 z-50 bg-gradient-to-r from-cyan-600 to-indigo-600 text-slate-900 dark:text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:from-cyan-700 hover:to-indigo-700 transition-all"
+        className="fixed top-4 right-4 z-50 bg-primary text-primary-foreground dark:text-primary-foreground px-4 py-2 rounded-sm shadow-none flex items-center gap-2"
       >
         <FileVideo className="w-4 h-4" />
         Export
@@ -231,29 +231,29 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 w-80 bg-gray-900/95 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-700/50 overflow-hidden">
+    <div className="fixed top-4 right-4 z-50 w-80 bg-card/95 rounded-sm shadow-none border border-border/50 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gray-800/50 border-b border-gray-700/50">
+      <div className="flex items-center justify-between px-4 py-3 bg-card/50 border-b border-border/50">
         <div className="flex items-center gap-2">
-          <FileVideo className="w-5 h-5 text-cyan-400" />
-          <span className="font-semibold text-slate-900 dark:text-white">Export</span>
+          <FileVideo className="w-5 h-5 text-primary" />
+          <span className="font-semibold text-foreground dark:text-white">Export</span>
         </div>
         <button
           onClick={() => setIsOpen(false)}
-          className="p-1 hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-1 hover:bg-gray-700 rounded-sm"
         >
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-5 h-5 text-muted-foreground" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-700/50">
+      <div className="flex border-b border-border/50">
         <button
           onClick={() => setActiveTab('export')}
           className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
             activeTab === 'export'
-              ? 'text-cyan-400 border-b-2 border-cyan-400 bg-gray-800/30'
-              : 'text-gray-400 hover:text-slate-900 dark:text-white'
+              ? 'text-primary border-b-2 border-primary bg-card/30'
+              : 'text-muted-foreground hover:text-foreground dark:text-white'
           }`}
         >
           Download
@@ -262,8 +262,8 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
           onClick={() => setActiveTab('youtube')}
           className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
             activeTab === 'youtube'
-              ? 'text-red-400 border-b-2 border-red-400 bg-gray-800/30'
-              : 'text-gray-400 hover:text-slate-900 dark:text-white'
+              ? 'text-red-400 border-b-2 border-red-400 bg-card/30'
+              : 'text-muted-foreground hover:text-foreground dark:text-white'
           }`}
         >
           YouTube
@@ -272,8 +272,8 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
           onClick={() => setActiveTab('linkedin')}
           className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
             activeTab === 'linkedin'
-              ? 'text-blue-400 border-b-2 border-blue-400 bg-gray-800/30'
-              : 'text-gray-400 hover:text-slate-900 dark:text-white'
+              ? 'text-blue-400 border-b-2 border-blue-400 bg-card/30'
+              : 'text-muted-foreground hover:text-foreground dark:text-white'
           }`}
         >
           LinkedIn
@@ -287,12 +287,12 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
             <Button
               onClick={onDownload}
               disabled={!videoBlob}
-              className="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-700 hover:to-indigo-700"
+              className="w-full bg-primary"
             >
               <Download className="w-4 h-4 mr-2" />
               Download MP4
             </Button>
-            <p className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-muted-foreground text-center">
               Render a video first to enable export options
             </p>
           </div>
@@ -307,28 +307,28 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
                   <Check className="w-6 h-6 text-green-500" />
                 </div>
                 <p className="text-green-400 font-medium">Uploaded to YouTube!</p>
-                <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-2">
-                  <Link className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <input type="text" value={youtubeUrl} readOnly className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white outline-none" />
-                  <button onClick={() => handleCopyLink(youtubeUrl)} className="p-1 hover:bg-gray-700 rounded transition-colors">
-                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                <div className="flex items-center gap-2 bg-card rounded-sm p-2">
+                  <Link className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <input type="text" value={youtubeUrl} readOnly className="flex-1 bg-transparent text-sm text-foreground dark:text-white outline-none" />
+                  <button onClick={() => handleCopyLink(youtubeUrl)} className="p-1 hover:bg-gray-700 rounded">
+                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                   </button>
                 </div>
                 <a href={youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 text-red-400 hover:text-red-300 text-sm">
                   <ExternalLink className="w-4 h-4" /> View on YouTube
                 </a>
-                <button onClick={() => setShowSuccess(false)} className="text-xs text-gray-500 hover:text-gray-400">Upload another</button>
+                <button onClick={() => setShowSuccess(false)} className="text-xs text-muted-foreground hover:text-muted-foreground">Upload another</button>
               </div>
             ) : isUploading ? (
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-slate-900 dark:text-white">
+                <div className="flex items-center gap-2 text-foreground dark:text-white">
                   <Loader2 className="w-5 h-5 animate-spin text-red-400" />
                   <span>Uploading to YouTube...</span>
                 </div>
                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-red-500 to-red-400 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                  <div className="h-full bg-muted duration-300" style={{ width: `${uploadProgress}%` }} />
                 </div>
-                <p className="text-xs text-gray-400 text-center">{uploadProgress}%</p>
+                <p className="text-xs text-muted-foreground text-center">{uploadProgress}%</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -337,21 +337,21 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
                     {ytConnected ? (
                       <>
                         <span className="flex items-center gap-1.5 text-xs text-green-400"><Check className="w-3 h-3" /> YouTube connected</span>
-                        <button onClick={handleDisconnectYouTube} disabled={isDisconnecting} className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-400 transition-colors">
+                        <button onClick={handleDisconnectYouTube} disabled={isDisconnecting} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-red-400">
                           <Unlink className="w-3 h-3" /> {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
                         </button>
                       </>
                     ) : (
-                      <span className="text-xs text-gray-500">Not connected</span>
+                      <span className="text-xs text-muted-foreground">Not connected</span>
                     )}
                   </div>
                 )}
                 <input type="text" placeholder="Video title" value={videoTitle} onChange={(e) => setVideoTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-slate-900 dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500" />
+                  className="w-full px-3 py-2 bg-card border border-border rounded-sm text-foreground dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-primary" />
                 <textarea placeholder="Description (optional)" value={videoDescription} onChange={(e) => setVideoDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-slate-900 dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500 resize-none" rows={2} />
+                  className="w-full px-3 py-2 bg-card border border-border rounded-sm text-foreground dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-primary resize-none" rows={2} />
                 <select value={videoPrivacy} onChange={(e) => setVideoPrivacy(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:border-cyan-500">
+                  className="w-full px-3 py-2 bg-card border border-border rounded-sm text-foreground dark:text-white text-sm focus:outline-none focus:border-primary">
                   <option value="private">Private</option>
                   <option value="unlisted">Unlisted</option>
                   <option value="public">Public</option>
@@ -379,28 +379,28 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
                   <Check className="w-6 h-6 text-green-500" />
                 </div>
                 <p className="text-green-400 font-medium">Posted to LinkedIn!</p>
-                <div className="flex items-center gap-2 bg-gray-800 rounded-lg p-2">
-                  <Link className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <input type="text" value={liPostUrl} readOnly className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white outline-none" />
-                  <button onClick={() => handleCopyLink(liPostUrl)} className="p-1 hover:bg-gray-700 rounded transition-colors">
-                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-gray-400" />}
+                <div className="flex items-center gap-2 bg-card rounded-sm p-2">
+                  <Link className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <input type="text" value={liPostUrl} readOnly className="flex-1 bg-transparent text-sm text-foreground dark:text-white outline-none" />
+                  <button onClick={() => handleCopyLink(liPostUrl)} className="p-1 hover:bg-gray-700 rounded">
+                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                   </button>
                 </div>
                 <a href={liPostUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 text-sm">
                   <ExternalLink className="w-4 h-4" /> View on LinkedIn
                 </a>
-                <button onClick={() => setLiShowSuccess(false)} className="text-xs text-gray-500 hover:text-gray-400">Post another</button>
+                <button onClick={() => setLiShowSuccess(false)} className="text-xs text-muted-foreground hover:text-muted-foreground">Post another</button>
               </div>
             ) : liUploading ? (
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-slate-900 dark:text-white">
+                <div className="flex items-center gap-2 text-foreground dark:text-white">
                   <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
                   <span>Posting to LinkedIn...</span>
                 </div>
                 <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-300" style={{ width: `${liProgress}%` }} />
+                  <div className="h-full bg-muted duration-300" style={{ width: `${liProgress}%` }} />
                 </div>
-                <p className="text-xs text-gray-400 text-center">{liProgress}%</p>
+                <p className="text-xs text-muted-foreground text-center">{liProgress}%</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -409,21 +409,21 @@ export function ExportPanel({ videoBlob, onDownload, onYouTubeUpload }: ExportPa
                     {liConnected ? (
                       <>
                         <span className="flex items-center gap-1.5 text-xs text-green-400"><Check className="w-3 h-3" /> LinkedIn connected</span>
-                        <button onClick={handleDisconnectLinkedIn} disabled={liDisconnecting} className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-400 transition-colors">
+                        <button onClick={handleDisconnectLinkedIn} disabled={liDisconnecting} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-red-400">
                           <Unlink className="w-3 h-3" /> {liDisconnecting ? 'Disconnecting...' : 'Disconnect'}
                         </button>
                       </>
                     ) : (
-                      <span className="text-xs text-gray-500">Not connected</span>
+                      <span className="text-xs text-muted-foreground">Not connected</span>
                     )}
                   </div>
                 )}
                 <input type="text" placeholder="Post title" value={liTitle} onChange={(e) => setLiTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-slate-900 dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500" />
+                  className="w-full px-3 py-2 bg-card border border-border rounded-sm text-foreground dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500" />
                 <textarea placeholder="Post description (optional)" value={liDescription} onChange={(e) => setLiDescription(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-slate-900 dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none" rows={2} />
+                  className="w-full px-3 py-2 bg-card border border-border rounded-sm text-foreground dark:text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none" rows={2} />
                 <select value={liVisibility} onChange={(e) => setLiVisibility(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-slate-900 dark:text-white text-sm focus:outline-none focus:border-blue-500">
+                  className="w-full px-3 py-2 bg-card border border-border rounded-sm text-foreground dark:text-white text-sm focus:outline-none focus:border-blue-500">
                   <option value="PUBLIC">Public</option>
                   <option value="CONNECTIONS">Connections only</option>
                 </select>

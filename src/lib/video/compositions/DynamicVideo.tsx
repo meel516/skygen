@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import * as ReactDOM from 'react-dom';
-import * as ReactDOMClient from 'react-dom/client';
-import * as jsxDevRuntime from 'react/jsx-dev-runtime';
-import * as jsxRuntime from 'react/jsx-runtime';
-import * as ThreeLib from 'three';
-import * as ReactThreeFiber from '@react-three/fiber';
-import * as ReactThreeDrei from '@react-three/drei';
-import * as ReactThreePostprocessing from '@react-three/postprocessing';
-import * as PostprocessingLib from 'postprocessing';
+import { pluginRuntimeDependencies } from '../../plugins/runtime-dependencies';
+import { requirePluginDependency } from '../../plugins/runtime-contract';
 import {
   AbsoluteFill,
   Sequence,
@@ -18,13 +11,9 @@ import {
   delayRender,
   continueRender,
 } from 'remotion';
-import { Audio, Video as MediaVideo } from '@remotion/media';
+import { BrowserAudio as Audio } from '../components/BrowserAudio';
+import { BrowserRenderVideo } from '../components/BrowserRenderVideo';
 import * as RemotionLib from 'remotion';
-import * as RemotionMotionBlur from '@remotion/motion-blur';
-import * as RemotionTransitions from '@remotion/transitions';
-import * as RemotionSfx from '@remotion/sfx';
-import * as RemotionLottie from '@remotion/lottie';
-import * as RemotionMediaUtils from '@remotion/media-utils';
 import {
   Intro,
   Outro,
@@ -153,13 +142,11 @@ const ProxiedImg = React.forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HT
 );
 
 /**
- * Wraps @remotion/media's <Audio> so cross-origin audio URLs auto-proxy.
- * Required because S3 presigned URLs (Remotion Lambda TTS output) lack CORS
- * headers — the web-renderer's audio fetch fails without going through proxy.
+ * Use browser-verified direct audio where possible, with a proxy fallback for CORS.
+ * This also unwraps URLs previously rewritten by proxyMediaUrlsDeep.
  */
 function ProxiedAudio(props: any) {
-  const proxied = proxyMediaSrc(props.src);
-  return <Audio {...props} src={proxied} />;
+  return <Audio {...props} />;
 }
 
 const IMAGE_URL_RE = /^https?:\/\/[^\s]+\.(?:jpe?g|png|webp|gif|avif|svg)(?:\?[^\s]*)?$/i;
@@ -365,37 +352,13 @@ function PluginScene({ block, theme, animation, motionProfile, bundleUrl }: Plug
 
   // Phase 1: Fetch and evaluate the plugin bundle.
   useEffect(() => {
+    const deps: Record<string, unknown> = {
+      ...pluginRuntimeDependencies,
+      // Preserve the renderer's WebCodecs audio and CORS-aware media.
+      remotion: { ...RemotionLib, Audio: ProxiedAudio, Img: ProxiedImg, Video: BrowserRenderVideo },
+    };
     if (typeof globalThis !== 'undefined') {
       const g = globalThis as Record<string, unknown>;
-      const deps = (g.__pluginDeps ?? {}) as Record<string, unknown>;
-      deps['react'] = React;
-      deps['react/jsx-dev-runtime'] = jsxDevRuntime;
-      deps['react/jsx-runtime'] = jsxRuntime;
-      deps['react-dom'] = ReactDOM;
-      deps['react-dom/client'] = ReactDOMClient;
-      // Override the legacy `Audio` (Html5Audio) from remotion with the
-      // WebCodecs-compatible one from @remotion/media — required for client
-      // (browser) renders. Plugins using `Audio` from 'remotion' will now
-      // transparently get the new component.
-      // Also wrap `Img` so cross-origin URLs auto-route through our CORS
-      // proxy — required because @remotion/web-renderer aborts the whole
-      // render if a single image fetch fails (CORS / 403 / etc).
-      deps['remotion'] = {
-        ...RemotionLib,
-        Audio: ProxiedAudio,
-        Img: ProxiedImg,
-        Video: MediaVideo,
-      };
-      deps['three'] = ThreeLib;
-      deps['@react-three/fiber'] = ReactThreeFiber;
-      deps['@react-three/drei'] = ReactThreeDrei;
-      deps['@react-three/postprocessing'] = ReactThreePostprocessing;
-      deps['postprocessing'] = PostprocessingLib;
-      deps['@remotion/motion-blur'] = RemotionMotionBlur;
-      deps['@remotion/transitions'] = RemotionTransitions;
-      deps['@remotion/sfx'] = RemotionSfx;
-      deps['@remotion/lottie'] = RemotionLottie;
-      deps['@remotion/media-utils'] = RemotionMediaUtils;
       g.__pluginDeps = deps;
     }
 
@@ -414,13 +377,7 @@ function PluginScene({ block, theme, animation, motionProfile, bundleUrl }: Plug
         const exportsObj: Record<string, unknown> = {};
         const moduleObj = { exports: exportsObj };
         const customRequire = (pkg: string) => {
-          const g = globalThis as Record<string, unknown>;
-          const deps = (g.__pluginDeps ?? {}) as Record<string, unknown>;
-          if (deps[pkg]) {
-            return deps[pkg];
-          }
-          console.warn(`Plugin "${block.pluginId}" requested unknown module: ${pkg}`);
-          return {};
+          return requirePluginDependency(deps, pkg, block.pluginId);
         };
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         const factory = new Function('exports', 'require', 'module', code);

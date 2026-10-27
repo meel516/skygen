@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Pencil, Trash2, LayoutGrid, ExternalLink, Globe, Lock, Play, Crown, Key, Copy, Check, X } from 'lucide-react';
+import { Pencil, Trash2, LayoutGrid, ExternalLink, Globe, Lock, Play, Crown, Key, Copy, Check, X } from '@/components/ui/studio-icons';
 import { useSession } from 'next-auth/react';
 import { hasPremiumAccess } from '@/lib/roles';
 import { usePremiumConfig, getUpgradeUrl } from '@/lib/use-premium-config';
@@ -39,22 +39,22 @@ function ApiKeysSection({ apiKeys, apiKeysLoading, generatingKey, newKeyLabel, s
   return (
     <div className="mt-12 mb-8">
       <div className="flex items-center gap-3 mb-2">
-        <Key className="w-5 h-5 text-purple-400" />
+        <Key className="w-5 h-5 text-primary" />
         <h2 className="text-xl font-bold text-white">API Keys</h2>
       </div>
-      <p className="text-sm mb-6" style={{ color: '#8B8BAA' }}>
+      <p className="text-sm mb-6" style={{ color: 'var(--muted-foreground)' }}>
         Use API keys to connect Claude Code or other tools to your account. Each key has full access — keep it secret.
       </p>
       {revealedKey && (
-        <div className="mb-6 rounded-xl p-4 border" style={{ background: 'rgba(124,58,237,0.08)', borderColor: 'rgba(124,58,237,0.3)' }}>
-          <p className="text-sm font-medium text-purple-300 mb-2">Copy your key now — it won't be shown again.</p>
+        <div className="mb-6 rounded-sm p-4 border" style={{ background: 'color-mix(in srgb, var(--primary) 8%, transparent)', borderColor: 'color-mix(in srgb, var(--primary) 30%, transparent)' }}>
+          <p className="text-sm font-medium text-primary mb-2">Copy your key now — it won't be shown again.</p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 text-sm bg-black/40 rounded-lg px-3 py-2 text-green-400 font-mono break-all">{revealedKey}</code>
-            <button onClick={handleCopy} className="p-2 rounded-lg transition-colors" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <code className="flex-1 text-sm bg-black/40 rounded-sm px-3 py-2 text-green-400 font-mono break-all">{revealedKey}</code>
+            <button onClick={handleCopy} className="p-2 rounded-sm" style={{ background: 'var(--border)' }}>
               {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-white" />}
             </button>
-            <button onClick={() => setRevealedKey(null)} className="p-2 rounded-lg transition-colors" style={{ background: 'rgba(255,255,255,0.06)' }}>
-              <X className="w-4 h-4 text-gray-400" />
+            <button onClick={() => setRevealedKey(null)} className="p-2 rounded-sm" style={{ background: 'var(--border)' }}>
+              <X className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
         </div>
@@ -65,39 +65,39 @@ function ApiKeysSection({ apiKeys, apiKeysLoading, generatingKey, newKeyLabel, s
           placeholder="Key label (optional)"
           value={newKeyLabel}
           onChange={e => setNewKeyLabel(e.target.value)}
-          className="rounded-lg px-3 py-2 text-sm text-white w-48 focus:outline-none"
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+          className="rounded-sm px-3 py-2 text-sm text-white w-48 focus:outline-none"
+          style={{ background: 'var(--border)', border: '1px solid var(--border)' }}
         />
         <button
           onClick={handleGenerateKey}
           disabled={generatingKey || apiKeys.length >= 5}
-          className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-50"
-          style={{ background: '#7C3AED' }}
+          className="px-4 py-2 rounded-sm text-sm font-medium text-white disabled:opacity-50"
+          style={{ background: 'var(--primary)' }}
         >
           {generatingKey ? 'Generating…' : 'Generate Key'}
         </button>
         {apiKeys.length >= 5 && (
-          <span className="text-xs" style={{ color: '#8B8BAA' }}>Max 5 keys reached</span>
+          <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>Max 5 keys reached</span>
         )}
       </div>
       {apiKeysLoading ? (
-        <p className="text-sm" style={{ color: '#8B8BAA' }}>Loading…</p>
+        <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Loading…</p>
       ) : apiKeys.length === 0 ? (
-        <p className="text-sm" style={{ color: '#8B8BAA' }}>No API keys yet.</p>
+        <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>No API keys yet.</p>
       ) : (
         <div className="flex flex-col gap-2">
           {apiKeys.map(k => (
-            <div key={k.id} className="flex items-center justify-between rounded-xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div key={k.id} className="flex items-center justify-between rounded-sm px-4 py-3" style={{ background: 'var(--border)', border: '1px solid var(--border)' }}>
               <div className="flex items-center gap-4">
-                <code className="text-sm font-mono text-purple-300">{k.key_prefix}…</code>
+                <code className="text-sm font-mono text-primary">{k.key_prefix}…</code>
                 <span className="text-sm text-white">{k.label}</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-xs" style={{ color: '#8B8BAA' }}>
+                <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
                   Created {formatDate(k.created_at)}
                   {k.last_used_at && ` · Last used ${formatDate(k.last_used_at)}`}
                 </span>
-                <button onClick={() => handleRevokeKey(k.id)} className="p-1.5 rounded-lg transition-colors hover:bg-red-500/10">
+                <button onClick={() => handleRevokeKey(k.id)} className="p-1.5 rounded-sm hover:bg-red-500/10">
                   <Trash2 className="w-3.5 h-3.5 text-red-400" />
                 </button>
               </div>
@@ -251,7 +251,7 @@ export default function TemplatesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-48">
-        <div className="w-5 h-5 rounded-full border-2 border-[#7C3AED] border-t-transparent animate-spin" />
+        <div className="w-5 h-5 rounded-full border-2 border-[var(--primary)] border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -260,23 +260,23 @@ export default function TemplatesPage() {
     return (
       <div className="max-w-3xl">
         <div
-          className="flex flex-col items-center justify-center py-20 rounded-2xl text-center"
-          style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex flex-col items-center justify-center py-20 rounded-sm text-center"
+          style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
         >
           <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+            className="w-16 h-16 rounded-sm flex items-center justify-center mb-4"
             style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.2)' }}
           >
             <Crown className="w-7 h-7" style={{ color: '#FBBF24' }} />
           </div>
-          <p className="text-[18px] font-semibold mb-2" style={{ color: '#F1F1F8' }}>My Templates is Premium</p>
-          <p className="text-[13px] max-w-[420px] mb-6" style={{ color: '#8B8BAA' }}>
+          <p className="text-[18px] font-semibold mb-2" style={{ color: 'var(--foreground)' }}>My Templates is Premium</p>
+          <p className="text-[13px] max-w-[420px] mb-6" style={{ color: 'var(--muted-foreground)' }}>
             Upgrade to Premium to save your own templates, reuse them later, and unlock advanced workflows.
           </p>
           <button
             onClick={() => { window.open(getUpgradeUrl(premiumConfig), '_blank'); }}
-            className="px-4 py-2 rounded-lg text-[12px] font-medium text-white transition-all"
-            style={{ background: 'linear-gradient(135deg, #7C3AED, #6D28D9)', boxShadow: '0 4px 16px rgba(124,58,237,0.3)' }}
+            className="px-4 py-2 rounded-sm text-[12px] font-medium text-white"
+            style={{ background: 'var(--primary)', boxShadow: 'none' }}
           >
             Upgrade to Premium
           </button>
@@ -302,25 +302,25 @@ export default function TemplatesPage() {
   return (
     <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold mb-1" style={{ color: '#F1F1F8' }}>My Templates</h1>
-        <p className="text-[13px]" style={{ color: '#8B8BAA' }}>
+        <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--foreground)' }}>My Templates</h1>
+        <p className="text-[13px]" style={{ color: 'var(--muted-foreground)' }}>
           {templates.length} saved template{templates.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {templates.length === 0 ? (
         <div
-          className="flex flex-col items-center justify-center py-20 rounded-2xl text-center"
-          style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex flex-col items-center justify-center py-20 rounded-sm text-center"
+          style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
         >
           <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            className="w-16 h-16 rounded-sm flex items-center justify-center mb-4"
+            style={{ background: 'var(--border)' }}
           >
-            <LayoutGrid className="w-7 h-7" style={{ color: '#55556A' }} />
+            <LayoutGrid className="w-7 h-7" style={{ color: 'var(--muted-foreground)' }} />
           </div>
-          <p className="text-[14px] font-medium mb-1" style={{ color: '#F1F1F8' }}>No templates yet</p>
-          <p className="text-[12px] max-w-[220px]" style={{ color: '#55556A' }}>
+          <p className="text-[14px] font-medium mb-1" style={{ color: 'var(--foreground)' }}>No templates yet</p>
+          <p className="text-[12px] max-w-[220px]" style={{ color: 'var(--muted-foreground)' }}>
             Build a video in the editor and use "Save as Template" to save it here.
           </p>
         </div>
@@ -329,13 +329,13 @@ export default function TemplatesPage() {
           {templates.map((template) => (
             <div
               key={template.id}
-              className="rounded-xl overflow-hidden"
-              style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.07)' }}
+              className="rounded-sm overflow-hidden"
+              style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
             >
               {/* Card row - Video/Image preview style */}
               <div className="flex items-center gap-4 p-4">
                 {/* Thumbnail preview */}
-                <div className="relative w-24 h-36 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
+                <div className="relative w-24 h-36 rounded-sm overflow-hidden flex-shrink-0 bg-card">
                   {template.previewUrl ? (
                     template.previewUrl.match(/\.(mp4|webm|mov)(\?|$)/i) ? (
                       <video src={template.previewUrl} muted loop playsInline autoPlay className="w-full h-full object-cover" />
@@ -343,16 +343,16 @@ export default function TemplatesPage() {
                       <img src={template.previewUrl} alt={template.name} className="w-full h-full object-cover" />
                     )
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-gray-800 to-gray-900">
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-muted">
                       <span className="text-3xl">{getCategoryEmoji(template.category)}</span>
-                      <span className="text-[10px] text-gray-500">{template.blocks?.length || 0} blocks</span>
+                      <span className="text-[10px] text-muted-foreground">{template.blocks?.length || 0} blocks</span>
                     </div>
                   )}
                   {/* Play icon overlay */}
                   {template.previewUrl && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity">
                       <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
-                        <Play className="w-5 h-5 fill-white text-gray-900 ml-0.5" />
+                        <Play className="w-5 h-5 fill-white text-foreground ml-0.5" />
                       </div>
                     </div>
                   )}
@@ -361,12 +361,12 @@ export default function TemplatesPage() {
                 {/* Template info */}
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
                   <div className="flex items-center gap-2">
-                    <p className="text-[14px] font-semibold truncate" style={{ color: '#F1F1F8' }}>{template.name}</p>
+                    <p className="text-[14px] font-semibold truncate" style={{ color: 'var(--foreground)' }}>{template.name}</p>
                     <span
                       className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]"
                       style={{
-                        background: template.isPublic ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.05)',
-                        color: template.isPublic ? '#34D399' : '#55556A',
+                        background: template.isPublic ? 'rgba(16,185,129,0.12)' : 'var(--border)',
+                        color: template.isPublic ? '#34D399' : 'var(--muted-foreground)',
                       }}
                     >
                       {template.isPublic ? <Globe className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
@@ -375,10 +375,10 @@ export default function TemplatesPage() {
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     {template.description && (
-                      <span className="text-[11px] truncate" style={{ color: '#8B8BAA' }}>{template.description}</span>
+                      <span className="text-[11px] truncate" style={{ color: 'var(--muted-foreground)' }}>{template.description}</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 mt-2 text-[10px]" style={{ color: '#55556A' }}>
+                  <div className="flex items-center gap-3 mt-2 text-[10px]" style={{ color: 'var(--muted-foreground)' }}>
                     <span>{getCategoryEmoji(template.category)} {template.category || 'General'}</span>
                     <span>📦 {template.blocks?.length || 0} blocks</span>
                     <span>📅 {formatDate(template.createdAt)}</span>
@@ -389,8 +389,8 @@ export default function TemplatesPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleLoadInEditor(template)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] transition-colors"
-                    style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.08)' }}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px]"
+                    style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
                     title="Load into editor"
                   >
                     <ExternalLink className="w-3 h-3" />
@@ -409,10 +409,10 @@ export default function TemplatesPage() {
                         setTemplates(prev => prev.map(t => t.id === template.id ? { ...t, isPublic: newPublic } : t));
                       }
                     }}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] transition-colors"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px]"
                     style={{
-                      border: `1px solid ${template.isPublic ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                      color: template.isPublic ? '#34D399' : '#55556A',
+                      border: `1px solid ${template.isPublic ? 'rgba(16,185,129,0.3)' : 'var(--border)'}`,
+                      color: template.isPublic ? '#34D399' : 'var(--muted-foreground)',
                     }}
                     title={template.isPublic ? 'Make private' : 'Make public'}
                   >
@@ -421,8 +421,8 @@ export default function TemplatesPage() {
                   </button>
                   <button
                     onClick={() => handleEditInEditor(template)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] transition-colors hover:bg-[#25253A]"
-                    style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.08)' }}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px] hover:bg-[var(--accent)]"
+                    style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
                     title="Edit template in editor"
                   >
                     <Pencil className="w-3 h-3" />
@@ -433,15 +433,15 @@ export default function TemplatesPage() {
                       <button
                         onClick={() => handleDelete(template.id)}
                         disabled={deleting === template.id}
-                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium text-white"
+                        className="px-2.5 py-1 rounded-sm text-[11px] font-medium text-white"
                         style={{ background: '#EF4444' }}
                       >
                         {deleting === template.id ? '…' : 'Delete'}
                       </button>
                       <button
                         onClick={() => setConfirmId(null)}
-                        className="px-2.5 py-1 rounded-lg text-[11px]"
-                        style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.08)' }}
+                        className="px-2.5 py-1 rounded-sm text-[11px]"
+                        style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
                       >
                         Cancel
                       </button>
@@ -449,8 +449,8 @@ export default function TemplatesPage() {
                   ) : (
                     <button
                       onClick={() => setConfirmId(template.id)}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10"
-                      style={{ color: '#55556A' }}
+                      className="w-7 h-7 rounded-sm flex items-center justify-center hover:bg-red-500/10"
+                      style={{ color: 'var(--muted-foreground)' }}
                       title="Delete template"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -463,35 +463,35 @@ export default function TemplatesPage() {
               {editingId === template.id && (
                 <div
                   className="px-4 pb-4 pt-0 border-t space-y-3"
-                  style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+                  style={{ borderColor: 'var(--border)' }}
                 >
                   <div className="grid grid-cols-2 gap-3 mt-3">
                     <div>
-                      <label className="text-[11px] mb-1 block" style={{ color: '#55556A' }}>Name</label>
+                      <label className="text-[11px] mb-1 block" style={{ color: 'var(--muted-foreground)' }}>Name</label>
                       <input
                         value={editForm.name}
                         onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                        className="w-full px-3 py-1.5 rounded-lg text-[12px] outline-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#F1F1F8' }}
+                        className="w-full px-3 py-1.5 rounded-sm text-[12px] outline-none"
+                        style={{ background: 'var(--border)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] mb-1 block" style={{ color: '#55556A' }}>Category</label>
+                      <label className="text-[11px] mb-1 block" style={{ color: 'var(--muted-foreground)' }}>Category</label>
                       <input
                         value={editForm.category}
                         onChange={(e) => setEditForm((f) => ({ ...f, category: e.target.value }))}
-                        className="w-full px-3 py-1.5 rounded-lg text-[12px] outline-none"
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#F1F1F8' }}
+                        className="w-full px-3 py-1.5 rounded-sm text-[12px] outline-none"
+                        style={{ background: 'var(--border)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="text-[11px] mb-1 block" style={{ color: '#55556A' }}>Description</label>
+                    <label className="text-[11px] mb-1 block" style={{ color: 'var(--muted-foreground)' }}>Description</label>
                     <input
                       value={editForm.description}
                       onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
-                      className="w-full px-3 py-1.5 rounded-lg text-[12px] outline-none"
-                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#F1F1F8' }}
+                      className="w-full px-3 py-1.5 rounded-sm text-[12px] outline-none"
+                      style={{ background: 'var(--border)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -500,9 +500,9 @@ export default function TemplatesPage() {
                       id={`pub-${template.id}`}
                       checked={editForm.isPublic}
                       onChange={(e) => setEditForm((f) => ({ ...f, isPublic: e.target.checked }))}
-                      className="accent-[#7C3AED]"
+                      className="accent-[var(--primary)]"
                     />
-                    <label htmlFor={`pub-${template.id}`} className="text-[12px]" style={{ color: '#8B8BAA' }}>
+                    <label htmlFor={`pub-${template.id}`} className="text-[12px]" style={{ color: 'var(--muted-foreground)' }}>
                       Make public (visible to all users)
                     </label>
                   </div>
@@ -510,15 +510,15 @@ export default function TemplatesPage() {
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className="px-4 py-1.5 rounded-lg text-[12px] font-medium text-white transition-all"
-                      style={{ background: '#7C3AED' }}
+                      className="px-4 py-1.5 rounded-sm text-[12px] font-medium text-white"
+                      style={{ background: 'var(--primary)' }}
                     >
                       {saving ? 'Saving…' : 'Save Changes'}
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="px-4 py-1.5 rounded-lg text-[12px] transition-colors"
-                      style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.08)' }}
+                      className="px-4 py-1.5 rounded-sm text-[12px]"
+                      style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
                     >
                       Cancel
                     </button>

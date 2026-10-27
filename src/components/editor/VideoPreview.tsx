@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditorStore } from '@/store/editor-store';
-import { Download, Loader2, Video, Maximize2, ChevronDown, FlaskConical, X } from 'lucide-react';
+import { Download, Loader2, Video, Maximize2, ChevronDown, FlaskConical, X } from '@/components/ui/studio-icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ExportModal } from './ExportModal';
 import { Player, PlayerRef } from '@remotion/player';
@@ -138,10 +138,10 @@ export function VideoPreview() {
     <>
     <ExportModal />
     <div
-      className="flex-1 flex items-center justify-center relative overflow-hidden min-h-0 group"
+      className="h-full w-full flex items-center justify-center relative overflow-hidden min-h-0 group"
       style={{
         background: undefined,
-        backgroundImage: 'var(--canvas-grid)',
+        backgroundImage: 'none',
         backgroundSize: '20px 20px',
       }}
     >
@@ -155,13 +155,13 @@ export function VideoPreview() {
             className="text-center relative z-10 flex flex-col items-center"
           >
             <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl"
-              className="bg-slate-100 dark:bg-[#1E1E2D] border border-slate-200 dark:border-white/[0.07] transition-colors"
+              className="w-20 h-20 rounded-sm flex items-center justify-center mx-auto mb-5 shadow-none bg-muted dark:bg-[var(--muted)] border border-border dark:border-white/[0.07]"
+
             >
-              <Video className="w-9 h-9" className="text-slate-500 dark:text-[#55556A]" />
+              <Video className="w-9 h-9 text-muted-foreground dark:text-[var(--muted-foreground)]"  />
             </div>
-            <h3 className="text-[15px] font-semibold mb-1.5 text-slate-900 dark:text-[#F1F1F8]">Canvas is empty</h3>
-            <p className="text-[12px] max-w-[200px] leading-relaxed" className="text-slate-500 dark:text-[#55556A]">
+            <h3 className="text-[15px] font-semibold mb-1.5 text-foreground dark:text-[var(--foreground)]">Canvas is empty</h3>
+            <p className="text-[12px] max-w-[200px] leading-relaxed text-muted-foreground dark:text-[var(--muted-foreground)]" >
               Add blocks from the library panel to begin
             </p>
           </motion.div>
@@ -173,19 +173,13 @@ export function VideoPreview() {
             exit={{ opacity: 0, scale: 0.95 }}
             className="relative z-10"
           >
-            {/* Ambient glow */}
-            <div
-              className="absolute -inset-8 rounded-full pointer-events-none blur-3xl"
-              style={{ background: 'rgba(124,58,237,0.08)' }}
-            />
-
             {/* Clean canvas */}
-            <div className="relative rounded-xl overflow-hidden shadow-2xl">
+            <div className="relative rounded-sm overflow-hidden shadow-none">
               <div
                 ref={playerWrapRef}
                 style={{
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: isFullscreen ? 0 : 12,
+                  border: '1px solid var(--border)',
+                  borderRadius: 0,
                   overflow: 'hidden',
                   position: 'relative',
                   width: isFullscreen ? '100vw' : previewDims.width,
@@ -235,15 +229,15 @@ export function VideoPreview() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px]"
               style={{
-                background: 'rgba(0,0,0,0.65)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                color: '#8B8BAA',
+                background: 'var(--popover)',
+                backdropFilter: 'none',
+                border: '1px solid var(--border)',
+                color: 'var(--muted-foreground)',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#F1F1F8')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#8B8BAA')}
+
+
             >
               {videoInput.videoMeta.aspectRatio}
               <ChevronDown className="w-3 h-3" />
@@ -251,13 +245,13 @@ export function VideoPreview() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            style={{ background: '#1E1E2D', borderColor: 'rgba(255,255,255,0.07)', color: '#F1F1F8' }}
+            style={{ background: 'var(--muted)', borderColor: 'var(--border)', color: 'var(--foreground)' }}
           >
             {ASPECT_RATIOS.map((ratio) => (
               <DropdownMenuItem
                 key={ratio}
                 className="text-xs cursor-pointer"
-                style={{ color: videoInput.videoMeta.aspectRatio === ratio ? '#7C3AED' : '#F1F1F8' }}
+                style={{ color: videoInput.videoMeta.aspectRatio === ratio ? 'var(--primary)' : 'var(--foreground)' }}
                 onClick={() => updateVideoMeta({ aspectRatio: ratio as '9:16' | '16:9' | '1:1' | '4:5' })}
               >
                 {ratio}
@@ -270,12 +264,12 @@ export function VideoPreview() {
       {/* Floating overlay — bottom-right: FPS (left) */}
       <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2">
         <span
-          className="px-2 py-1 rounded-md text-[10px] font-mono"
+          className="px-2 py-1 rounded-sm text-[10px] font-mono"
           style={{
-            background: 'rgba(0,0,0,0.65)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            color: '#55556A',
+            background: 'var(--popover)',
+            backdropFilter: 'none',
+            border: '1px solid var(--border)',
+            color: 'var(--muted-foreground)',
           }}
         >
           {videoInput.videoMeta.fps}fps
@@ -286,7 +280,7 @@ export function VideoPreview() {
       {isClientRendering && (
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40 z-30">
           <div
-            className="h-full bg-purple-500 transition-all duration-200"
+            className="h-full bg-muted duration-200"
             style={{ width: `${Math.round(clientProgress * 100)}%` }}
           />
         </div>
@@ -296,22 +290,22 @@ export function VideoPreview() {
       <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
         {/* Client render status/cancel */}
         {isClientRendering && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px]"
-            style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', color: '#A78BFA' }}
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px]"
+            style={{ background: 'var(--popover)', backdropFilter: 'none', border: '1px solid var(--border)', color: 'var(--primary)' }}
           >
             <Loader2 className="w-3 h-3 animate-spin" />
             <span>{Math.round(clientProgress * 100)}%</span>
-            <button onClick={cancelRender} className="ml-1 hover:text-slate-900 dark:text-white transition-colors" title="Cancel">
+            <button onClick={cancelRender} className="ml-1 hover:text-foreground dark:text-white" title="Cancel">
               <X className="w-3 h-3" />
             </button>
           </div>
         )}
         {clientRenderStatus === 'error' && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px]"
-            style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)', border: '1px solid rgba(239,68,68,0.4)', color: '#F87171' }}
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px]"
+            style={{ background: 'var(--popover)', backdropFilter: 'none', border: '1px solid rgba(239,68,68,0.4)', color: '#F87171' }}
           >
             <span>Render failed</span>
-            <button onClick={resetClientRender} className="ml-1 hover:text-slate-900 dark:text-white transition-colors" title="Dismiss">
+            <button onClick={resetClientRender} className="ml-1 hover:text-foreground dark:text-white" title="Dismiss">
               <X className="w-3 h-3" />
             </button>
           </div>
@@ -322,14 +316,14 @@ export function VideoPreview() {
             <DropdownMenuTrigger asChild>
               <button
                 disabled={isExporting || isClientRendering}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-60"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-semibold disabled:opacity-60"
                 style={{
                   background: (isExporting || isClientRendering)
-                    ? 'rgba(124,58,237,0.5)'
-                    : 'linear-gradient(135deg, #7C3AED, #6D28D9)',
-                  backdropFilter: 'blur(8px)',
-                  color: '#fff',
-                  boxShadow: '0 2px 12px rgba(124,58,237,0.35)',
+                    ? 'color-mix(in srgb, var(--primary) 50%, transparent)'
+                    : 'var(--primary)',
+                  backdropFilter: 'none',
+                  color: 'var(--primary-foreground)',
+                  boxShadow: 'none',
                 }}
               >
                 {isExporting ? (
@@ -348,7 +342,7 @@ export function VideoPreview() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              style={{ background: '#1E1E2D', borderColor: 'rgba(255,255,255,0.07)', color: '#F1F1F8', minWidth: 200 }}
+              style={{ background: 'var(--muted)', borderColor: 'var(--border)', color: 'var(--foreground)', minWidth: 200 }}
             >
               <DropdownMenuItem
                 className="text-xs cursor-pointer flex items-center gap-2"
@@ -357,7 +351,7 @@ export function VideoPreview() {
                 <Download className="w-3.5 h-3.5" />
                 <div>
                   <div className="font-medium">Export MP4 (Server)</div>
-                  <div style={{ color: '#55556A', fontSize: 10 }}>Render via server or Lambda</div>
+                  <div style={{ color: 'var(--muted-foreground)', fontSize: 10 }}>Render via server or Lambda</div>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem
@@ -366,13 +360,13 @@ export function VideoPreview() {
                 disabled={!clientRenderSupported}
                 title={!clientRenderSupported ? 'Requires Chrome or Edge' : undefined}
               >
-                <FlaskConical className="w-3.5 h-3.5" style={{ color: clientRenderSupported ? '#A78BFA' : '#55556A' }} />
+                <FlaskConical className="w-3.5 h-3.5" style={{ color: clientRenderSupported ? 'var(--primary)' : 'var(--muted-foreground)' }} />
                 <div>
                   <div className="font-medium flex items-center gap-1">
                     Render in Browser
-                    <span className="px-1 py-0.5 rounded text-[9px] font-bold" style={{ background: 'rgba(167,139,250,0.15)', color: '#A78BFA' }}>BETA</span>
+                    <span className="px-1 py-0.5 rounded text-[9px] font-bold" style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)' }}>BETA</span>
                   </div>
-                  <div style={{ color: '#55556A', fontSize: 10 }}>
+                  <div style={{ color: 'var(--muted-foreground)', fontSize: 10 }}>
                     {clientRenderSupported ? 'No server needed · saves as .webm' : 'Chrome / Edge only'}
                   </div>
                 </div>
@@ -382,15 +376,15 @@ export function VideoPreview() {
         )}
         <button
           onClick={handleFullscreen}
-          className="w-7 h-7 rounded-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+          className="w-7 h-7 rounded-sm flex items-center justify-center opacity-100 group-hover:opacity-100"
           style={{
-            background: 'rgba(0,0,0,0.65)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            color: '#55556A',
+            background: 'var(--popover)',
+            backdropFilter: 'none',
+            border: '1px solid var(--border)',
+            color: 'var(--muted-foreground)',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = '#F1F1F8')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = '#55556A')}
+
+
           title="Fullscreen"
         >
           <Maximize2 className="w-3.5 h-3.5" />

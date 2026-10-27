@@ -1,0 +1,78 @@
+name: Deploy SkyGen Web to VPS
+
+on:
+  push:
+    branches:
+      - prod
+    paths-ignore:
+      - 'mastra-server/**'
+      - '.github/workflows/deploy-mastra.yml'
+      - 'README.md'
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Next.js Standalone
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+        run: |
+          npm run build
+          # Next.js standalone mode requires public and static folders copied manually
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+
+      - name: Create archive
+        run: |
+          tar -czf skygen-standalone.tar.gz -C .next/standalone .
+
+      - name: Upload to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: "37.187.139.100"
+          username: "root"
+          password: ${{ secrets.VPS_SSH_PW }}
+          port: 20033
+          source: "skygen-standalone.tar.gz"
+          target: "/tmp"
+
+      - name: Extract and Restart PM2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: "37.187.139.100"
+          username: "root"
+          password: ${{ secrets.VPS_SSH_PW }}
+          port: 20033
+          script: |
+            mkdir -p /opt/skygen-web
+            cd /opt/skygen-web
+            
+            # Backup previous build if exists
+            if [ -f server.js ]; then
+              mkdir -p /opt/skygen-web-backups
+              cp -r . /opt/skygen-web-backups/backup-$(date +%Y%m%d%H%M%S) 2>/dev/null || true
+            fi
+            
+            # Extract new standalone build
+            tar -xzf /tmp/skygen-standalone.tar.gz -C /opt/skygen-web
+            rm -f /tmp/skygen-standalone.tar.gz
+            
+            # Restart or start PM2 process on Port 3000
+            PORT=3000 pm2 restart skygen-web || PORT=3000 pm2 start server.js --name skygen-web
+            pm2 save
+            pm2 status skygen-web

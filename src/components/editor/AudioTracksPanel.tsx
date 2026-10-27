@@ -6,7 +6,7 @@ import { AudioTrack } from '@/lib/video/schemas';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Plus, Music } from 'lucide-react';
+import { Plus, Music } from '@/components/ui/studio-icons';
 import { Reorder, AnimatePresence } from 'framer-motion';
 import AudioTrackItem from '@/components/audio/AudioTrackerItem'; // keep your existing item component
 
@@ -134,7 +134,7 @@ export function AudioTracksPanel() {
     <div className="space-y-4">
       {/* Header + Add URL */}
       <div className="space-y-2">
-        <Label className="text-xs text-gray-400 font-medium">
+        <Label className="text-xs text-muted-foreground font-medium">
           Audio Tracks ({audioTracks.length})
         </Label>
 
@@ -143,7 +143,7 @@ export function AudioTracksPanel() {
             value={newTrackUrl}
             onChange={(e) => setNewTrackUrl(e.target.value)}
             placeholder="Paste audio URL (https://...)"
-            className="h-8 text-xs bg-gray-800/50 border-gray-700 text-slate-900 dark:text-white"
+            className="h-8 text-xs bg-card/50 border-border text-foreground dark:text-white"
           />
 
           <Button
@@ -160,10 +160,10 @@ export function AudioTracksPanel() {
 
       {/* Track List */}
       {audioTracks.length === 0 ? (
-        <div className="border border-dashed border-gray-700 rounded-lg p-6 text-center">
-          <Music className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No audio tracks added</p>
-          <p className="text-xs text-gray-600 mt-1">
+        <div className="border border-dashed border-border rounded-sm p-6 text-center">
+          <Music className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">No audio tracks added</p>
+          <p className="text-xs text-muted-foreground mt-1">
             Paste a URL above to add background music or sound effects
           </p>
         </div>
@@ -200,7 +200,7 @@ export function AudioTracksPanel() {
       )}
 
       {/* Help Text */}
-      <div className="text-[10px] text-gray-600 space-y-0.5">
+      <div className="text-[10px] text-muted-foreground space-y-0.5">
         <p>Drag tracks to reorder. Click to expand for detailed controls.</p>
         <p>Supported formats: MP3, WAV, OGG, AAC</p>
       </div>

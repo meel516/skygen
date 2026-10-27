@@ -20,7 +20,7 @@ export function TemplateVariableForm({ variables, values, onChange }: TemplateVa
     <div className="space-y-5">
       {variables.map(variable => (
         <div key={variable.key} className="space-y-2">
-          <Label className="text-gray-300 flex items-center gap-2">
+          <Label className="text-muted-foreground flex items-center gap-2">
             {variable.label}
             {variable.required && <span className="text-red-400">*</span>}
           </Label>
@@ -30,7 +30,7 @@ export function TemplateVariableForm({ variables, values, onChange }: TemplateVa
               value={values[variable.key] || ''}
               onChange={e => handleChange(variable.key, e.target.value)}
               placeholder={variable.placeholder}
-              className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white placeholder:text-gray-500 min-h-[100px]"
+              className="bg-card border-border text-foreground dark:text-white placeholder:text-muted-foreground min-h-[100px]"
               required={variable.required}
             />
           ) : variable.type === 'image' || variable.type === 'audio' ? (
@@ -40,10 +40,10 @@ export function TemplateVariableForm({ variables, values, onChange }: TemplateVa
                 value={values[variable.key] || ''}
                 onChange={e => handleChange(variable.key, e.target.value)}
                 placeholder={variable.placeholder || `Enter ${variable.type} URL`}
-                className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white placeholder:text-gray-500"
+                className="bg-card border-border text-foreground dark:text-white placeholder:text-muted-foreground"
               />
               {variable.type === 'image' && values[variable.key] && (
-                <div className="relative h-24 w-full bg-gray-800 rounded-lg overflow-hidden">
+                <div className="relative h-24 w-full bg-card rounded-sm overflow-hidden">
                   <img
                     src={values[variable.key]}
                     alt="Preview"
@@ -61,7 +61,7 @@ export function TemplateVariableForm({ variables, values, onChange }: TemplateVa
               value={values[variable.key] || ''}
               onChange={e => handleChange(variable.key, e.target.value)}
               placeholder={variable.placeholder}
-              className="bg-gray-800 border-gray-700 text-slate-900 dark:text-white placeholder:text-gray-500"
+              className="bg-card border-border text-foreground dark:text-white placeholder:text-muted-foreground"
               required={variable.required}
             />
           )}

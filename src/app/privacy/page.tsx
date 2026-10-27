@@ -1,4 +1,4 @@
-import { Video } from 'lucide-react';
+import { Video } from '@/components/ui/studio-icons';
 import Link from 'next/link';
 
 export const metadata = {
@@ -8,16 +8,16 @@ export const metadata = {
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen" style={{ background: '#0A0A0F', color: '#F1F1F8' }}>
+    <div className="min-h-screen" style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
       {/* Navbar */}
       <nav
         className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 border-b"
-        style={{ background: 'rgba(10,10,15,0.9)', borderColor: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(12px)' }}
+        style={{ background: 'var(--background)', borderColor: 'var(--border)', backdropFilter: 'none' }}
       >
         <Link href="/" className="flex items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #7C3AED, #0EA5E9)' }}
+            className="w-8 h-8 rounded-sm flex items-center justify-center"
+            style={{ background: 'var(--primary)' }}
           >
             <Video className="w-4 h-4 text-white" />
           </div>
@@ -25,8 +25,8 @@ export default function PrivacyPolicy() {
         </Link>
         <Link
           href="/"
-          className="text-[13px] transition-colors"
-          style={{ color: '#8B8BAA' }}
+          className="text-[13px] "
+          style={{ color: 'var(--muted-foreground)' }}
         >
           ← Back to home
         </Link>
@@ -35,14 +35,14 @@ export default function PrivacyPolicy() {
       {/* Content */}
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-[13px] mb-10" style={{ color: '#55556A' }}>
+        <p className="text-[13px] mb-10" style={{ color: 'var(--muted-foreground)' }}>
           Last updated: March 18, 2026
         </p>
 
-        <div className="space-y-10 text-[14px] leading-relaxed" style={{ color: '#8B8BAA' }}>
+        <div className="space-y-10 text-[14px] leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>1. Introduction</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>1. Introduction</h2>
             <p>
               SKYGEN ("we", "us", or "our") is an AI-powered video creation platform operated by
               Saleem Mohammed (md.saleem516@gmail.com). This Privacy Policy explains how we collect,
@@ -55,31 +55,31 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>2. Information We Collect</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>2. Information We Collect</h2>
             <p className="mb-3">We collect the following types of information:</p>
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                <strong style={{ color: '#F1F1F8' }}>Google account information</strong> — When you sign in with Google,
+                <strong style={{ color: 'var(--foreground)' }}>Google account information</strong> — When you sign in with Google,
                 we receive your name, email address, and profile picture via Google OAuth.
               </li>
               <li>
-                <strong style={{ color: '#F1F1F8' }}>YouTube account tokens</strong> — If you connect your YouTube
+                <strong style={{ color: 'var(--foreground)' }}>YouTube account tokens</strong> — If you connect your YouTube
                 account, we store OAuth tokens (access token and refresh token) securely in our
                 database to enable video uploads on your behalf.
               </li>
               <li>
-                <strong style={{ color: '#F1F1F8' }}>Video content and project data</strong> — The video scripts, block
+                <strong style={{ color: 'var(--foreground)' }}>Video content and project data</strong> — The video scripts, block
                 configurations, templates, and other content you create within SKYGEN.
               </li>
               <li>
-                <strong style={{ color: '#F1F1F8' }}>Usage data</strong> — Basic usage information such as pages visited
+                <strong style={{ color: 'var(--foreground)' }}>Usage data</strong> — Basic usage information such as pages visited
                 and features used, for improving the product.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>3. How We Use Your Information</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>3. How We Use Your Information</h2>
             <ul className="space-y-2 list-disc list-inside">
               <li>To authenticate you and maintain your session</li>
               <li>To save and retrieve your video projects and templates</li>
@@ -90,7 +90,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>4. YouTube API Data</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>4. YouTube API Data</h2>
             <p className="mb-3">
               SKYGEN integrates with the YouTube Data API v3. When you connect your YouTube account:
             </p>
@@ -103,7 +103,7 @@ export default function PrivacyPolicy() {
                   href="https://developers.google.com/youtube/terms/api-services-terms-of-service"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   YouTube API Services Terms of Service
@@ -113,7 +113,7 @@ export default function PrivacyPolicy() {
                   href="https://policies.google.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   Google's Privacy Policy
@@ -123,7 +123,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>5. Data Storage and Security</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>5. Data Storage and Security</h2>
             <p>
               Your data is stored in a PostgreSQL database hosted on Amazon RDS (AWS, EU North region).
               We use SSL/TLS encryption for all data in transit. We do not sell your personal data to
@@ -132,29 +132,29 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>6. Third-Party Services</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>6. Third-Party Services</h2>
             <p className="mb-3">SKYGEN uses the following third-party services:</p>
             <ul className="space-y-2 list-disc list-inside">
               <li>
-                <strong style={{ color: '#F1F1F8' }}>Google OAuth</strong> — For authentication. Subject to{' '}
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#A78BFA' }} className="hover:underline">
+                <strong style={{ color: 'var(--foreground)' }}>Google OAuth</strong> — For authentication. Subject to{' '}
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }} className="hover:underline">
                   Google's Privacy Policy
                 </a>.
               </li>
               <li>
-                <strong style={{ color: '#F1F1F8' }}>YouTube Data API</strong> — For video uploads. Subject to{' '}
-                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: '#A78BFA' }} className="hover:underline">
+                <strong style={{ color: 'var(--foreground)' }}>YouTube Data API</strong> — For video uploads. Subject to{' '}
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }} className="hover:underline">
                   Google's Privacy Policy
                 </a>.
               </li>
               <li>
-                <strong style={{ color: '#F1F1F8' }}>Amazon Web Services (AWS)</strong> — For database hosting.
+                <strong style={{ color: 'var(--foreground)' }}>Amazon Web Services (AWS)</strong> — For database hosting.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>7. Your Rights</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>7. Your Rights</h2>
             <p className="mb-3">You have the right to:</p>
             <ul className="space-y-2 list-disc list-inside">
               <li>Access the personal data we hold about you</li>
@@ -165,7 +165,7 @@ export default function PrivacyPolicy() {
                   href="https://myaccount.google.com/permissions"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#A78BFA' }}
+                  style={{ color: 'var(--primary)' }}
                   className="hover:underline"
                 >
                   Google Account Permissions
@@ -174,14 +174,14 @@ export default function PrivacyPolicy() {
             </ul>
             <p className="mt-3">
               To exercise any of these rights, contact us at{' '}
-              <a href="mailto:md.saleem516@gmail.com" style={{ color: '#A78BFA' }} className="hover:underline">
+              <a href="mailto:md.saleem516@gmail.com" style={{ color: 'var(--primary)' }} className="hover:underline">
                 md.saleem516@gmail.com
               </a>.
             </p>
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>8. Cookies</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>8. Cookies</h2>
             <p>
               SKYGEN uses session cookies to keep you signed in. We do not use advertising
               or tracking cookies.
@@ -189,7 +189,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>9. Changes to This Policy</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>9. Changes to This Policy</h2>
             <p>
               We may update this Privacy Policy from time to time. We will notify you of significant
               changes by updating the date at the top of this page. Continued use of SKYGEN after
@@ -198,10 +198,10 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-[16px] font-semibold mb-3" style={{ color: '#F1F1F8' }}>10. Contact</h2>
+            <h2 className="text-[16px] font-semibold mb-3" style={{ color: 'var(--foreground)' }}>10. Contact</h2>
             <p>
               If you have any questions about this Privacy Policy, please contact us at{' '}
-              <a href="mailto:md.saleem516@gmail.com" style={{ color: '#A78BFA' }} className="hover:underline">
+              <a href="mailto:md.saleem516@gmail.com" style={{ color: 'var(--primary)' }} className="hover:underline">
                 md.saleem516@gmail.com
               </a>.
             </p>
@@ -210,9 +210,9 @@ export default function PrivacyPolicy() {
         </div>
 
         {/* Footer links */}
-        <div className="mt-16 pt-8 flex items-center gap-6 text-[12px]" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', color: '#55556A' }}>
-          <Link href="/" className="hover:text-[#8B8BAA] transition-colors">Home</Link>
-          <Link href="/terms" className="hover:text-[#8B8BAA] transition-colors">Terms of Service</Link>
+        <div className="mt-16 pt-8 flex items-center gap-6 text-[12px]" style={{ borderTop: '1px solid var(--border)', color: 'var(--muted-foreground)' }}>
+          <Link href="/" className="hover:text-[var(--muted-foreground)] ">Home</Link>
+          <Link href="/terms" className="hover:text-[var(--muted-foreground)] ">Terms of Service</Link>
           <span>© 2026 SKYGEN</span>
         </div>
       </div>

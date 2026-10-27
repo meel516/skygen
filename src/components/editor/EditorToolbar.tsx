@@ -7,7 +7,7 @@ import {
   Keyboard, Rocket, Layout, Save, Settings2, Search,
   MoreHorizontal, Loader2, BarChart3, LayoutGrid, User,
   ChevronDown, ChevronRight, AlertTriangle, CheckCircle2,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 import { useMemo, useState } from 'react';
 import { ApiKeySettings } from './ApiKeySettings';
 import {
@@ -150,31 +150,31 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
   return (
     <div
       className="h-12 flex items-center justify-between px-4 flex-shrink-0 z-30 border-b"
-      style={{ background: '#13131C', borderColor: 'rgba(255,255,255,0.07)' }}
+      style={{ background: 'var(--card)', borderColor: 'var(--border)' }}
     >
       {/* LEFT — Logo + undo/redo */}
       <div className="flex items-center gap-3">
         {/* Logo */}
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#0EA5E9] flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-900/40">
+        <div className="w-7 h-7 rounded-sm bg-muted flex items-center justify-center flex-shrink-0 shadow-none shadow-none">
           <Video className="w-3.5 h-3.5 text-white" />
         </div>
 
         {/* Name + dirty dot */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[13px] font-semibold text-slate-900 dark:text-[#F1F1F8]">Video Editor</span>
+          <span className="text-[13px] font-semibold text-foreground dark:text-[var(--foreground)]">Video Editor</span>
           {isDirty && (
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-dot-pulse" />
           )}
         </div>
 
-        <div className="w-px h-4" style={{ background: 'rgba(255,255,255,0.07)' }} />
+        <div className="w-px h-4" style={{ background: 'var(--border)' }} />
 
         {/* Undo / Redo */}
         <div className="flex items-center gap-0.5">
           <Button
             variant="ghost" size="sm"
-            className="h-7 w-7 p-0 rounded-md disabled:opacity-25"
-            className="text-slate-500 dark:text-[#55556A]"
+            className="h-7 w-7 p-0 rounded-sm disabled:opacity-25 text-muted-foreground dark:text-[var(--muted-foreground)]"
+
             onClick={undo}
             disabled={!canUndo()}
             title="Undo (Ctrl+Z)"
@@ -183,8 +183,8 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
           </Button>
           <Button
             variant="ghost" size="sm"
-            className="h-7 w-7 p-0 rounded-md disabled:opacity-25"
-            className="text-slate-500 dark:text-[#55556A]"
+            className="h-7 w-7 p-0 rounded-sm disabled:opacity-25 text-muted-foreground dark:text-[var(--muted-foreground)]"
+
             onClick={redo}
             disabled={!canRedo()}
             title="Redo (Ctrl+Y)"
@@ -196,17 +196,17 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
 
       {/* CENTER — block count + duration */}
       <div
-        className="flex items-center gap-2 px-3 py-1 rounded-md"
-        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="flex items-center gap-2 px-3 py-1 rounded-sm"
+        style={{ background: 'var(--border)', border: '1px solid var(--border)' }}
       >
-        <Sparkles className="w-3 h-3" style={{ color: '#7C3AED' }} />
-        <span className="text-[11px]" className="text-[#8B8BAA]">
+        <Sparkles className="w-3 h-3" style={{ color: 'var(--primary)' }} />
+        <span className="text-[11px] text-[var(--muted-foreground)]" >
           {blockCount} block{blockCount !== 1 ? 's' : ''}
         </span>
         {blockCount > 0 && (
           <>
             <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-            <span className="text-[11px] font-mono tabular-nums" className="text-[#8B8BAA]">
+            <span className="text-[11px] font-mono tabular-nums text-[var(--muted-foreground)]" >
               {formatDuration(totalDuration)}
             </span>
           </>
@@ -218,8 +218,8 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
         {/* Templates */}
         <button
           onClick={() => window.location.href = '/templates'}
-          className="h-7 px-2.5 rounded-md flex items-center gap-1.5 text-[11px] transition-colors hover:bg-[#25253A]"
-          style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="h-7 px-2.5 rounded-sm flex items-center gap-1.5 text-[11px] hover:bg-[var(--accent)]"
+          style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
           title="Template Gallery"
         >
           <LayoutGrid className="w-3 h-3" />
@@ -229,8 +229,8 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
         {/* Account */}
         <button
           onClick={() => window.location.href = '/account/usage'}
-          className="h-7 px-2.5 rounded-md flex items-center gap-1.5 text-[11px] transition-colors hover:bg-[#25253A]"
-          style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="h-7 px-2.5 rounded-sm flex items-center gap-1.5 text-[11px] hover:bg-[var(--accent)]"
+          style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
           title="My Account"
         >
           <User className="w-3 h-3" />
@@ -240,13 +240,13 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
         {/* ⌘K command palette */}
         <button
           onClick={onOpenCmdPalette}
-          className="h-7 px-2 rounded-md flex items-center gap-1.5 text-[11px] transition-colors hover:bg-[#25253A]"
-          className="text-slate-500 dark:text-[#55556A]"
+          className="h-7 px-2 rounded-sm flex items-center gap-1.5 text-[11px] hover:bg-[var(--accent)] text-muted-foreground dark:text-[var(--muted-foreground)]"
+
         >
           <Search className="w-3.5 h-3.5" />
           <kbd
             className="text-[10px] px-1.5 py-0.5 rounded font-sans"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)', color: '#55556A' }}
+            style={{ background: 'var(--border)', border: '1px solid var(--border)', color: 'var(--muted-foreground)' }}
           >
             ⌘K
           </kbd>
@@ -258,8 +258,8 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
         {/* Scene settings cog */}
         <Button
           variant="ghost" size="sm"
-          className="h-7 w-7 p-0 rounded-md"
-          className="text-slate-500 dark:text-[#55556A]"
+          className="h-7 w-7 p-0 rounded-sm text-muted-foreground dark:text-[var(--muted-foreground)]"
+
           onClick={onOpenSettings}
           title="Scene Settings"
         >
@@ -269,76 +269,76 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
         {/* More dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-md" className="text-slate-500 dark:text-[#55556A]">
+            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-sm text-muted-foreground dark:text-[var(--muted-foreground)]" >
               <MoreHorizontal className="w-3.5 h-3.5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
             className="min-w-[190px]"
-            style={{ background: '#1E1E2D', borderColor: 'rgba(255,255,255,0.07)', color: '#F1F1F8' }}
+            style={{ background: 'var(--muted)', borderColor: 'var(--border)', color: 'var(--foreground)' }}
           >
             <DropdownMenuItem
-              className="text-[12px] gap-2 cursor-pointer hover:bg-[#25253A] focus:bg-[#25253A] text-[#F1F1F8]"
+              className="text-[12px] gap-2 cursor-pointer hover:bg-[var(--accent)] focus:bg-[var(--accent)] text-[var(--foreground)]"
               onClick={() => {
                 setImportJson(getVideoJson());
                 setJsonDialogOpen(true);
               }}
             >
-              <Code className="w-3.5 h-3.5 text-[#8B8BAA]" />
+              <Code className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
               Edit JSON
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-[12px] gap-2 cursor-pointer hover:bg-[#25253A] focus:bg-[#25253A] text-[#F1F1F8]"
+              className="text-[12px] gap-2 cursor-pointer hover:bg-[var(--accent)] focus:bg-[var(--accent)] text-[var(--foreground)]"
               onClick={handleExportJson}
             >
-              <FileJson className="w-3.5 h-3.5 text-[#8B8BAA]" />
+              <FileJson className="w-3.5 h-3.5 text-[var(--muted-foreground)]" />
               Export JSON
             </DropdownMenuItem>
-            <DropdownMenuSeparator style={{ background: 'rgba(255,255,255,0.07)' }} />
+            <DropdownMenuSeparator style={{ background: 'var(--border)' }} />
             <DropdownMenuItem
-              className="text-[12px] gap-2 cursor-pointer hover:bg-[#25253A] focus:bg-[#25253A]"
-              className="text-[#F1F1F8]"
+              className="text-[12px] gap-2 cursor-pointer hover:bg-[var(--accent)] focus:bg-[var(--accent)] text-[var(--foreground)]"
+
               onClick={handleOpenSaveDialog}
             >
-              <Save className="w-3.5 h-3.5" className="text-[#8B8BAA]" />
+              <Save className="w-3.5 h-3.5 text-[var(--muted-foreground)]"  />
               {hasPremium ? 'Save as Template' : 'Save as Template (Premium)'}
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-[12px] gap-2 cursor-pointer hover:bg-[#25253A] focus:bg-[#25253A]"
-              className="text-[#F1F1F8]"
+              className="text-[12px] gap-2 cursor-pointer hover:bg-[var(--accent)] focus:bg-[var(--accent)] text-[var(--foreground)]"
+
               onClick={() => window.location.href = '/templates'}
             >
-              <Layout className="w-3.5 h-3.5" className="text-[#8B8BAA]" />
+              <Layout className="w-3.5 h-3.5 text-[var(--muted-foreground)]"  />
               Template Gallery
             </DropdownMenuItem>
-            <DropdownMenuSeparator style={{ background: 'rgba(255,255,255,0.07)' }} />
+            <DropdownMenuSeparator style={{ background: 'var(--border)' }} />
             <DropdownMenuItem
-              className="text-[12px] gap-2 cursor-pointer hover:bg-[#25253A] focus:bg-[#25253A]"
-              className="text-[#F1F1F8]"
+              className="text-[12px] gap-2 cursor-pointer hover:bg-[var(--accent)] focus:bg-[var(--accent)] text-[var(--foreground)]"
+
               onClick={() => window.location.href = '/account/usage'}
             >
-              <BarChart3 className="w-3.5 h-3.5" className="text-[#8B8BAA]" />
+              <BarChart3 className="w-3.5 h-3.5 text-[var(--muted-foreground)]"  />
               Dashboard
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-[12px] gap-2 cursor-pointer hover:bg-[#25253A] focus:bg-[#25253A]"
-              className="text-[#F1F1F8]"
+              className="text-[12px] gap-2 cursor-pointer hover:bg-[var(--accent)] focus:bg-[var(--accent)] text-[var(--foreground)]"
+
               onClick={() => setShortcutsOpen(true)}
             >
-              <Keyboard className="w-3.5 h-3.5" className="text-[#8B8BAA]" />
+              <Keyboard className="w-3.5 h-3.5 text-[var(--muted-foreground)]"  />
               Keyboard Shortcuts
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="w-px h-4 mx-0.5" style={{ background: 'rgba(255,255,255,0.07)' }} />
+        <div className="w-px h-4 mx-0.5" style={{ background: 'var(--border)' }} />
 
         {/* Save as Template */}
         <Button
           variant="ghost" size="sm"
-          className="h-7 px-2.5 rounded-md text-[11px] gap-1.5"
-          className="text-[#8B8BAA]"
+          className="h-7 px-2.5 rounded-sm text-[11px] gap-1.5 text-[var(--muted-foreground)]"
+
           onClick={handleOpenSaveDialog}
           disabled={blockCount === 0}
           title={hasPremium ? 'Save as Template' : 'Premium required to save templates'}
@@ -349,8 +349,8 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
 
         {/* Render */}
         <Button
-          className="h-7 px-3 text-[11px] font-semibold rounded-md text-white transition-all"
-          style={{ background: '#7C3AED', boxShadow: '0 4px 16px rgba(124,58,237,0.35)' }}
+          className="h-7 px-3 text-[11px] font-semibold rounded-sm text-white"
+          style={{ background: 'var(--primary)', boxShadow: 'none' }}
           onClick={handleRender}
           disabled={rendering || blockCount === 0}
         >
@@ -365,21 +365,21 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
       {/* --- Dialogs --- */}
       {/* Edit JSON */}
       <Dialog open={jsonDialogOpen} onOpenChange={setJsonDialogOpen}>
-        <DialogContent className="max-w-[min(1100px,calc(100vw-2rem))] max-h-[85vh] overflow-y-auto flex flex-col p-0 bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07] transition-colors">
-          <DialogHeader className="px-5 pt-5 pb-3 border-b border-slate-200 dark:border-white/[0.07]">
-            <DialogTitle className="text-[#F1F1F8]">Edit Video JSON</DialogTitle>
+        <DialogContent className="max-w-[min(1100px,calc(100vw-2rem))] max-h-[85vh] overflow-y-auto flex flex-col p-0 bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07]">
+          <DialogHeader className="px-5 pt-5 pb-3 border-b border-border dark:border-white/[0.07]">
+            <DialogTitle className="text-[var(--foreground)]">Edit Video JSON</DialogTitle>
           </DialogHeader>
           <JsonEditorPanel
             value={importJson}
             onChange={setImportJson}
             placeholder="Paste or edit your video JSON here..."
           />
-          <div className="flex justify-end gap-2 px-5 py-4 border-t border-slate-200 dark:border-white/[0.07]">
+          <div className="flex justify-end gap-2 px-5 py-4 border-t border-border dark:border-white/[0.07]">
             <Button variant="outline" onClick={() => setJsonDialogOpen(false)}
-              className="border-white/10 text-[#8B8BAA]">
+              className="border-white/10 text-[var(--muted-foreground)]">
               Cancel
             </Button>
-            <Button onClick={handleImport} className="bg-[#7C3AED] text-white">
+            <Button onClick={handleImport} className="bg-[var(--primary)] text-primary-foreground">
               Apply Changes
             </Button>
           </div>
@@ -388,34 +388,34 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
 
       {/* Save as Template */}
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
-        <DialogContent className="bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07] transition-colors max-h-[85vh] overflow-y-auto">
+        <DialogContent className="bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#F1F1F8]">{editingTemplateId ? 'Update Template' : 'Save as Template'}</DialogTitle>
+            <DialogTitle className="text-[var(--foreground)]">{editingTemplateId ? 'Update Template' : 'Save as Template'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="text-sm mb-2 block text-[#8B8BAA]">Template Name</label>
+              <label className="text-sm mb-2 block text-[var(--muted-foreground)]">Template Name</label>
               <Input
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
                 placeholder="Enter template name..."
-                className="text-sm bg-slate-100 dark:bg-white/[0.05] border-slate-200 dark:border-white/[0.1] text-[#F1F1F8]"
+                className="text-sm bg-muted dark:bg-white/[0.05] border-border dark:border-white/[0.1] text-[var(--foreground)]"
                 onKeyDown={(e) => e.key === 'Enter' && void handleSaveTemplate()}
                 autoFocus
               />
             </div>
             <div>
-              <label className="text-sm mb-2 block text-[#8B8BAA]">Description (optional)</label>
+              <label className="text-sm mb-2 block text-[var(--muted-foreground)]">Description (optional)</label>
               <textarea
                 value={templateDescription}
                 onChange={(e) => setTemplateDescription(e.target.value)}
                 placeholder="Describe this template so AI knows how to fill it — e.g. 'A motivational short about an athlete's journey with stats and parallax story blocks'"
                 rows={3}
-                className="text-sm w-full resize-none bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/[0.1] text-[#F1F1F8] rounded-lg p-2"
+                className="text-sm w-full resize-none bg-muted dark:bg-white/[0.05] border border-border dark:border-white/[0.1] text-[var(--foreground)] rounded-sm p-2"
               />
             </div>
             <div>
-              <label className="text-sm mb-2 block" className="text-[#8B8BAA]">
+              <label className="text-sm mb-2 block text-[var(--muted-foreground)]" >
                 Preview Image (optional)
                 {exportOutputUrl && <span className="ml-2 text-xs text-emerald-300">Rendered video will be used</span>}
               </label>
@@ -424,21 +424,21 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
                   type="file"
                   accept="image/*"
                   onChange={handlePreviewUpload}
-                  className="text-sm file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-[#7C3AED] file:text-white hover:file:bg-[#6D28D9]"
-                  className="text-[#8B8BAA]"
+                  className="text-sm file:mr-4 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:text-xs file:font-medium file:bg-[var(--primary)] file:text-primary-foreground hover:file:bg-[var(--primary)] text-[var(--muted-foreground)]"
+
                 />
                 {templatePreview && (
-                  <img src={templatePreview} alt="Preview" className="w-14 h-14 object-cover rounded-lg"
-                    style={{ border: '1px solid rgba(255,255,255,0.1)' }} />
+                  <img src={templatePreview} alt="Preview" className="w-14 h-14 object-cover rounded-sm"
+                    style={{ border: '1px solid var(--border)' }} />
                 )}
               </div>
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setSaveDialogOpen(false)} className="text-[#8B8BAA]">
+              <Button variant="ghost" onClick={() => setSaveDialogOpen(false)} className="text-[var(--muted-foreground)]">
                 Cancel
               </Button>
               <Button onClick={() => void handleSaveTemplate()} disabled={(!editingTemplateId && !templateName.trim()) || savingTemplate}
-                className="bg-[#7C3AED] text-white">
+                className="bg-[var(--primary)] text-primary-foreground">
                 {savingTemplate ? 'Saving...' : (editingTemplateId ? 'Update Template' : 'Save Template')}
               </Button>
             </div>
@@ -448,9 +448,9 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
 
       {/* Keyboard Shortcuts */}
       <Dialog open={shortcutsOpen} onOpenChange={setShortcutsOpen}>
-        <DialogContent className="max-w-md" className="bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07] transition-colors">
+        <DialogContent className="max-w-md bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07]" >
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2" className="text-[#F1F1F8]">
+            <DialogTitle className="flex items-center gap-2 text-[var(--foreground)]" >
               <Keyboard className="w-4 h-4" />
               Keyboard Shortcuts
             </DialogTitle>
@@ -458,17 +458,17 @@ export function EditorToolbar({ onOpenSettings, onOpenCmdPalette }: EditorToolba
           <div className="space-y-1">
             {shortcuts.map((shortcut, i) => (
               <div key={i} className="flex items-center justify-between py-2 border-b last:border-0"
-                style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-                <span className="text-sm" className="text-[#8B8BAA]">{shortcut.action}</span>
+                style={{ borderColor: 'var(--border)' }}>
+                <span className="text-sm text-[var(--muted-foreground)]" >{shortcut.action}</span>
                 <div className="flex items-center gap-1">
                   {shortcut.keys.map((key, j) => (
                     <span key={j}>
                       <kbd className="px-2 py-1 rounded text-xs font-mono"
-                        style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.1)', color: '#F1F1F8' }}>
+                        style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--foreground)' }}>
                         {key}
                       </kbd>
                       {j < shortcut.keys.length - 1 && (
-                        <span className="mx-1" className="text-slate-500 dark:text-[#55556A]">+</span>
+                        <span className="mx-1 text-muted-foreground dark:text-[var(--muted-foreground)]" >+</span>
                       )}
                     </span>
                   ))}
@@ -541,11 +541,11 @@ function JsonEditorPanel({
           <button
             type="button"
             onClick={() => setMode('code')}
-            className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
+            className="px-3 py-1.5 rounded-sm text-xs font-medium"
             style={{
-              background: mode === 'code' ? 'rgba(124,58,237,0.22)' : 'rgba(255,255,255,0.04)',
-              color: mode === 'code' ? '#DDD6FE' : '#8B8BAA',
-              border: `1px solid ${mode === 'code' ? 'rgba(167,139,250,0.35)' : 'rgba(255,255,255,0.07)'}`,
+              background: mode === 'code' ? 'color-mix(in srgb, var(--primary) 22%, transparent)' : 'var(--border)',
+              color: mode === 'code' ? '#DDD6FE' : 'var(--muted-foreground)',
+              border: `1px solid ${mode === 'code' ? 'color-mix(in srgb, var(--primary) 35%, transparent)' : 'var(--border)'}`,
             }}
           >
             Raw JSON
@@ -553,12 +553,12 @@ function JsonEditorPanel({
           <button
             type="button"
             onClick={() => setMode('tree')}
-            className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-40"
+            className="px-3 py-1.5 rounded-sm text-xs font-medium disabled:opacity-40"
             disabled={!parsed.ok}
             style={{
-              background: mode === 'tree' ? 'rgba(124,58,237,0.22)' : 'rgba(255,255,255,0.04)',
-              color: mode === 'tree' ? '#DDD6FE' : '#8B8BAA',
-              border: `1px solid ${mode === 'tree' ? 'rgba(167,139,250,0.35)' : 'rgba(255,255,255,0.07)'}`,
+              background: mode === 'tree' ? 'color-mix(in srgb, var(--primary) 22%, transparent)' : 'var(--border)',
+              color: mode === 'tree' ? '#DDD6FE' : 'var(--muted-foreground)',
+              border: `1px solid ${mode === 'tree' ? 'color-mix(in srgb, var(--primary) 35%, transparent)' : 'var(--border)'}`,
             }}
           >
             Tree
@@ -577,8 +577,8 @@ function JsonEditorPanel({
               variant="ghost"
               onClick={formatJson}
               disabled={!parsed.ok}
-              className="h-7 px-2 text-xs"
-              className="text-[#8B8BAA]"
+              className="h-7 px-2 text-xs text-[var(--muted-foreground)]"
+
             >
               Format
             </Button>
@@ -590,8 +590,8 @@ function JsonEditorPanel({
                 size="sm"
                 variant="ghost"
                 onClick={collapseAll}
-                className="h-7 px-2 text-xs"
-                className="text-[#8B8BAA]"
+                className="h-7 px-2 text-xs text-[var(--muted-foreground)]"
+
               >
                 Collapse all
               </Button>
@@ -600,8 +600,8 @@ function JsonEditorPanel({
                 size="sm"
                 variant="ghost"
                 onClick={expandAll}
-                className="h-7 px-2 text-xs"
-                className="text-[#8B8BAA]"
+                className="h-7 px-2 text-xs text-[var(--muted-foreground)]"
+
               >
                 Expand all
               </Button>
@@ -621,7 +621,7 @@ function JsonEditorPanel({
             className="h-full min-h-0 resize-none font-mono text-xs leading-5"
             style={{
               background: '#101018',
-              borderColor: 'rgba(255,255,255,0.1)',
+              borderColor: 'var(--border)',
               color: '#EDEDF7',
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(139,139,170,0.45) transparent',
@@ -629,10 +629,10 @@ function JsonEditorPanel({
           />
         ) : (
           <div
-            className="h-full overflow-auto rounded-lg border p-3 font-mono text-xs"
+            className="h-full overflow-auto rounded-sm border p-3 font-mono text-xs"
             style={{
               background: '#101018',
-              borderColor: 'rgba(255,255,255,0.1)',
+              borderColor: 'var(--border)',
               color: '#EDEDF7',
               scrollbarWidth: 'thin',
               scrollbarColor: 'rgba(139,139,170,0.45) transparent',
@@ -682,7 +682,7 @@ function JsonTreeNode({
   if (!isObject) {
     return (
       <div className="flex items-start gap-2 py-0.5" style={{ paddingLeft: depth * 16 }}>
-        <span style={{ color: '#A78BFA' }}>{name}:</span>
+        <span style={{ color: 'var(--primary)' }}>{name}:</span>
         <JsonPrimitive value={value} />
       </div>
     );
@@ -702,8 +702,8 @@ function JsonTreeNode({
         style={{ paddingLeft: depth * 16, color: '#EDEDF7' }}
       >
         {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-        <span style={{ color: '#A78BFA' }}>{name}</span>
-        <span className="text-slate-500 dark:text-[#55556A]">{label}</span>
+        <span style={{ color: 'var(--primary)' }}>{name}</span>
+        <span className="text-muted-foreground dark:text-[var(--muted-foreground)]">{label}</span>
       </button>
       {!isCollapsed && (
         <div>
@@ -727,7 +727,7 @@ function JsonTreeNode({
 function JsonPrimitive({ value }: { value: string | number | boolean | null }) {
   if (value === null) return <span style={{ color: '#FCA5A5' }}>null</span>;
   if (typeof value === 'string') return <span style={{ color: '#86EFAC' }}>{JSON.stringify(value)}</span>;
-  if (typeof value === 'number') return <span style={{ color: '#67E8F9' }}>{value}</span>;
+  if (typeof value === 'number') return <span style={{ color: 'var(--primary)' }}>{value}</span>;
   return <span style={{ color: '#FDBA74' }}>{String(value)}</span>;
 }
 

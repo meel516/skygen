@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download, Trash2, Video, AlertCircle } from 'lucide-react';
+import { Download, Trash2, Video, AlertCircle } from '@/components/ui/studio-icons';
 
 interface VideoRecord {
   id: string;
@@ -49,7 +49,7 @@ export default function VideosPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-48">
-        <div className="w-5 h-5 rounded-full border-2 border-[#7C3AED] border-t-transparent animate-spin" />
+        <div className="w-5 h-5 rounded-full border-2 border-[var(--primary)] border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -57,25 +57,25 @@ export default function VideosPage() {
   return (
     <div className="max-w-4xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold mb-1" style={{ color: '#F1F1F8' }}>My Videos</h1>
-        <p className="text-[13px]" style={{ color: '#8B8BAA' }}>
+        <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--foreground)' }}>My Videos</h1>
+        <p className="text-[13px]" style={{ color: 'var(--muted-foreground)' }}>
           {videos.length} rendered video{videos.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {videos.length === 0 ? (
         <div
-          className="flex flex-col items-center justify-center py-20 rounded-2xl text-center"
-          style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex flex-col items-center justify-center py-20 rounded-sm text-center"
+          style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
         >
           <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-            style={{ background: 'rgba(255,255,255,0.04)' }}
+            className="w-16 h-16 rounded-sm flex items-center justify-center mb-4"
+            style={{ background: 'var(--border)' }}
           >
-            <Video className="w-7 h-7" style={{ color: '#55556A' }} />
+            <Video className="w-7 h-7" style={{ color: 'var(--muted-foreground)' }} />
           </div>
-          <p className="text-[14px] font-medium mb-1" style={{ color: '#F1F1F8' }}>No videos yet</p>
-          <p className="text-[12px] max-w-[220px]" style={{ color: '#55556A' }}>
+          <p className="text-[14px] font-medium mb-1" style={{ color: 'var(--foreground)' }}>No videos yet</p>
+          <p className="text-[12px] max-w-[220px]" style={{ color: 'var(--muted-foreground)' }}>
             Go to the editor and export your first video to see it here.
           </p>
         </div>
@@ -84,26 +84,26 @@ export default function VideosPage() {
           {videos.map((video) => (
             <div
               key={video.id}
-              className="flex items-center gap-4 p-4 rounded-xl"
-              style={{ background: '#13131C', border: '1px solid rgba(255,255,255,0.07)' }}
+              className="flex items-center gap-4 p-4 rounded-sm"
+              style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
             >
               {/* Icon */}
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ background: 'rgba(124,58,237,0.15)' }}
+                className="w-10 h-10 rounded-sm flex items-center justify-center flex-shrink-0"
+                style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)' }}
               >
-                <Video className="w-5 h-5" style={{ color: '#A78BFA' }} />
+                <Video className="w-5 h-5" style={{ color: 'var(--primary)' }} />
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium truncate" style={{ color: '#F1F1F8' }}>{video.name}</p>
+                <p className="text-[13px] font-medium truncate" style={{ color: 'var(--foreground)' }}>{video.name}</p>
                 <div className="flex items-center gap-3 mt-0.5">
-                  <span className="text-[11px]" style={{ color: '#55556A' }}>{formatDate(video.createdAt)}</span>
+                  <span className="text-[11px]" style={{ color: 'var(--muted-foreground)' }}>{formatDate(video.createdAt)}</span>
                   {video.duration && (
                     <>
-                      <span style={{ color: 'rgba(255,255,255,0.1)' }}>·</span>
-                      <span className="text-[11px] font-mono" style={{ color: '#55556A' }}>
+                      <span style={{ color: 'var(--border)' }}>·</span>
+                      <span className="text-[11px] font-mono" style={{ color: 'var(--muted-foreground)' }}>
                         {formatDuration(video.duration)}
                       </span>
                     </>
@@ -117,31 +117,31 @@ export default function VideosPage() {
                   <a
                     href={video.url}
                     download
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-colors"
-                    style={{ background: 'rgba(14,165,233,0.15)', color: '#0EA5E9', border: '1px solid rgba(14,165,233,0.2)' }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-medium"
+                    style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)', border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)' }}
                   >
                     <Download className="w-3.5 h-3.5" />
                     Download
                   </a>
                 ) : (
-                  <span className="text-[11px] px-3 py-1.5" style={{ color: '#55556A' }}>No file</span>
+                  <span className="text-[11px] px-3 py-1.5" style={{ color: 'var(--muted-foreground)' }}>No file</span>
                 )}
 
                 {confirmId === video.id ? (
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[11px]" style={{ color: '#8B8BAA' }}>Delete?</span>
+                    <span className="text-[11px]" style={{ color: 'var(--muted-foreground)' }}>Delete?</span>
                     <button
                       onClick={() => handleDelete(video.id)}
                       disabled={deleting === video.id}
-                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-900 dark:text-white"
+                      className="px-2.5 py-1 rounded-sm text-[11px] font-medium text-foreground dark:text-white"
                       style={{ background: '#EF4444' }}
                     >
                       {deleting === video.id ? '…' : 'Yes'}
                     </button>
                     <button
                       onClick={() => setConfirmId(null)}
-                      className="px-2.5 py-1 rounded-lg text-[11px]"
-                      style={{ color: '#8B8BAA', border: '1px solid rgba(255,255,255,0.08)' }}
+                      className="px-2.5 py-1 rounded-sm text-[11px]"
+                      style={{ color: 'var(--muted-foreground)', border: '1px solid var(--border)' }}
                     >
                       No
                     </button>
@@ -149,8 +149,8 @@ export default function VideosPage() {
                 ) : (
                   <button
                     onClick={() => setConfirmId(video.id)}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10"
-                    style={{ color: '#55556A' }}
+                    className="w-7 h-7 rounded-sm flex items-center justify-center hover:bg-red-500/10"
+                    style={{ color: 'var(--muted-foreground)' }}
                     title="Delete video"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -163,8 +163,8 @@ export default function VideosPage() {
       )}
 
       <div
-        className="flex items-start gap-3 p-4 rounded-xl text-[12px]"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', color: '#55556A' }}
+        className="flex items-start gap-3 p-4 rounded-sm text-[12px]"
+        style={{ background: 'var(--border)', border: '1px solid var(--border)', color: 'var(--muted-foreground)' }}
       >
         <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
         <p>Deleting a video removes it from your history but does not affect your render count.</p>

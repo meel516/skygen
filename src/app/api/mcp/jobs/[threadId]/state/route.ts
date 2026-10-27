@@ -7,10 +7,12 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ threadId: string }> },
 ) {
-  const authResult = await requireAuthenticatedSession();
-  if ('response' in authResult) return authResult.response;
-
   const { threadId } = await params;
+  const isMcpPreview = threadId.includes('mcp_preview_');
+  if (!isMcpPreview) {
+    const authResult = await requireAuthenticatedSession();
+    if ('response' in authResult) return authResult.response;
+  }
   const job = await getJob(threadId);
 
   if (!job) return NextResponse.json(null, { status: 404 });

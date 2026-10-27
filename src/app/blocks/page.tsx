@@ -1,11 +1,13 @@
 'use client';
+import { LibrarySkeleton } from '@/components/app/LibrarySkeleton';
+import { WorkspaceSkeleton } from '@/components/app/WorkspaceSkeleton';
 
 import { AppShell } from '@/components/app/AppShell';
 import { LibraryPreviewModal } from '@/components/app/LibraryPreviewModal';
 import { useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Blocks, Code2, Loader2, Search, Sparkles } from 'lucide-react';
+import { Blocks, Code2, Loader2, Search, Sparkles } from '@/components/ui/studio-icons';
 
 interface ContentBlock {
   type: string;
@@ -65,50 +67,41 @@ export default function BlocksPage() {
     router.push(`/chat?blockType=${encodeURIComponent(block.type)}&blockName=${encodeURIComponent(block.type)}&prompt=${encodeURIComponent(prompt)}`);
   }
 
-  if (status === 'loading') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#0A0A0F]">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-600 dark:text-[#8B8BAA]" />
-      </div>
-    );
-  }
+  if (status === 'loading') return <WorkspaceSkeleton />;
 
   if (status === 'unauthenticated') return null;
 
   return (
     <AppShell>
-      <div className="h-screen overflow-y-auto bg-slate-50 dark:bg-[#0A0A0F] px-6 py-8 md:px-10">
+      <div className="h-screen overflow-y-auto bg-background dark:bg-[var(--background)] px-6 py-8 md:px-10">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#0EA5E9]/30 bg-[#0EA5E9]/15 px-3 py-1 text-xs font-medium text-[#67E8F9]">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/30 bg-[var(--primary)]/15 px-3 py-1 text-xs font-medium text-[var(--primary)]">
                 <Sparkles className="h-3.5 w-3.5" />
                 Built-in scene primitives
               </div>
-              <h1 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-[#F1F1F8]">Blocks</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-600 dark:text-[#8B8BAA]">
+              <h1 className="text-4xl font-semibold tracking-tight text-foreground dark:text-[var(--foreground)]">Blocks</h1>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground dark:text-[var(--muted-foreground)]">
                 Core video blocks the agent can assemble before reaching for custom plugins.
               </p>
             </div>
 
             <div className="relative w-full md:w-[360px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-[#55556A]" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-[var(--muted-foreground)]" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search blocks..."
-                className="h-11 w-full rounded-xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-[#13131C] pl-10 pr-4 text-sm text-slate-900 dark:text-[#F1F1F8] outline-none transition placeholder:text-slate-500 dark:text-[#55556A] focus:border-[#0EA5E9]/50 focus:ring-4 focus:ring-[#0EA5E9]/10"
+                aria-label="Search blocks" placeholder="Search blocks..."
+                className="h-11 w-full rounded-sm border border-border dark:border-white/[0.07] bg-card dark:bg-[var(--card)] pl-10 pr-4 text-sm text-foreground dark:text-[var(--foreground)] outline-none placeholder:text-muted-foreground dark:text-[var(--muted-foreground)] focus:border-[var(--primary)]/50 focus:ring-4 focus:ring-[var(--primary)]/10"
               />
             </div>
           </div>
 
           {loading ? (
-            <div className="mt-16 flex items-center justify-center text-slate-600 dark:text-[#8B8BAA]">
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Loading blocks
-            </div>
+            <LibrarySkeleton label="Loading blocks" />
           ) : (
-            <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-2">
               {filtered.map((block) => (
                 <article
                   key={block.type}
@@ -118,33 +111,33 @@ export default function BlocksPage() {
                   onKeyDown={(event) => {
                     if (event.key === 'Enter' || event.key === ' ') setSelectedBlock(block);
                   }}
-                  className="cursor-pointer rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-[#13131C] p-4 shadow-sm transition hover:border-[#0EA5E9]/40 hover:bg-slate-50 dark:bg-[#171724]"
+                  className="cursor-pointer rounded-sm border border-border dark:border-white/[0.07] bg-card dark:bg-[var(--card)] p-4 shadow-none hover:border-[var(--primary)]/40 hover:bg-background dark:bg-[#171724]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#7C3AED]/20 text-[#A78BFA] ring-1 ring-[#7C3AED]/30">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-sm bg-[var(--primary)]/20 text-[var(--primary)] ring-1 ring-[var(--primary)]/30">
                       <Blocks className="h-5 w-5" />
                     </div>
                     <div>
-                      <h2 className="font-semibold text-slate-900 dark:text-[#F1F1F8]">{block.type}</h2>
-                      <p className="text-xs text-slate-500 dark:text-[#55556A]">Content block</p>
+                      <h2 className="font-semibold text-foreground dark:text-[var(--foreground)]">{block.type}</h2>
+                      <p className="text-xs text-muted-foreground dark:text-[var(--muted-foreground)]">Content block</p>
                     </div>
                   </div>
-                  <p className="mt-4 min-h-10 text-sm leading-5 text-slate-600 dark:text-[#8B8BAA]">{block.description}</p>
-                  <div className="mt-4 rounded-xl bg-slate-50 dark:bg-[#0A0A0F] p-3">
-                    <div className="mb-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-[#8B8BAA]">
+                  <p className="mt-4 min-h-10 text-sm leading-5 text-muted-foreground dark:text-[var(--muted-foreground)]">{block.description}</p>
+                  <div className="mt-4 rounded-sm bg-background dark:bg-[var(--background)] p-3">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground dark:text-[var(--muted-foreground)]">
                       <Code2 className="h-3.5 w-3.5" />
                       Key fields
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {(block.keyFields ?? []).slice(0, 4).map((field) => (
-                        <span key={field} className="rounded-md bg-slate-100 dark:bg-[#1E1E2D] px-2 py-1 text-xs text-slate-600 dark:text-[#8B8BAA] ring-1 ring-black/5 dark:ring-white/[0.06]">
+                        <span key={field} className="rounded-sm bg-muted dark:bg-[var(--muted)] px-2 py-1 text-xs text-muted-foreground dark:text-[var(--muted-foreground)] ring-1 ring-black/5 dark:ring-white/[0.06]">
                           {field}
                         </span>
                       ))}
                     </div>
                   </div>
                   {block.useWhen && (
-                    <p className="mt-3 text-xs leading-5 text-slate-500 dark:text-[#55556A]">
+                    <p className="mt-3 text-xs leading-5 text-muted-foreground dark:text-[var(--muted-foreground)]">
                       Use when: {block.useWhen}
                     </p>
                   )}

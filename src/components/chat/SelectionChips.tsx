@@ -52,19 +52,19 @@ export function SelectionChips() {
   return (
     <div
       className="border-t"
-      style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+      style={{ borderColor: 'var(--border)' }}
     >
       {/* Summary bar — always visible */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-2.5 transition-colors"
-        style={{ color: '#6B6B8A' }}
+        className="w-full flex items-center justify-between px-4 py-2.5"
+        style={{ color: 'var(--muted-foreground)' }}
       >
         <div className="flex items-center gap-2">
-          <Sliders weight="duotone" size={14} className="shrink-0" style={{ color: '#55556A' }} />
+          <Sliders weight="duotone" size={14} className="shrink-0" style={{ color: 'var(--muted-foreground)' }} />
           <div className="flex items-center gap-1.5 flex-wrap">
             {activeCount === 0 ? (
-              <span className="text-xs" style={{ color: '#55556A' }}>
+              <span className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
                 Configure template, voice &amp; style
               </span>
             ) : (
@@ -76,7 +76,7 @@ export function SelectionChips() {
                   <ActivePill label={selectedVoice.name} color="cyan" />
                 )}
                 {selectedStyle && (
-                  <ActivePill label={`${selectedStyle.emoji} ${selectedStyle.label}`} color="orange" />
+                  <ActivePill label={selectedStyle.label} color="orange" />
                 )}
               </>
             )}
@@ -92,7 +92,7 @@ export function SelectionChips() {
       {open && (
         <div
           className="px-4 pb-3 flex flex-col gap-0"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}
+          style={{ borderTop: '1px solid var(--border)' }}
         >
           {templates.length > 0 && (
             <ChipRow<TemplateItem>
@@ -129,7 +129,7 @@ export function SelectionChips() {
             onSelect={(id) => setSelectedStyle(id)}
             getId={s => s.id}
             getLabel={s => s.label}
-            getIcon={s => <span className="text-sm">{s.emoji}</span>}
+            getIcon={s => <span className="text-sm">{s.label.slice(0, 1)}</span>}
             loading={loading.styles}
           />
         </div>

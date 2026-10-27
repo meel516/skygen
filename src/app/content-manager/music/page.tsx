@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Loader2, Upload, Trash2, Play, Pause, Music, Plus } from 'lucide-react';
+import { Loader2, Upload, Trash2, Play, Pause, Music, Plus } from '@/components/ui/studio-icons';
 import { ALL_MOODS, MOOD_META, formatDuration, type MusicMood, type MusicTrack } from '@/lib/music/music-catalog';
 
 export default function MusicPage() {
@@ -127,20 +127,20 @@ export default function MusicPage() {
   };
 
   const inputClass =
-    'w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500';
+    'w-full px-3 py-2 bg-muted border border-border rounded-sm text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-500';
 
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Music Library</h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Upload royalty-free music tracks for the video wizard background music step.
           </p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary text-primary-foreground rounded-sm text-sm font-medium"
         >
           <Plus className="w-4 h-4" />
           Add Track
@@ -149,22 +149,22 @@ export default function MusicPage() {
 
       {/* Upload Form */}
       {showForm && (
-        <div className="rounded-xl p-5 space-y-4 bg-gray-900/80 border border-gray-800">
-          <h2 className="text-sm font-semibold text-gray-300">Upload New Track</h2>
+        <div className="rounded-sm p-5 space-y-4 bg-card/80 border border-border">
+          <h2 className="text-sm font-semibold text-muted-foreground">Upload New Track</h2>
 
           <div>
-            <label className="block text-xs text-gray-400 mb-1">Audio File (MP3/WAV/OGG)</label>
+            <label className="block text-xs text-muted-foreground mb-1">Audio File (MP3/WAV/OGG)</label>
             <input
               type="file"
               accept="audio/*"
               onChange={handleFileChange}
-              className="block w-full text-sm text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-gray-800 file:text-gray-300 hover:file:bg-gray-700 cursor-pointer"
+              className="block w-full text-sm text-muted-foreground file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:text-sm file:font-medium file:bg-card file:text-muted-foreground hover:file:bg-gray-700 cursor-pointer"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Track Name *</label>
+              <label className="block text-xs text-muted-foreground mb-1">Track Name *</label>
               <input
                 type="text"
                 value={name}
@@ -174,7 +174,7 @@ export default function MusicPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Artist</label>
+              <label className="block text-xs text-muted-foreground mb-1">Artist</label>
               <input
                 type="text"
                 value={artist}
@@ -187,7 +187,7 @@ export default function MusicPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Mood</label>
+              <label className="block text-xs text-muted-foreground mb-1">Mood</label>
               <select
                 value={mood}
                 onChange={e => setMood(e.target.value as MusicMood)}
@@ -201,7 +201,7 @@ export default function MusicPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Duration (sec)</label>
+              <label className="block text-xs text-muted-foreground mb-1">Duration (sec)</label>
               <input
                 type="number"
                 value={duration}
@@ -211,7 +211,7 @@ export default function MusicPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Tags (comma separated)</label>
+              <label className="block text-xs text-muted-foreground mb-1">Tags (comma separated)</label>
               <input
                 type="text"
                 value={tags}
@@ -226,7 +226,7 @@ export default function MusicPage() {
             <button
               onClick={handleUpload}
               disabled={uploading || !file || !name.trim()}
-              className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary disabled:opacity-50 text-primary-foreground rounded-sm text-sm font-medium"
             >
               {uploading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
@@ -236,7 +236,7 @@ export default function MusicPage() {
             </button>
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors"
+              className="px-4 py-2 text-muted-foreground hover:text-white text-sm"
             >
               Cancel
             </button>
@@ -247,17 +247,17 @@ export default function MusicPage() {
       {/* Track List */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
       ) : tracks.length === 0 ? (
         <div className="text-center py-16">
-          <Music className="w-12 h-12 mx-auto mb-3 text-gray-600" />
-          <p className="text-gray-500">No music tracks yet.</p>
-          <p className="text-gray-600 text-sm mt-1">Upload royalty-free tracks for the wizard music step.</p>
+          <Music className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-muted-foreground">No music tracks yet.</p>
+          <p className="text-muted-foreground text-sm mt-1">Upload royalty-free tracks for the wizard music step.</p>
         </div>
       ) : (
         <div className="space-y-2">
-          <p className="text-xs text-gray-500">{tracks.length} track{tracks.length !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-muted-foreground">{tracks.length} track{tracks.length !== 1 ? 's' : ''}</p>
           <div className="grid gap-2">
             {tracks.map(track => {
               const moodInfo = MOOD_META[track.mood as MusicMood] || MOOD_META.calm;
@@ -265,14 +265,14 @@ export default function MusicPage() {
               return (
                 <div
                   key={track.id}
-                  className="flex items-center gap-4 rounded-xl px-4 py-3 bg-gray-900/60 border border-gray-800 hover:border-gray-700 transition-colors"
+                  className="flex items-center gap-4 rounded-sm px-4 py-3 bg-card/60 border border-border hover:border-border"
                 >
                   {/* Play button */}
                   <button
                     onClick={() => handlePlay(track)}
-                    className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
+                    className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{
-                      background: isPlaying ? 'rgba(6,182,212,0.2)' : 'rgba(255,255,255,0.06)',
+                      background: isPlaying ? 'rgba(6,182,212,0.2)' : 'var(--border)',
                       color: isPlaying ? '#06b6d4' : '#9ca3af',
                     }}
                   >
@@ -290,10 +290,10 @@ export default function MusicPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className="text-xs text-gray-500">{track.artist}</span>
-                      <span className="text-xs text-gray-600">{formatDuration(track.duration)}</span>
+                      <span className="text-xs text-muted-foreground">{track.artist}</span>
+                      <span className="text-xs text-muted-foreground">{formatDuration(track.duration)}</span>
                       {track.tags && track.tags.length > 0 && (
-                        <span className="text-[10px] text-gray-600 truncate">
+                        <span className="text-[10px] text-muted-foreground truncate">
                           {(Array.isArray(track.tags) ? track.tags : []).join(', ')}
                         </span>
                       )}
@@ -303,7 +303,7 @@ export default function MusicPage() {
                   {/* Delete */}
                   <button
                     onClick={() => handleDelete(track.id)}
-                    className="p-2 rounded-lg text-gray-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    className="p-2 rounded-sm text-muted-foreground hover:text-red-400 hover:bg-red-500/10"
                     title="Delete track"
                   >
                     <Trash2 className="w-4 h-4" />

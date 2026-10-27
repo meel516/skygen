@@ -18,7 +18,7 @@ import {
   LineChart, PieChart, Grid3X3, Sparkles, ZoomIn, ZoomOut, Timer,
   QrCode, Video, Users, Share2, MousePointer, Palette, Waves, Hourglass,
   Play, Pause, ChevronDown, Box, TrendingUp, Layers, CloudSun,
-} from 'lucide-react';
+} from '@/components/ui/studio-icons';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -123,60 +123,60 @@ function SortableBlock({ block, index, isSelected, zoom, onSelect, onDuplicate, 
       animate={{ opacity: isDragging ? 0.75 : 1, scale: isDragging ? 1.04 : 1 }}
       exit={{ opacity: 0, scale: 0.85 }}
       className={cn(
-        'relative flex-shrink-0 rounded-xl cursor-pointer transition-colors duration-150 group',
-        isSelected ? 'ring-1 ring-[#7C3AED]' : 'hover:ring-1',
-        isDragging ? 'shadow-2xl' : ''
+        'relative flex-shrink-0 rounded-sm cursor-pointer group',
+        isSelected ? 'ring-1 ring-[var(--primary)]' : 'hover:ring-1',
+        isDragging ? 'shadow-none' : ''
       )}
       onClick={onSelect}
     >
       <div
-        className={cn("p-2.5 rounded-xl h-full flex flex-col gap-2 backdrop-blur border transition-colors",
-          isSelected ? "bg-purple-500/10 border-purple-500/40" : "bg-white dark:bg-[#1E1E2D] border-slate-200 dark:border-white/[0.07]"
+        className={cn("p-2.5 rounded-sm h-full flex flex-col gap-2 border",
+          isSelected ? "bg-primary/10 border-primary/40" : "bg-card dark:bg-[var(--muted)] border-border dark:border-white/[0.07]"
         )}
       >
         {/* Colored left accent bar */}
-        <div className={`absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-gradient-to-b ${gradient}`} />
+        <div className={`absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-muted ${gradient}`} />
 
         {/* Header row */}
         <div className="flex items-center gap-1.5 pl-1.5">
           <button
             {...attributes}
             {...listeners}
-            className="p-0.5 rounded cursor-grab active:cursor-grabbing transition-opacity opacity-0 group-hover:opacity-100 text-[#55556A]"
+            className="p-0.5 rounded cursor-grab active:cursor-grabbing opacity-100 text-[var(--muted-foreground)]"
             onClick={(e) => e.stopPropagation()}
           >
             <GripVertical className="w-3 h-3" />
           </button>
-          <div className={`w-6 h-6 rounded-md bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow`}>
-            <Icon className="w-3 h-3 text-slate-900 dark:text-white" />
+          <div className={`w-6 h-6 rounded-sm bg-muted ${gradient} flex items-center justify-center flex-shrink-0 shadow`}>
+            <Icon className="w-3 h-3 text-foreground dark:text-white" />
           </div>
-          <p className="text-[11px] font-medium truncate flex-1 text-slate-900 dark:text-[#F1F1F8]">
+          <p className="text-[11px] font-medium truncate flex-1 text-foreground dark:text-[var(--foreground)]">
             {getBlockLabel(block)}
           </p>
         </div>
 
         {/* Duration bar */}
-        <div className="h-1 rounded-full overflow-hidden bg-slate-200 dark:bg-white/[0.07]">
+        <div className="h-1 rounded-full overflow-hidden bg-muted dark:bg-white/[0.07]">
           <div
-            className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all`}
+            className={`h-full bg-muted ${gradient} rounded-full `}
             style={{ width: `${Math.min((duration / 15) * 100, 100)}%` }}
           />
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono tabular-nums text-[#55556A]">
+          <span className="text-[10px] font-mono tabular-nums text-[var(--muted-foreground)]">
             {duration}s
           </span>
-          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-0.5 opacity-100">
             <button
-              className="w-5 h-5 rounded flex items-center justify-center transition-colors text-[#55556A] hover:text-slate-900 dark:hover:text-[#F1F1F8]"
+              className="w-5 h-5 rounded flex items-center justify-center text-[var(--muted-foreground)] hover:text-foreground dark:hover:text-[var(--foreground)]"
               onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
             >
               <Copy className="w-2.5 h-2.5" />
             </button>
             <button
-              className="w-5 h-5 rounded flex items-center justify-center transition-colors text-[#55556A] hover:text-red-500"
+              className="w-5 h-5 rounded flex items-center justify-center text-[var(--muted-foreground)] hover:text-red-500"
               onClick={(e) => { e.stopPropagation(); onDelete(); }}
             >
               <Trash2 className="w-2.5 h-2.5" />
@@ -219,37 +219,37 @@ export function TimelineEditor({ onCollapse }: TimelineEditorProps) {
     <div className="h-full flex flex-col overflow-hidden" style={{ background: undefined }}>
       {/* Header */}
       <div
-        className="h-11 flex items-center justify-between px-3 flex-shrink-0 border-b bg-white dark:bg-[#13131C] border-slate-200 dark:border-white/[0.07] transition-colors"
+        className="h-11 flex items-center justify-between px-3 flex-shrink-0 border-b bg-card dark:bg-[var(--card)] border-border dark:border-white/[0.07]"
       >
         {/* Play + time */}
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="w-7 h-7 rounded-md flex items-center justify-center transition-colors shadow-md"
+            className="w-7 h-7 rounded-sm flex items-center justify-center shadow-none"
             style={{
-              background: '#7C3AED',
-              boxShadow: '0 2px 10px rgba(124,58,237,0.4)',
+              background: 'var(--primary)',
+              boxShadow: 'none',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = '#6D28D9')}
-            onMouseLeave={(e) => (e.currentTarget.style.background = '#7C3AED')}
+
+
           >
             {isPlaying
-              ? <Pause className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
-              : <Play className="w-3.5 h-3.5 text-slate-900 dark:text-white fill-white" />
+              ? <Pause className="w-3.5 h-3.5 text-foreground dark:text-white" />
+              : <Play className="w-3.5 h-3.5 text-foreground dark:text-white fill-white" />
             }
           </button>
 
-          <div className="text-[11px] font-mono tabular-nums text-[#8B8BAA]">
-            <span className="text-slate-900 dark:text-[#F1F1F8]">00:00</span>
-            <span className="text-[#55556A]"> / {formatTime(totalDuration)}</span>
+          <div className="text-[11px] font-mono tabular-nums text-[var(--muted-foreground)]">
+            <span className="text-foreground dark:text-[var(--foreground)]">00:00</span>
+            <span className="text-[var(--muted-foreground)]"> / {formatTime(totalDuration)}</span>
           </div>
 
           {videoInput.contentBlocks.length > 0 && (
             <div
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06]"
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded-sm bg-muted dark:bg-white/[0.04] border border-border dark:border-white/[0.06]"
             >
-              <Sparkles className="w-2.5 h-2.5 text-[#7C3AED]" />
-              <span className="text-[10px] text-[#8B8BAA]">
+              <Sparkles className="w-2.5 h-2.5 text-[var(--primary)]" />
+              <span className="text-[10px] text-[var(--muted-foreground)]">
                 {videoInput.contentBlocks.length} blocks
               </span>
             </div>
@@ -260,30 +260,30 @@ export function TimelineEditor({ onCollapse }: TimelineEditorProps) {
         <div className="flex items-center gap-1">
           {/* Zoom out */}
           <button
-            className="w-6 h-6 rounded flex items-center justify-center transition-colors disabled:opacity-30 text-[#55556A] hover:text-slate-900 dark:hover:text-[#F1F1F8]"
+            className="w-6 h-6 rounded flex items-center justify-center disabled:opacity-30 text-[var(--muted-foreground)] hover:text-foreground dark:hover:text-[var(--foreground)]"
             onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))}
             disabled={zoom <= 0.5}
           >
             <ZoomOut className="w-3.5 h-3.5" />
           </button>
-          <span className="text-[10px] font-mono tabular-nums w-8 text-center text-[#55556A]">
+          <span className="text-[10px] font-mono tabular-nums w-8 text-center text-[var(--muted-foreground)]">
             {Math.round(zoom * 100)}%
           </span>
           {/* Zoom in */}
           <button
-            className="w-6 h-6 rounded flex items-center justify-center transition-colors disabled:opacity-30 text-[#55556A] hover:text-slate-900 dark:hover:text-[#F1F1F8]"
+            className="w-6 h-6 rounded flex items-center justify-center disabled:opacity-30 text-[var(--muted-foreground)] hover:text-foreground dark:hover:text-[var(--foreground)]"
             onClick={() => setZoom((z) => Math.min(2, z + 0.25))}
             disabled={zoom >= 2}
           >
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
 
-          <div className="w-px h-4 mx-1 bg-slate-200 dark:bg-white/[0.07]" />
+          <div className="w-px h-4 mx-1 bg-muted dark:bg-white/[0.07]" />
 
           {/* Collapse */}
           {onCollapse && (
             <button
-              className="w-6 h-6 rounded flex items-center justify-center transition-colors text-[#55556A] hover:text-slate-900 dark:hover:text-[#F1F1F8]"
+              className="w-6 h-6 rounded flex items-center justify-center text-[var(--muted-foreground)] hover:text-foreground dark:hover:text-[var(--foreground)]"
               onClick={onCollapse}
               title="Collapse timeline"
             >
@@ -302,11 +302,11 @@ export function TimelineEditor({ onCollapse }: TimelineEditorProps) {
             className="h-full flex flex-col items-center justify-center gap-3"
           >
             <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-[#1E1E2D] border border-slate-200 dark:border-white/[0.07]"
+              className="w-12 h-12 rounded-sm flex items-center justify-center bg-muted dark:bg-[var(--muted)] border border-border dark:border-white/[0.07]"
             >
-              <Sparkles className="w-5 h-5 text-[#55556A]" />
+              <Sparkles className="w-5 h-5 text-[var(--muted-foreground)]" />
             </div>
-            <p className="text-xs text-[#55556A]">Add blocks from the library to begin</p>
+            <p className="text-xs text-[var(--muted-foreground)]">Add blocks from the library to begin</p>
           </motion.div>
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

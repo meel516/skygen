@@ -1,36 +1,32 @@
 'use client';
+import { WorkspaceSkeleton } from '@/components/app/WorkspaceSkeleton';
 
 import { AppShell } from '@/components/app/AppShell';
 import { ChatWizard } from '@/components/chat/ChatWizard';
 import { useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { Video } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ChatPage() {
+  return <Suspense fallback={<WorkspaceSkeleton />}><ChatPageContent /></Suspense>;
+}
+
+function ChatPageContent() {
   const { status } = useSession();
   const router = useRouter();
+  const isEmbed = useSearchParams().get('embed') === '1';
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (status === 'unauthenticated' && !isEmbed) {
       router.push('/');
     }
-  }, [router, status]);
+  }, [router, status, isEmbed]);
 
-  if (status === 'loading') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-[#0A0A0F]">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#0EA5E9]">
-            <Video className="h-4 w-4 text-slate-900 dark:text-white" />
-          </div>
-          <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#7C3AED]" />
-        </div>
-      </div>
-    );
-  }
+  if (isEmbed) return <ChatWizard />;
 
-  if (status === 'unauthenticated') return null;
+  if (status === 'loading') return <WorkspaceSkeleton />;
+
+  if (status === 'unauthenticated' && !isEmbed) return null;
 
   return (
     <AppShell>

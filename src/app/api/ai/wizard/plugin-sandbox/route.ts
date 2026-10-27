@@ -83,12 +83,16 @@ function summarizePending(pending: Record<string, any>) {
 }
 
 export async function POST(req: NextRequest) {
-  const authResult = await requireAuthenticatedSession();
-  if ('response' in authResult) return authResult.response;
-  const { session } = authResult;
-
   try {
     const body = await req.json();
+    const isMcpPreview = typeof body.threadId === 'string' && body.threadId.includes('mcp_preview_');
+    
+    let session = null;
+    if (!isMcpPreview) {
+      const authResult = await requireAuthenticatedSession();
+      if ('response' in authResult) return authResult.response;
+      session = authResult.session;
+    }
     const threadId = typeof body.threadId === 'string' ? body.threadId.trim() : '';
     const action = typeof body.action === 'string' ? body.action.trim() : 'list';
 
@@ -272,6 +276,8 @@ export async function POST(req: NextRequest) {
           ok: false,
           action: 'install',
           error: result.error,
+          buildError: result.buildError,
+          diagnostics: result.diagnostics,
           message: 'Sandbox install/build failed (same path as preview). Fix dependencies.json or source, then retry.',
         }, { status: 422 });
       }

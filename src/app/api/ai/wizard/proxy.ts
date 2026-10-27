@@ -47,8 +47,11 @@ function proxyResponseHeaders(upstream: Response): Headers {
 }
 
 export async function proxyWizardRequest(req: Request, path: string): Promise<Response> {
-  const authResult = await requireAuthenticatedSession();
-  if ('response' in authResult) return authResult.response;
+  const isMcpPreview = path.includes('mcp_preview_');
+  if (!isMcpPreview) {
+    const authResult = await requireAuthenticatedSession();
+    if ('response' in authResult) return authResult.response;
+  }
 
   const target = new URL(`${getMastraBaseUrl()}${path}`);
   const requestUrl = new URL(req.url);

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, use } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Send, ArrowLeft } from 'lucide-react';
+import { Loader2, Send, ArrowLeft } from '@/components/ui/studio-icons';
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-blue-500/20 text-blue-300',
@@ -84,15 +84,15 @@ export default function SupportTicketPage({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+      <div className="min-h-screen bg-card flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
 
   if (!ticket) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-gray-400">
+      <div className="min-h-screen bg-card flex items-center justify-center text-muted-foreground">
         Ticket not found
       </div>
     );
@@ -101,20 +101,20 @@ export default function SupportTicketPage({ params }: { params: Promise<{ id: st
   const isClosed = ticket.status === 'closed';
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col">
+    <div className="min-h-screen bg-card text-white flex flex-col">
       {/* Header */}
-      <div className="border-b border-gray-800 bg-gray-900 px-4 py-3 flex items-center gap-3">
-        <button onClick={() => router.push('/support')} className="text-gray-400 hover:text-white transition-colors">
+      <div className="border-b border-border bg-card px-4 py-3 flex items-center gap-3">
+        <button onClick={() => router.push('/support')} className="text-muted-foreground hover:text-white ">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-sm truncate">{ticket.subject}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLORS[ticket.status] ?? 'bg-gray-700 text-gray-300'}`}>
+            <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLORS[ticket.status] ?? 'bg-gray-700 text-muted-foreground'}`}>
               {ticket.status.replace('_', ' ')}
             </span>
           </div>
-          <p className="text-xs text-gray-500">Ticket #{id.slice(0, 8)}</p>
+          <p className="text-xs text-muted-foreground">Ticket #{id.slice(0, 8)}</p>
         </div>
       </div>
 
@@ -124,12 +124,12 @@ export default function SupportTicketPage({ params }: { params: Promise<{ id: st
           const isUser = m.sender_role === 'user';
           return (
             <div key={m.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${isUser ? 'bg-purple-600 text-white rounded-br-sm' : 'bg-gray-800 text-gray-100 rounded-bl-sm'}`}>
+              <div className={`max-w-[75%] rounded-sm px-4 py-2.5 ${isUser ? 'bg-muted text-white rounded-br-sm' : 'bg-card text-muted-foreground rounded-bl-sm'}`}>
                 {!isUser && (
-                  <p className="text-xs font-semibold text-purple-400 mb-1">Support</p>
+                  <p className="text-xs font-semibold text-primary mb-1">Support</p>
                 )}
                 <p className="text-sm whitespace-pre-wrap">{m.message}</p>
-                <p className={`text-xs mt-1 ${isUser ? 'text-purple-200' : 'text-gray-500'}`}>
+                <p className={`text-xs mt-1 ${isUser ? 'text-primary' : 'text-muted-foreground'}`}>
                   {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -140,10 +140,10 @@ export default function SupportTicketPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-800 bg-gray-900 px-4 py-3">
+      <div className="border-t border-border bg-card px-4 py-3">
         <div className="max-w-2xl mx-auto">
           {isClosed ? (
-            <p className="text-center text-sm text-gray-500">This ticket is closed.</p>
+            <p className="text-center text-sm text-muted-foreground">This ticket is closed.</p>
           ) : (
             <form onSubmit={handleSend} className="flex gap-2">
               <input
@@ -152,12 +152,12 @@ export default function SupportTicketPage({ params }: { params: Promise<{ id: st
                 onChange={e => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
                 disabled={sending}
-                className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500 disabled:opacity-50"
+                className="flex-1 bg-card border border-border rounded-sm px-4 py-2 text-sm text-white focus:outline-none focus:border-primary disabled:opacity-50"
               />
               <button
                 type="submit"
                 disabled={sending || !newMessage.trim()}
-                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl px-4 py-2 transition-colors flex items-center gap-1"
+                className="bg-primary hover:bg-primary disabled:opacity-50 text-white rounded-sm px-4 py-2  flex items-center gap-1"
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>

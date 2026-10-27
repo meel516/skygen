@@ -1,31 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./studio.css";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { PostHogProvider, PostHogPageView } from "@/components/providers/PostHogProvider";
 import { Suspense } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "SKYGEN EDITOR",
-  description: "Modern Next.js Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
+  title: "SkyGen | Motion graphics studio",
+  description: "Create, refine, and export motion graphics in SkyGen. An AI video workspace with editable scenes and reusable templates.",
+  keywords: ["SkyGen", "motion graphics", "AI video", "video editor"],
   authors: [{ name: "saleem" }],
   icons: {
     icon: "/logo.png",
   },
- 
+
 };
 
 export default function RootLayout({
@@ -36,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 dark:bg-background text-slate-900 dark:text-foreground`}
+        className={"antialiased bg-background text-foreground"}
       >
         <PostHogProvider>
           <ThemeProvider

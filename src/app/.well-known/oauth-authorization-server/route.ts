@@ -9,7 +9,8 @@ export async function GET() {
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code"],
     code_challenge_methods_supported: ["S256", "plain"],
-    scopes_supported: ["generate"]
+    scopes_supported: ["generate"],
+    client_id_metadata_document_supported: true
   }, {
     headers: {
       'Access-Control-Allow-Origin': '*',

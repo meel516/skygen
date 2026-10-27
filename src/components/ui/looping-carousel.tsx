@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from '@/components/ui/studio-icons';
 
 interface LoopingCarouselProps {
   children: React.ReactNode[];
@@ -89,17 +89,17 @@ export function LoopingCarousel({ children, cardWidth = 150, gap = 12 }: Looping
         >
           <div
             className="absolute left-0 top-0 bottom-0 w-16 pointer-events-none"
-            style={{ background: 'linear-gradient(to right, #0A0A0F, transparent)' }}
+            style={{ background: 'var(--primary)' }}
           />
           <button
             onClick={scrollLeftFn}
-            className="relative z-10 ml-1 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="relative z-10 ml-1 w-9 h-9 rounded-full flex items-center justify-center"
             style={{
               background: 'rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(8px)',
+              backdropFilter: 'none',
               border: '1px solid rgba(255,255,255,0.12)',
-              color: '#F1F1F8',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+              color: 'var(--foreground)',
+              boxShadow: 'none',
             }}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -115,17 +115,17 @@ export function LoopingCarousel({ children, cardWidth = 150, gap = 12 }: Looping
         >
           <div
             className="absolute right-0 top-0 bottom-0 w-16 pointer-events-none"
-            style={{ background: 'linear-gradient(to left, #0A0A0F, transparent)' }}
+            style={{ background: 'var(--primary)' }}
           />
           <button
             onClick={scrollRightFn}
-            className="relative z-10 mr-1 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            className="relative z-10 mr-1 w-9 h-9 rounded-full flex items-center justify-center"
             style={{
               background: 'rgba(0,0,0,0.7)',
-              backdropFilter: 'blur(8px)',
+              backdropFilter: 'none',
               border: '1px solid rgba(255,255,255,0.12)',
-              color: '#F1F1F8',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+              color: 'var(--foreground)',
+              boxShadow: 'none',
             }}
           >
             <ChevronRight className="w-5 h-5" />

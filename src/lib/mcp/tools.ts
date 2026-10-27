@@ -1,4 +1,6 @@
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { randomUUID } from 'crypto';
+import { createJob } from '@/lib/mcp/wizard-jobs';
 import {
   getBaseBundleInfo,
   validatePluginLocal,
@@ -442,8 +444,54 @@ Requires filesystem access (stdio MCP on the machine). On HTTP MCP (Vercel), use
     },
   },
   {
-    name: 'propose_plugin_preview',
+    name: 'import_media_from_url',
+    description: 'Download an image, audio, or video file from a public URL and save it to SkyGen S3. Returns the persistent SkyGen S3 URL. Use this when the user has already provided a URL or an attached file download link. Always prefer this over request_media_upload if you already have a URL.',
+    inputSchema: {
+      type: 'object',
+      required: ['url'],
+      properties: {
+        url: { type: 'string', description: 'The public URL of the media file to import.' },
+      },
+    },
+  },
+  {
+      name: 'request_media_upload',
+      description: 'Requests a UI widget to allow the user to directly upload a media file (image, video, audio) from their browser. Use this when the user wants to provide their own media for a block or plugin. Wait for the user to upload the file, the tool will return the uploaded URL.',
+      _meta: {
+        ui: {
+          resourceUri: 'ui://skygen/upload-v4.html',
+          csp: {
+            resourceDomains: ['https://esm.sh', 'https://skygen.salru.in', 'https://cdn.tailwindcss.com'],
+            connectDomains: ['https://skygen.salru.in'],
+            frameDomains: ['https://skygen.salru.in']
+          }
+        },
+        outputSchema: {
+          type: 'object',
+          properties: {
+            url: { type: 'string' }
+          }
+        }
+      },
+      inputSchema: {
+        type: 'object',
+        properties: {},
+      },
+    },
+    {
+      name: 'propose_plugin_preview',
     description: 'Propose a plugin via MCP and generate a live preview URL for the user to review in the web UI. Once the user approves it (either in the UI or via approve_plugin_preview), it becomes a fully saved plugin.',
+    _meta: {
+      ui: {
+        resourceUri: 'ui://skygen/preview-v6.html',
+        }
+      },
+      outputSchema: {
+        type: 'object',
+        properties: {
+          previewUrl: { type: 'string' }
+        }
+      },
     inputSchema: {
       type: 'object',
       properties: {
@@ -463,7 +511,6 @@ Requires filesystem access (stdio MCP on the machine). On HTTP MCP (Vercel), use
           description: 'npm dependencies the plugin imports (package -> semver)',
           additionalProperties: { type: 'string' },
         },
-
       },
       required: ['id', 'name', 'schema_json'],
     },
@@ -604,6 +651,7 @@ export async function handleToolCall(
   name: string,
   args: Record<string, any>,
   apiFetch: ApiFetch,
+  userId: string,
 ): Promise<{ content: any[] }> {
   switch (name) {
 
@@ -1196,6 +1244,32 @@ export async function handleToolCall(
       };
     }
 
+    case 'import_media_from_url': {
+      const { url } = args;
+      if (!url) throw new McpError(ErrorCode.InvalidParams, 'url is required');
+      const { proxyImageToS3 } = await import('@/lib/video/ai/media-service');
+      const s3Url = await proxyImageToS3(url);
+      return {
+        content: [{ type: 'text', text: JSON.stringify({ url: s3Url }, null, 2) }],
+      };
+    }
+
+    case 'request_media_upload': {
+      // Create a temporary upload job ID that the widget can use to authorize the upload
+      const uploadId = 'mcp_upload_' + randomUUID();
+        await createJob(uploadId, userId);
+      
+      return {
+        content: [
+          {
+            type: 'text',
+            text: 'Please use the interactive widget to upload your media.',
+          },
+        ],
+        structuredContent: { uploadId },
+      };
+    }
+
     case 'propose_plugin_preview': {
       const {
         id,
@@ -1229,16 +1303,21 @@ export async function handleToolCall(
       }
 
       return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            success: true,
-            thread_id: result.threadId,
-            preview_url: result.url,
-            message: `Preview created successfully! Please tell the user to review it at ${result.url}. Once approved, call approve_plugin_preview with the thread_id.`,
-          }, null, 2),
-        }],
-      };
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: true,
+                thread_id: result.threadId,
+                preview_url: result.url,
+                message: `Preview created successfully! Please tell the user to review it at ${result.url}. Once approved, call approve_plugin_preview with the thread_id.`,
+              }, null, 2),
+            }
+          ],
+          structuredContent: {
+            previewUrl: result.url
+          }
+        };
     }
 
     case 'approve_plugin_preview': {

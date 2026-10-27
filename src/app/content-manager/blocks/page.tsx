@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ImageUploader } from '@/components/content-manager/ImageUploader';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save } from '@/components/ui/studio-icons';
 
 const ALL_BLOCK_TYPES = [
   { type: 'text', label: 'Text' },
@@ -74,14 +74,14 @@ export default function BlockThumbnailsPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>;
+    return <div className="flex items-center justify-center h-64"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (
     <div>
       <div className="mb-8">
         <h2 className="text-2xl font-bold">Block Thumbnails</h2>
-        <p className="text-sm text-gray-400 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Upload preview images for each content block. These replace the default icons in the editor sidebar.
         </p>
       </div>
@@ -90,11 +90,11 @@ export default function BlockThumbnailsPage() {
         {ALL_BLOCK_TYPES.map(({ type, label }) => (
           <div
             key={type}
-            className="bg-gray-900/50 rounded-lg border border-gray-800 p-4 space-y-3"
+            className="bg-card/50 rounded-sm border border-border p-4 space-y-3"
           >
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-white">{label}</span>
-              <span className="text-[10px] text-gray-600 font-mono">{type}</span>
+              <span className="text-[10px] text-muted-foreground font-mono">{type}</span>
             </div>
             <ImageUploader
               value={thumbnails[type] || undefined}

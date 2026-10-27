@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
   user_id TEXT NOT NULL,
   redirect_uri TEXT NOT NULL,
   scope TEXT DEFAULT 'generate',
+  code_challenge TEXT,
+  code_challenge_method TEXT,
   expires_at TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

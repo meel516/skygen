@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Player } from '@remotion/player';
+import { requirePluginDependency } from '@/lib/plugins/runtime-contract';
+import { PluginBuildErrorPanel } from './PluginBuildErrorPanel';
 import { useWizardChatStore } from '@/store/wizard-chat-store';
 import { CircleNotch, CheckCircle, XCircle, ArrowsClockwise, Code, Copy, DownloadSimple, PencilSimple, FloppyDisk, CloudArrowUp } from '@phosphor-icons/react';
 import Editor from '@monaco-editor/react';
@@ -192,66 +194,13 @@ function previewDataFromSchema(schemaJson: string, durationSec?: number): Record
 // ---------------------------------------------------------------------------
 
 let pluginDepsReady = false;
+let previewDependencies: Record<string, unknown> = {};
 
 async function ensurePluginDeps(): Promise<void> {
   if (pluginDepsReady) return;
-
-  const [
-    React,
-    ReactDOM,
-    ReactDOMClient,
-    jsxRuntime,
-    jsxDevRuntime,
-    Remotion,
-    RemotionPlayer,
-    mediaUtils,
-    remotionSfx,
-    three,
-    r3f,
-    drei,
-    postfx,
-    postprocessing,
-    remotionThree,
-    remotionLottie,
-  ] = await Promise.all([
-    import('react'),
-    import('react-dom'),
-    import('react-dom/client'),
-    import('react/jsx-runtime'),
-    import('react/jsx-dev-runtime'),
-    import('remotion'),
-    import('@remotion/player'),
-    import('@remotion/media-utils'),
-    import('@remotion/sfx'),
-    import('three'),
-    import('@react-three/fiber'),
-    import('@react-three/drei'),
-    import('@react-three/postprocessing'),
-    import('postprocessing'),
-    import('@remotion/three'),
-    import('@remotion/lottie'),
-  ]);
-
-  const g = globalThis as Record<string, unknown>;
-  const deps = (g.__pluginDeps ?? {}) as Record<string, unknown>;
-  deps['react'] = React;
-  deps['react-dom'] = ReactDOM;
-  deps['react-dom/client'] = ReactDOMClient;
-  deps['react/jsx-runtime'] = jsxRuntime;
-  deps['react/jsx-dev-runtime'] = jsxDevRuntime;
-  deps['remotion'] = Remotion;
-  deps['@remotion/player'] = RemotionPlayer;
-  deps['@remotion/renderer'] = {};
-  deps['@remotion/media-utils'] = mediaUtils;
-  deps['@remotion/sfx'] = remotionSfx;
-  deps['three'] = three;
-  deps['@react-three/fiber'] = r3f;
-  deps['@react-three/drei'] = drei;
-  deps['@react-three/postprocessing'] = postfx;
-  deps['postprocessing'] = postprocessing;
-  deps['@remotion/three'] = remotionThree;
-  deps['@remotion/lottie'] = remotionLottie;
-  g.__pluginDeps = deps;
+  const { pluginRuntimeDependencies } = await import('@/lib/plugins/runtime-dependencies');
+  previewDependencies = { ...pluginRuntimeDependencies };
+  (globalThis as Record<string, unknown>).__pluginDeps = previewDependencies;
   pluginDepsReady = true;
 }
 
@@ -259,10 +208,7 @@ function evaluateCjsPluginBundle(code: string, pluginId: string): Record<string,
   const exportsObj: Record<string, unknown> = {};
   const moduleObj = { exports: exportsObj };
   const customRequire = (pkg: string) => {
-    const deps = ((globalThis as Record<string, unknown>).__pluginDeps ?? {}) as Record<string, unknown>;
-    if (deps[pkg]) return deps[pkg];
-    console.warn(`[PluginPreview] "${pluginId}" requested unknown module: ${pkg}`);
-    return {};
+    return requirePluginDependency(previewDependencies, pkg, pluginId);
   };
   // eslint-disable-next-line @typescript-eslint/no-implied-eval
   const factory = new Function('exports', 'require', 'module', code);
@@ -294,7 +240,8 @@ export function PluginPreview() {
   const [activeFile, setActiveFile] = useState('Scene.tsx');
   const [previewMeta, setPreviewMeta] = useState<PreviewMeta>(null);
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
-  
+  const [overrideDuration, setOverrideDuration] = useState<number | null>(null);
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedCode, setEditedCode] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -345,7 +292,7 @@ export function PluginPreview() {
     expectedSourceHash?: string,
   ) => {
     const sourceHash = expectedSourceHash ?? hashCode(stableStringify({ sceneCode, dependencies, modules, schemaJson }));
-    if (loadedSceneHash.current === sourceHash) return;
+    if (loadedSceneHash.current === sourceHash) return true;
 
     setState('loading');
     setErrorMsg('');
@@ -356,9 +303,9 @@ export function PluginPreview() {
       const res = await fetch('/api/plugins/preview-bundle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sceneCode, pluginId, dependencies, modules, schemaJson }),
+        body: JSON.stringify({ sceneCode, pluginId, dependencies, modules, schemaJson, threadId }),
       });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({ error: `Preview request failed (HTTP ${res.status} ${res.statusText}). The server did not return build details.` }));
 
       if (!res.ok || json.error) {
         throw new Error(json.error ?? 'Build failed');
@@ -385,12 +332,14 @@ export function PluginPreview() {
         bundleBytes: json.bundleBytes ?? json.bundleJs?.length ?? 0,
       });
       setState('ready');
+      return true;
     } catch (e: any) {
       console.error('[PluginPreview] failed to load preview:', e?.message);
       setErrorMsg(e?.message ?? 'Unknown error');
       setState('error');
+      return false;
     }
-  }, []);
+  }, [threadId]);
 
   // Runtime preview crashes are shown to the user, but we do not auto-send
   // a follow-up chat message. A delayed auto-heal can fire after Stop / Save
@@ -473,16 +422,12 @@ export function PluginPreview() {
     setSandboxErr(null);
     setSandboxMsg(null);
     try {
-      // Persist deps editor first if valid JSON
-      try {
-        JSON.parse(depsJsonText);
-        await callPluginSandbox({
-          action: 'set-dependencies',
-          dependenciesJson: depsJsonText,
-        });
-      } catch {
-        /* use server pending deps */
-      }
+      // Report invalid edits instead of silently rebuilding with old versions.
+      JSON.parse(depsJsonText);
+      await callPluginSandbox({
+        action: 'set-dependencies',
+        dependenciesJson: depsJsonText,
+      });
       const json = await callPluginSandbox({ action: 'install' });
       if (json.pending) {
         // pending may be summarized without full modules — refresh from server
@@ -494,7 +439,7 @@ export function PluginPreview() {
       loadedSceneHash.current = null;
       const plugin = useWizardChatStore.getState().pendingPlugin;
       if (plugin) {
-        await loadPreview(
+        const ready = await loadPreview(
           plugin.sceneCode,
           plugin.pluginId,
           plugin.dependencies,
@@ -502,11 +447,18 @@ export function PluginPreview() {
           plugin.schemaJson,
           localSourceHash(plugin),
         );
+        if (!ready) {
+          setActiveTab('preview');
+          return;
+        }
       }
       setSandboxMsg(json.message || `Sandbox install OK (${json.bundleBytes ?? 0} bytes). Preview reloaded.`);
       setActiveTab('preview');
     } catch (e) {
-      setSandboxErr(e instanceof Error ? e.message : 'Sandbox install failed');
+      const message = e instanceof Error ? e.message : 'Sandbox install failed';
+      setSandboxErr(message);
+      setErrorMsg(message);
+      setState('error');
     } finally {
       setSandboxBusy(false);
     }
@@ -558,15 +510,14 @@ export function PluginPreview() {
   const savedPreviewCurrent = pendingPlugin.previewSourceHash === sourceHash;
   const browserPreviewCurrent = previewMeta?.sourceHash === sourceHash;
   const selectedFileCode = codeFiles[selectedFile] ?? '';
-  
-  const [overrideDuration, setOverrideDuration] = useState<number | null>(null);
+
   const basePreviewTiming = previewTimingFromSchema(pendingPlugin.schemaJson);
   const previewTiming = overrideDuration ? {
     ...basePreviewTiming,
     durationSec: overrideDuration,
     durationInFrames: Math.max(1, Math.round(overrideDuration * basePreviewTiming.fps)),
   } : basePreviewTiming;
-  
+
   const previewData = previewDataFromSchema(pendingPlugin.schemaJson, previewTiming.durationSec);
 
   const copySelectedFile = async () => {
@@ -593,7 +544,7 @@ export function PluginPreview() {
         throw new Error(await res.text());
       }
       setIsEditing(false);
-      
+
       // Clear local hash and fetch fresh state from server so preview updates
       loadedSceneHash.current = null;
       const freshPlugin = await refreshFromServer();
@@ -681,21 +632,21 @@ export function PluginPreview() {
   return (
     <div
       className="flex flex-col h-full"
-      style={{ background: '#0A0A0F', borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      style={{ background: 'var(--background)', borderTop: '1px solid var(--border)' }}
     >
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-2.5 shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        style={{ borderBottom: '1px solid var(--border)' }}
       >
         <div className="flex items-center gap-2">
-          <Code weight="duotone" size={14} style={{ color: '#A78BFA' }} />
-          <span className="text-xs font-semibold" style={{ color: '#E2E2F0' }}>
+          <Code weight="duotone" size={14} style={{ color: 'var(--primary)' }} />
+          <span className="text-xs font-semibold" style={{ color: 'var(--foreground)' }}>
             Plugin Preview
           </span>
           <span
             className="text-[10px] px-2 py-0.5 rounded-full"
-            style={{ background: 'rgba(124,58,237,0.15)', color: '#A78BFA', border: '1px solid rgba(124,58,237,0.25)' }}
+            style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)', border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)' }}
           >
             {pendingPlugin.pluginName}
           </span>
@@ -714,17 +665,17 @@ export function PluginPreview() {
         <div className="flex items-center gap-1">
           {/* Tab switcher */}
           <div
-            className="flex rounded-lg p-0.5 gap-0.5"
-            style={{ background: 'rgba(255,255,255,0.05)' }}
+            className="flex rounded-sm p-0.5 gap-0.5"
+            style={{ background: 'var(--border)' }}
           >
             {(['preview', 'code', 'sandbox'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="text-[10px] px-2.5 py-1 rounded-md font-medium transition-all capitalize"
+                className="text-[10px] px-2.5 py-1 rounded-sm font-medium capitalize"
                 style={{
-                  background: activeTab === tab ? 'rgba(124,58,237,0.3)' : 'transparent',
-                  color: activeTab === tab ? '#A78BFA' : '#55556A',
+                  background: activeTab === tab ? 'color-mix(in srgb, var(--primary) 30%, transparent)' : 'transparent',
+                  color: activeTab === tab ? 'var(--primary)' : 'var(--muted-foreground)',
                 }}
               >
                 {tab}
@@ -759,17 +710,17 @@ export function PluginPreview() {
       <div className="flex-1 min-h-0 overflow-hidden">
         {activeTab === 'sandbox' ? (
           <div className="h-full min-h-0 overflow-auto p-4 flex flex-col gap-3">
-            <p className="text-[11px] leading-relaxed" style={{ color: '#8B8BAA' }}>
+            <p className="text-[11px] leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
               Remotion plugin sandbox (additive). Edit <code style={{ color: '#C4C4E0' }}>dependencies.json</code>,
               create files, then <strong style={{ color: '#C4C4E0' }}>Install packages</strong> using the{' '}
               <strong style={{ color: '#C4C4E0' }}>same sandbox as preview</strong>. Agent flow is unchanged.
             </p>
 
-            <div className="text-[10px] font-mono" style={{ color: '#6B6B8A' }}>
+            <div className="text-[10px] font-mono" style={{ color: 'var(--muted-foreground)' }}>
               Files: {(pendingPlugin.modules ? Object.keys(pendingPlugin.modules) : ['Scene.tsx']).join(', ') || 'Scene.tsx'}
             </div>
 
-            <label className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: '#6B6B8A' }}>
+            <label className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'var(--muted-foreground)' }}>
               dependencies.json
             </label>
             <textarea
@@ -777,11 +728,11 @@ export function PluginPreview() {
               onChange={(e) => setDepsJsonText(e.target.value)}
               spellCheck={false}
               rows={8}
-              className="w-full text-[11px] font-mono p-3 rounded-xl outline-none resize-y min-h-[120px]"
+              className="w-full text-[11px] font-mono p-3 rounded-sm outline-none resize-y min-h-[120px]"
               style={{
                 background: 'rgba(0,0,0,0.35)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#E2E2F0',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
               }}
               placeholder={'{\n  "maplibre-gl": "^5.0.0"\n}'}
             />
@@ -791,10 +742,10 @@ export function PluginPreview() {
                 type="button"
                 disabled={sandboxBusy || !threadId}
                 onClick={() => void handleSandboxSaveDeps()}
-                className="inline-flex items-center gap-1.5 text-[11px] px-3 py-2 rounded-xl font-medium disabled:opacity-40"
+                className="inline-flex items-center gap-1.5 text-[11px] px-3 py-2 rounded-sm font-medium disabled:opacity-40"
                 style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--border)',
+                  border: '1px solid var(--border)',
                   color: '#C4C4E0',
                 }}
               >
@@ -804,10 +755,10 @@ export function PluginPreview() {
                 type="button"
                 disabled={sandboxBusy || !threadId}
                 onClick={() => void handleSandboxInstall()}
-                className="inline-flex items-center gap-1.5 text-[11px] px-3 py-2 rounded-xl font-semibold disabled:opacity-40"
+                className="inline-flex items-center gap-1.5 text-[11px] px-3 py-2 rounded-sm font-semibold disabled:opacity-40"
                 style={{
-                  background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
-                  color: '#fff',
+                  background: 'var(--primary)',
+                  color: 'var(--primary-foreground)',
                 }}
               >
                 {sandboxBusy ? (
@@ -825,10 +776,10 @@ export function PluginPreview() {
             </div>
 
             <div
-              className="rounded-xl p-3 flex flex-col gap-2"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+              className="rounded-sm p-3 flex flex-col gap-2"
+              style={{ background: 'var(--border)', border: '1px solid var(--border)' }}
             >
-              <label className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: '#6B6B8A' }}>
+              <label className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: 'var(--muted-foreground)' }}>
                 Create file
               </label>
               <div className="flex gap-2">
@@ -836,35 +787,35 @@ export function PluginPreview() {
                   value={newFilePath}
                   onChange={(e) => setNewFilePath(e.target.value)}
                   placeholder="features/MapLayers.tsx"
-                  className="flex-1 text-[11px] font-mono px-3 py-2 rounded-lg outline-none"
+                  className="flex-1 text-[11px] font-mono px-3 py-2 rounded-sm outline-none"
                   style={{
                     background: 'rgba(0,0,0,0.35)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    color: '#E2E2F0',
+                    border: '1px solid var(--border)',
+                    color: 'var(--foreground)',
                   }}
                 />
                 <button
                   type="button"
                   disabled={sandboxBusy || !newFilePath.trim() || !threadId}
                   onClick={() => void handleSandboxCreateFile()}
-                  className="text-[11px] px-3 py-2 rounded-lg font-medium disabled:opacity-40"
+                  className="text-[11px] px-3 py-2 rounded-sm font-medium disabled:opacity-40"
                   style={{
-                    background: 'rgba(124,58,237,0.2)',
-                    border: '1px solid rgba(167,139,250,0.3)',
+                    background: 'color-mix(in srgb, var(--primary) 20%, transparent)',
+                    border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)',
                     color: '#DDD6FE',
                   }}
                 >
                   Add file
                 </button>
               </div>
-              <p className="text-[10px]" style={{ color: '#55556A' }}>
+              <p className="text-[10px]" style={{ color: 'var(--muted-foreground)' }}>
                 Then open the Code tab to edit. Install after changing dependencies.
               </p>
             </div>
 
             {sandboxMsg && (
               <div
-                className="text-[11px] px-3 py-2 rounded-lg"
+                className="text-[11px] px-3 py-2 rounded-sm"
                 style={{
                   background: 'rgba(34,197,94,0.1)',
                   border: '1px solid rgba(34,197,94,0.25)',
@@ -875,27 +826,8 @@ export function PluginPreview() {
               </div>
             )}
             {sandboxErr && (
-              <div
-                className="text-[11px] px-3 py-2 rounded-lg whitespace-pre-wrap font-mono max-h-40 overflow-auto"
-                style={{
-                  background: 'rgba(239,68,68,0.1)',
-                  border: '1px solid rgba(239,68,68,0.25)',
-                  color: '#FCA5A5',
-                }}
-              >
-                {sandboxErr}
-                <button
-                  type="button"
-                  className="block mt-2 text-[10px] underline"
-                  onClick={() => {
-                    sendMessage(
-                      `Plugin sandbox install/build failed. Fix dependencies.json or source only. Do NOT call build-and-save-plugin.\n\n${sandboxErr}`,
-                    );
-                  }}
-                >
-                  Send error to agent
-                </button>
-              </div>
+              <PluginBuildErrorPanel error={sandboxErr} agentBusy={isStreaming}
+                onAskAgent={() => sendMessage(`Plugin sandbox install/build failed. Fix dependencies.json or source only. Do NOT call build-and-save-plugin.\n\n${sandboxErr}`)} />
             )}
           </div>
         ) : activeTab === 'code' ? (
@@ -903,7 +835,7 @@ export function PluginPreview() {
           <div className="h-full min-h-0 flex flex-col">
             <div
               className="shrink-0 px-3 py-2 flex items-center justify-between gap-2"
-              style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ borderBottom: '1px solid var(--border)' }}
             >
               <div className="flex items-center gap-2 overflow-x-auto min-w-0">
                 {fileNames.map((fileName) => (
@@ -913,11 +845,11 @@ export function PluginPreview() {
                       setActiveFile(fileName);
                       setIsEditing(false);
                     }}
-                    className="text-[10px] px-2.5 py-1 rounded-md font-mono whitespace-nowrap transition-all"
+                    className="text-[10px] px-2.5 py-1 rounded-sm font-mono whitespace-nowrap"
                     style={{
-                      background: selectedFile === fileName ? 'rgba(124,58,237,0.25)' : 'rgba(255,255,255,0.04)',
-                      color: selectedFile === fileName ? '#DDD6FE' : '#8B8BAA',
-                      border: `1px solid ${selectedFile === fileName ? 'rgba(167,139,250,0.35)' : 'rgba(255,255,255,0.06)'}`,
+                      background: selectedFile === fileName ? 'color-mix(in srgb, var(--primary) 25%, transparent)' : 'var(--border)',
+                      color: selectedFile === fileName ? '#DDD6FE' : 'var(--muted-foreground)',
+                      border: `1px solid ${selectedFile === fileName ? 'color-mix(in srgb, var(--primary) 35%, transparent)' : 'var(--border)'}`,
                     }}
                   >
                     {fileName}
@@ -931,11 +863,11 @@ export function PluginPreview() {
                       setEditedCode(selectedFileCode);
                       setIsEditing(true);
                     }}
-                    className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md transition-all"
+                    className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-sm"
                     style={{
-                      background: 'rgba(255,255,255,0.04)',
+                      background: 'var(--border)',
                       color: '#C4C4E0',
-                      border: '1px solid rgba(255,255,255,0.07)',
+                      border: '1px solid var(--border)',
                     }}
                     title="Edit file manually"
                   >
@@ -947,7 +879,7 @@ export function PluginPreview() {
                     <button
                       onClick={() => setIsEditing(false)}
                       disabled={isSaving}
-                      className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md transition-all disabled:opacity-50"
+                      className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-sm disabled:opacity-50"
                       style={{
                         background: 'rgba(239,68,68,0.1)',
                         color: '#FCA5A5',
@@ -959,7 +891,7 @@ export function PluginPreview() {
                     <button
                       onClick={handleSaveEdit}
                       disabled={isSaving}
-                      className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md transition-all disabled:opacity-50"
+                      className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-sm disabled:opacity-50"
                       style={{
                         background: 'rgba(34,197,94,0.15)',
                         color: '#86EFAC',
@@ -973,11 +905,11 @@ export function PluginPreview() {
                 )}
                 <button
                   onClick={copySelectedFile}
-                  className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md transition-all"
+                  className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-sm"
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
+                    background: 'var(--border)',
                     color: copiedFile === selectedFile ? '#86EFAC' : '#C4C4E0',
-                    border: `1px solid ${copiedFile === selectedFile ? 'rgba(34,197,94,0.28)' : 'rgba(255,255,255,0.07)'}`,
+                    border: `1px solid ${copiedFile === selectedFile ? 'rgba(34,197,94,0.28)' : 'var(--border)'}`,
                   }}
                   title={`Copy ${selectedFile}`}
                 >
@@ -986,11 +918,11 @@ export function PluginPreview() {
                 </button>
                 <button
                   onClick={downloadAllFiles}
-                  className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md transition-all"
+                  className="inline-flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-sm"
                   style={{
-                    background: 'rgba(124,58,237,0.14)',
+                    background: 'color-mix(in srgb, var(--primary) 14%, transparent)',
                     color: '#DDD6FE',
-                    border: '1px solid rgba(167,139,250,0.26)',
+                    border: '1px solid color-mix(in srgb, var(--primary) 26%, transparent)',
                   }}
                   title="Download all plugin source files"
                 >
@@ -1001,7 +933,7 @@ export function PluginPreview() {
             </div>
             <div
               className="shrink-0 px-3 py-2 grid grid-cols-2 gap-2 text-[10px] font-mono"
-              style={{ color: '#8B8BAA', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ color: 'var(--muted-foreground)', borderBottom: '1px solid var(--border)' }}
             >
               <div>source: <span style={{ color: '#C4C4E0' }}>{sourceHash}</span></div>
               <div>compiled: <span style={{ color: compileCurrent ? '#86EFAC' : '#FBBF24' }}>{pendingPlugin.lastCompiledSourceHash ?? 'none'}</span></div>
@@ -1010,7 +942,7 @@ export function PluginPreview() {
             </div>
             <div className="flex-1 min-h-0 overflow-auto p-3 relative">
               {isEditing ? (
-                <div className="h-full w-full rounded-md overflow-hidden border" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+                <div className="h-full w-full rounded-sm overflow-hidden border" style={{ borderColor: 'var(--border)' }}>
                   <Editor
                     height="100%"
                     language={selectedFile.endsWith('.json') ? 'json' : 'typescript'}
@@ -1041,34 +973,21 @@ export function PluginPreview() {
           <div className="flex items-center justify-center p-4 h-full">
             {state === 'loading' && (
               <div className="flex flex-col items-center gap-3">
-                <CircleNotch weight="bold" size={24} className="animate-spin" style={{ color: '#7C3AED' }} />
-                <p className="text-xs" style={{ color: '#55556A' }}>Transpiling scene code…</p>
+                <CircleNotch weight="bold" size={24} className="animate-spin" style={{ color: 'var(--primary)' }} />
+                <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>Transpiling scene code…</p>
               </div>
             )}
 
             {state === 'error' && (
-              <div
-                className="flex flex-col items-center gap-3 p-4 rounded-xl text-center max-w-xs"
-                style={{ background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.18)' }}
-              >
-                <XCircle weight="fill" size={24} style={{ color: '#F87171' }} />
-                <p className="text-xs font-medium" style={{ color: '#F87171' }}>Build error</p>
-                <p className="text-[11px] font-mono break-all" style={{ color: '#9B9BBB' }}>{errorMsg}</p>
-                <button
-                  onClick={() => sendMessage(`The plugin preview failed with this error:\n${errorMsg}\n\nPlease inspect the current pending plugin source and modules, then fix only the real cause. Do not assume this is data.animation unless the source actually contains that pattern.`)}
-                  disabled={isStreaming}
-                  className="mt-1 text-xs px-3 py-1.5 rounded-lg"
-                  style={{ background: 'rgba(239,68,68,0.12)', color: '#F87171', border: '1px solid rgba(239,68,68,0.25)' }}
-                >
-                  Ask agent to fix
-                </button>
-              </div>
+              <PluginBuildErrorPanel error={errorMsg} agentBusy={isStreaming}
+                onEditDependencies={() => setActiveTab('sandbox')}
+                onAskAgent={() => sendMessage(`The plugin preview failed with this error:\n${errorMsg}\n\nPlease inspect the current pending plugin source and modules, then fix only the real cause.`)} />
             )}
 
             {state === 'ready' && Component && (
               <div
-                className="rounded-xl overflow-hidden w-full relative"
-                style={{ border: '1px solid rgba(124,58,237,0.3)', aspectRatio: '16/9' }}
+                className="rounded-sm overflow-hidden w-full relative"
+                style={{ border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)', aspectRatio: '16/9' }}
               >
                 <div
                   className="absolute top-2 right-2 z-10 flex items-center gap-2"
@@ -1079,16 +998,16 @@ export function PluginPreview() {
                     max="120"
                     value={overrideDuration ?? basePreviewTiming.durationSec}
                     onChange={(e) => setOverrideDuration(Number(e.target.value))}
-                    className="w-24 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                    style={{ accentColor: '#A78BFA' }}
+                    className="w-24 h-1 bg-white/20 rounded-sm appearance-none cursor-pointer"
+                    style={{ accentColor: 'var(--primary)' }}
                     title="Drag to override preview duration"
                   />
                   <div
-                    className="text-[10px] font-mono px-2 py-0.5 rounded-md cursor-pointer hover:bg-white/10"
+                    className="text-[10px] font-mono px-2 py-0.5 rounded-sm cursor-pointer hover:bg-white/10"
                     style={{
                       background: 'rgba(0,0,0,0.55)',
-                      color: '#A78BFA',
-                      border: '1px solid rgba(167,139,250,0.25)',
+                      color: 'var(--primary)',
+                      border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
                     }}
                     title="Click to reset duration to schema default"
                     onClick={() => setOverrideDuration(null)}
@@ -1147,11 +1066,11 @@ export function PluginPreview() {
       {/* Approval bar */}
       <div
         className="shrink-0 px-4 pb-4 pt-2 flex flex-col gap-2"
-        style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        style={{ borderTop: '1px solid var(--border)' }}
       >
         {lastManualSave && (
           <div
-            className="text-[10px] px-3 py-2 rounded-lg font-mono"
+            className="text-[10px] px-3 py-2 rounded-sm font-mono"
             style={{
               background: 'rgba(34,197,94,0.1)',
               border: '1px solid rgba(34,197,94,0.25)',
@@ -1170,11 +1089,11 @@ export function PluginPreview() {
               sendMessage(`The plugin preview looks good. Please build and save it.`);
             }}
             disabled={isStreaming}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold flex-1 justify-center transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-sm text-xs font-semibold flex-1 justify-center"
             style={{
-              background: 'linear-gradient(135deg, #7C3AED, #6D28D9)',
-              color: '#fff',
-              boxShadow: '0 0 14px rgba(124,58,237,0.3)',
+              background: 'var(--primary)',
+              color: 'var(--primary-foreground)',
+              boxShadow: 'none',
             }}
           >
             <CheckCircle weight="fill" size={14} />
@@ -1183,7 +1102,7 @@ export function PluginPreview() {
           <button
             onClick={openManualSave}
             disabled={isStreaming || isManualSaving || !threadId}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all disabled:opacity-40"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-sm text-xs font-semibold disabled:opacity-40"
             style={{
               background: 'rgba(56,189,248,0.12)',
               border: '1px solid rgba(56,189,248,0.3)',
@@ -1196,11 +1115,11 @@ export function PluginPreview() {
           </button>
           <button
             onClick={() => setPendingPlugin(null)}
-            className="px-3 py-2 rounded-xl text-xs transition-all"
+            className="px-3 py-2 rounded-sm text-xs"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#55556A',
+              background: 'var(--border)',
+              border: '1px solid var(--border)',
+              color: 'var(--muted-foreground)',
             }}
             title="Dismiss preview"
           >
@@ -1216,25 +1135,25 @@ export function PluginPreview() {
             onClick={() => !isManualSaving && setShowManualSave(false)}
           >
             <div
-              className="w-full max-w-md rounded-2xl p-5 flex flex-col gap-3 shadow-2xl"
+              className="w-full max-w-md rounded-sm p-5 flex flex-col gap-3 shadow-none"
               style={{
-                background: '#12121A',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'var(--card)',
+                border: '1px solid var(--border)',
               }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-2">
                 <CloudArrowUp weight="duotone" size={18} style={{ color: '#7DD3FC' }} />
-                <h3 className="text-sm font-semibold" style={{ color: '#E2E2F0' }}>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--foreground)' }}>
                   Save plugin manually
                 </h3>
               </div>
-              <p className="text-[11px] leading-relaxed" style={{ color: '#8B8BAA' }}>
+              <p className="text-[11px] leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                 Creates a <strong style={{ color: '#C4C4E0' }}>new library plugin</strong> (remix-style id)
                 from this draft. No AI. Does <strong style={{ color: '#C4C4E0' }}>not</strong> close the
                 preview — you can keep editing. Agent “Looks good — save it” still works as before.
               </p>
-              <label className="text-[10px] font-medium uppercase tracking-wide" style={{ color: '#6B6B8A' }}>
+              <label className="text-[10px] font-medium uppercase tracking-wide" style={{ color: 'var(--muted-foreground)' }}>
                 Display name
               </label>
               <input
@@ -1248,16 +1167,16 @@ export function PluginPreview() {
                 placeholder="e.g. Neon Pipeline"
                 autoFocus
                 disabled={isManualSaving}
-                className="w-full text-sm px-3 py-2.5 rounded-xl outline-none"
+                className="w-full text-sm px-3 py-2.5 rounded-sm outline-none"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#F1F1F8',
+                  background: 'var(--border)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--foreground)',
                 }}
               />
               {manualSaveError && (
                 <div
-                  className="text-[11px] px-3 py-2 rounded-lg max-h-32 overflow-auto"
+                  className="text-[11px] px-3 py-2 rounded-sm max-h-32 overflow-auto"
                   style={{
                     background: 'rgba(239,68,68,0.1)',
                     border: '1px solid rgba(239,68,68,0.25)',
@@ -1292,10 +1211,10 @@ export function PluginPreview() {
                   type="button"
                   disabled={isManualSaving}
                   onClick={() => setShowManualSave(false)}
-                  className="flex-1 px-3 py-2 rounded-xl text-xs"
+                  className="flex-1 px-3 py-2 rounded-sm text-xs"
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'var(--border)',
+                    border: '1px solid var(--border)',
                     color: '#9B9BBB',
                   }}
                 >
@@ -1305,10 +1224,10 @@ export function PluginPreview() {
                   type="button"
                   disabled={isManualSaving || !manualSaveName.trim() || !threadId}
                   onClick={() => void handleManualSave()}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold disabled:opacity-40"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-sm text-xs font-semibold disabled:opacity-40"
                   style={{
-                    background: 'linear-gradient(135deg, #0EA5E9, #0284C7)',
-                    color: '#fff',
+                    background: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
                   }}
                 >
                   {isManualSaving ? (
@@ -1340,11 +1259,11 @@ export function PluginPreview() {
               }
             }}
             placeholder="Or describe what to change…"
-            className="flex-1 bg-transparent text-xs outline-none px-3 py-2 rounded-xl"
+            className="flex-1 bg-transparent text-xs outline-none px-3 py-2 rounded-sm"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#E2E2F0',
+              background: 'var(--border)',
+              border: '1px solid var(--border)',
+              color: 'var(--foreground)',
             }}
           />
           <button
@@ -1354,11 +1273,11 @@ export function PluginPreview() {
               setFeedback('');
             }}
             disabled={!feedback.trim()}
-            className="px-3 py-2 rounded-xl text-xs disabled:opacity-30 transition-all"
+            className="px-3 py-2 rounded-sm text-xs disabled:opacity-30"
             style={{
-              background: feedback.trim() ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(124,58,237,0.25)',
-              color: '#A78BFA',
+              background: feedback.trim() ? 'color-mix(in srgb, var(--primary) 20%, transparent)' : 'var(--border)',
+              border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
+              color: 'var(--primary)',
             }}
           >
             Send
