@@ -11,8 +11,8 @@ import { randomUUID } from 'crypto';
 
 // ── Provider configuration (env vars or defaults) ──────────────────────────
 
-const CF_ACCOUNT_ID        = () => process.env.CF_ACCOUNT_ID        || 'b878fc219459718a59845347272b20fa';
-const CF_API_TOKEN         = () => process.env.CF_API_TOKEN          || 'cfut_pqzbocksXk5wMBMTyRIRs4UNDMn1pnlbWsivdxfld5f618c8';
+const CF_ACCOUNT_ID        = () => process.env.CF_ACCOUNT_ID        || '';
+const CF_API_TOKEN         = () => process.env.CF_API_TOKEN          || '';
 const RUNWARE_API_KEY      = () => process.env.RUNWARE_API_KEY       || '';
 const BG_REMOVAL_WEBHOOK   = () => process.env.BG_REMOVAL_WEBHOOK   || 'https://salru.duckdns.org/webhook/1b6b383a-696d-471d-9196-e2dca29e50d3';
 const BG_REMOVAL_API_URL   = () => process.env.BG_REMOVAL_API_URL   || 'https://sybppqk12a.execute-api.us-east-1.amazonaws.com/remove-bg-asset';
