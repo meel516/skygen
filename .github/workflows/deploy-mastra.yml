@@ -1,18 +1,18 @@
-name: Deploy Mastra Server to VPS
+name: Deploy SkyGen Web to VPS
 
 on:
   push:
     branches:
       - prod
-    paths:
+    paths-ignore:
       - 'mastra-server/**'
-      - 'src/lib/video/ai/mastra/**'
-      - 'src/lib/plugins/**'
-      - 'package.json'
-      - 'package-lock.json'
+      - '.github/workflows/deploy-mastra.yml'
+      - 'README.md'
+      - 'docs/**'
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,20 +21,25 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Install root dependencies
+      - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Mastra
-        working-directory: ./mastra-server
+      - name: Build Next.js Standalone
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
         run: |
-          npm install --legacy-peer-deps
           npm run build
+          # Standalone mode requires copying public and static assets manually:
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
 
       - name: Create archive
         run: |
-          tar -czf mastra-output-no-node-modules.tgz -C mastra-server/.mastra/output --exclude=node_modules .
+          tar -czf skygen-standalone.tar.gz -C .next/standalone .
 
       - name: Upload to VPS
         uses: appleboy/scp-action@v0.1.7
@@ -43,10 +48,10 @@ jobs:
           username: "root"
           password: ${{ secrets.VPS_SSH_PW }}
           port: 20033
-          source: "mastra-output-no-node-modules.tgz"
-          target: "/root"
+          source: "skygen-standalone.tar.gz"
+          target: "/tmp"
 
-      - name: Extract and restart PM2
+      - name: Extract and Restart PM2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: "37.187.139.100"
@@ -54,10 +59,20 @@ jobs:
           password: ${{ secrets.VPS_SSH_PW }}
           port: 20033
           script: |
-            cd /opt/videogen-mastra/mastra-server/.mastra
-            cp -a output output.prev.$(date +%Y%m%d%H%M%S)
-            tar -xzf /root/mastra-output-no-node-modules.tgz -C output
-            cd output
-            npm install --omit=dev --legacy-peer-deps
-            pm2 restart videogen-mastra --update-env
-            pm2 status videogen-mastra
+            mkdir -p /opt/skygen-web
+            cd /opt/skygen-web
+            
+            # Backup previous build if exists
+            if [ -f server.js ]; then
+              mkdir -p /opt/skygen-web-backups
+              cp -r . /opt/skygen-web-backups/backup-$(date +%Y%m%d%H%M%S) 2>/dev/null || true
+            fi
+            
+            # Extract new standalone build
+            tar -xzf /tmp/skygen-standalone.tar.gz -C /opt/skygen-web
+            rm -f /tmp/skygen-standalone.tar.gz
+            
+            # Restart or start PM2 process on Port 3000
+            PORT=3000 pm2 restart skygen-web || PORT=3000 pm2 start server.js --name skygen-web
+            pm2 save
+            pm2 status skygen-web
