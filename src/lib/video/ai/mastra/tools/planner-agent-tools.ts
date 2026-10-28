@@ -23,8 +23,9 @@ export const probeWebSearchTool = createTool({
     knowledgeGraph: z.string().optional(),
     hitCount: z.number(),
   }),
-  execute: async ({ context }) => {
-    const { query } = context as { query: string };
+  execute: async (rawInput: any) => {
+    const context = (rawInput?.context ?? rawInput) as { query: string };
+    const { query } = context;
     const r = await searchWeb(query);
     return {
       snippets: r.snippets,
@@ -46,8 +47,9 @@ export const probeImageSearchTool = createTool({
     found: z.boolean(),
     url: z.string().nullable(),
   }),
-  execute: async ({ context }) => {
-    const { query, minWidth } = context as { query: string; minWidth: number };
+  execute: async (rawInput: any) => {
+    const context = (rawInput?.context ?? rawInput) as { query: string; minWidth: number };
+    const { query, minWidth } = context;
     const url = await searchWebImage(query, { minWidth });
     return { found: !!url, url: url ?? null };
   },
@@ -63,8 +65,9 @@ export const probeNewsSearchTool = createTool({
     items: z.array(z.object({ title: z.string(), snippet: z.string(), date: z.string() })),
     hitCount: z.number(),
   }),
-  execute: async ({ context }) => {
-    const { query } = context as { query: string };
+  execute: async (rawInput: any) => {
+    const context = (rawInput?.context ?? rawInput) as { query: string };
+    const { query } = context;
     const items = await searchNews(query);
     return { items, hitCount: items.length };
   },

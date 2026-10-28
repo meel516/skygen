@@ -1096,7 +1096,8 @@ export const updateDependenciesTool = createTool({
     add: z.record(z.string(), z.string()).optional().describe('Map of { packageName: semver-range } to add or overwrite, e.g. { "@react-three/fiber": "^9.0.0" }'),
     remove: z.array(z.string()).optional().describe('Package names to remove from the manifest, e.g. ["@react-spring/three", "@react-three/drei"]'),
   }),
-  execute: async ({ context }) => {
+  execute: async (rawInput: any) => {
+    const context = rawInput?.context ?? rawInput;
     const { threadId, add, remove } = context;
     const job = await getJob(threadId);
     const pendingPlugin = (job?.state as any)?.pendingPlugin;
@@ -1167,7 +1168,8 @@ export const listDependenciesTool = createTool({
   inputSchema: z.object({
     threadId: z.string(),
   }),
-  execute: async ({ context }) => {
+  execute: async (rawInput: any) => {
+    const context = rawInput?.context ?? rawInput;
     const { threadId } = context;
     const job = await getJob(threadId);
     const pendingPlugin = (job?.state as any)?.pendingPlugin;

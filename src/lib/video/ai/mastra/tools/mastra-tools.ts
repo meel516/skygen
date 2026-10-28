@@ -789,7 +789,8 @@ export const requestCustomPluginMastra = createTool({
     userStory: z.string().describe("The user's original request verbatim"),
     forkPluginId: z.string().optional().describe('If the user is forking an existing plugin to modify it, provide its ID here.'),
   }),
-  execute: async ({ context }) => {
+  execute: async (rawInput: any) => {
+    const context = rawInput?.context ?? rawInput;
     const { threadId, pluginName, description, userStory, forkPluginId } = context;
     await db.query(
       `UPDATE wizard_jobs SET status = 'interrupted', interrupt = $2, updated_at = NOW() WHERE thread_id = $1`,
@@ -812,7 +813,8 @@ export const clearPluginInterruptMastra = createTool({
   inputSchema: z.object({
     threadId: z.string(),
   }),
-  execute: async ({ context }) => {
+  execute: async (rawInput: any) => {
+    const context = rawInput?.context ?? rawInput;
     await db.query(
       `UPDATE wizard_jobs SET interrupt = NULL, status = 'running', updated_at = NOW() WHERE thread_id = $1`,
       [context.threadId],

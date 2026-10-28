@@ -14,7 +14,8 @@ export const loadForkedPluginSourceTool = createTool({
     pluginId: z.string(),
     forkPluginId: z.string(),
   }),
-  execute: async ({ context }) => {
+  execute: async (rawInput: any) => {
+    const context = rawInput?.context ?? rawInput;
     const { threadId, pluginId, forkPluginId } = context;
     
     // 1. Fetch source.json from S3
