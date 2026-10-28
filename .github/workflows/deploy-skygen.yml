@@ -3,7 +3,7 @@ name: Deploy SkyGen Web to VPS
 on:
   push:
     branches:
-      - prod
+      - main
     paths-ignore:
       - 'mastra-server/**'
       - '.github/workflows/deploy-mastra.yml'
@@ -32,6 +32,7 @@ jobs:
           NEXT_TELEMETRY_DISABLED: 1
           NODE_ENV: production
           DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/videogen"
+          NEXT_PUBLIC_APP_URL: "https://skygen.salru.in"
         run: |
           npm run build
           # Standalone mode requires copying public and static assets manually:
