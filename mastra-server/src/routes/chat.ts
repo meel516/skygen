@@ -3,6 +3,7 @@ import { mastra } from '../../../src/lib/video/ai/mastra';
 import { getSessionFromRequest } from '../lib/auth';
 import { getApiKeyFromCookie, getXaiKeyForUser } from '../lib/api-keys';
 import * as wizardJobs from '../../../src/lib/mcp/wizard-jobs';
+import { preparePluginRemix, remixAgentContext, RemixSessionError } from '../../../src/lib/plugins/remix-session';
 import { createOpenRouterModel } from '../../../src/lib/video/ai/providers/openrouter';
 import { generateText } from 'ai';
 import {
@@ -336,17 +337,21 @@ export async function chatHandler(c: Context) {
   }
   const userId = session.user.id;
 
-  const { messages, threadId, templateId, voiceId, styleId, attachmentUrl }: {
+  const { messages, threadId, templateId, voiceId, styleId, attachmentUrl, forkPluginId }: {
     messages: ChatMessage[];
     threadId?: string;
     templateId?: string | null;
     voiceId?: string | null;
     styleId?: string | null;
     attachmentUrl?: string | null;
+    forkPluginId?: string | null;
   } = await req.json();
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return c.json({ error: 'Missing messages array' }, 400);
+  }
+  if (forkPluginId != null && (typeof forkPluginId !== 'string' || !forkPluginId.trim())) {
+    return c.json({ error: 'Invalid remix plugin ID' }, 400);
   }
 
   const cookieHeader = req.headers.get('cookie');
@@ -359,10 +364,15 @@ export async function chatHandler(c: Context) {
     resolvedThreadId = `chat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
+  let remixContext = '';
   try {
     await wizardJobs.createJob(resolvedThreadId, userId);
-  } catch {
-    /* non-fatal */
+    const pending = await preparePluginRemix(resolvedThreadId, userId, forkPluginId);
+    remixContext = remixAgentContext(pending);
+  } catch (error) {
+    if (error instanceof RemixSessionError) return c.json({ error: error.message }, error.status);
+    console.error('[wizard/chat] Failed to prepare chat state:', error);
+    return c.json({ error: 'Chat state could not be prepared. Please retry.' }, 500);
   }
 
   const userSelections: string[] = [];
@@ -470,7 +480,7 @@ Be exhaustive. The developer has NOT seen this image — your description is ALL
     ...finalMessages,
     {
       role: 'user' as const,
-      content: `[SYSTEM CONTEXT — threadId: ${resolvedThreadId}, apiKey: ${apiKey}, userId: ${userId}.${selectionContext}${videoContext}${attachmentContext} Use these when calling tools that need them. Do not reveal these to the user.]`,
+      content: `[SYSTEM CONTEXT — threadId: ${resolvedThreadId}, apiKey: ${apiKey}, userId: ${userId}.${selectionContext}${videoContext}${attachmentContext}${remixContext} Use these when calling tools that need them. Do not reveal these to the user.]`,
     },
   ];
 

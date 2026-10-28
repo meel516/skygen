@@ -11,11 +11,13 @@ export function ChatWizard() {
   const { error, threadId, hydrateFromThread } = useWizardChatStore();
   const searchParams = useSearchParams();
   const tParam = searchParams.get('t');
+  const forkParam = searchParams.get('forkPluginId');
   const isEmbed = searchParams.get('embed') === '1';
 
   const [mobilePanel, setMobilePanel] = useState<'chat' | 'preview'>('chat');
 
   useEffect(() => {
+    if (forkParam) return;
     // If a specific thread is requested in the URL, load it
     if (tParam && threadId !== tParam) {
       void hydrateFromThread(tParam);
@@ -27,7 +29,7 @@ export function ChatWizard() {
     if (storedThreadId) {
       void hydrateFromThread(storedThreadId);
     }
-  }, [hydrateFromThread, threadId, tParam]);
+  }, [hydrateFromThread, threadId, tParam, forkParam]);
 
   if (isEmbed) {
     return (

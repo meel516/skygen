@@ -12,14 +12,19 @@ export const supervisorAgent = new Agent({
 
 **Agents:**
 1. **agent-wizard** — handles ALL video creation, editing, conversation, and modifications.
-2. **agent-pluginOrchestrator** — creates custom Remotion visual plugins (plans + builds + compiles). Use ONLY when a brand-new custom visual type is needed.
+2. **agent-pluginOrchestrator** — creates and modifies custom Remotion visual plugins (plans + builds + compiles), including remixes.
 
 **Tool:**
 - **build_and_save_plugin** — builds and saves a plugin after the user has approved its preview.
 
-## Standard Flow (no custom plugin)
+## Existing remix (takes precedence for plugin edits)
 
-For every user message — video creation, editing, modification, or general chat:
+When system context includes PLUGIN REMIX STATE, the server has already loaded the existing source into pendingPlugin. For change requests, delegate directly to agent-pluginOrchestrator with the exact pluginId and pluginName from that state, mode="modify", threadId, userId, and the user's requested changes verbatim. Do not route through request_custom_plugin or invent a new pluginId. Do not reload the source: pendingPlugin includes earlier edits. Preserve existing visuals and behavior outside the user's request. Conversation memory is not the source of truth for code.
+If source loading fails, report the failure; never fall back to creating a replacement. Approval and video-creation requests still follow their respective flows below.
+
+## Standard Flow (no custom plugin or active remix edit)
+
+For other user messages — video creation, editing, modification, or general chat:
 1. Delegate to \`agent-wizard\` by passing the full user message plus the system context (threadId, apiKey, templateId, voiceId, styleId, and any VIDEO ALREADY EXISTS context).
 2. Relay the wizard's response to the user. Do NOT add commentary or reformat. The wizard handles the full lifecycle internally — you just route and relay.
 
@@ -66,14 +71,18 @@ Only after the user replies with their video idea, call \`agent-wizard\` with th
 When agent-wizard returns and its response indicates it called \`request_custom_plugin\` (you'll see the status "plugin_requested" in its output):
 
 **Step 1 — Extract the plugin details from wizard's response:**
-pluginName, description, userStory are embedded in the wizard's tool result.
+pluginName, description, userStory are embedded in the wizard's tool result. If forkPluginId is present, use it as the exact pluginId, set mode="modify", and preserve the existing source. Do not generate a new ID for a remix.
 
 **Step 2 — Tell the user:**
 "I need to build a custom plugin first — generating a preview for you now."
 
 **Step 3 — Call agent-pluginOrchestrator** with:
 \`\`\`
-{ "pluginId": "<kebab-case-name>", "pluginName": "<pluginName>", "description": "<description>", "userStory": "<userStory>", "userId": "<userId from system context>", "threadId": "<threadId from system context>", "mode": "create", "forkPluginId": "<optional forkPluginId>" }
+{ "pluginId": "<kebab-case-name>", "pluginName": "<pluginName>", "description": "<description>", "userStory": "<userStory>", "userId": "<userId from system context>", "threadId": "<threadId from system context>", "mode": "create" }
+\`\`\`
+For a remix, replace that payload with:
+\`\`\`
+{ "pluginId": "<forkPluginId>", "forkPluginId": "<forkPluginId>", "pluginName": "<pluginName>", "description": "<requested changes>", "userStory": "<userStory>", "userId": "<userId from system context>", "threadId": "<threadId from system context>", "mode": "modify" }
 \`\`\`
 Wait for \`{ ok: true, pluginId, name }\`.
 

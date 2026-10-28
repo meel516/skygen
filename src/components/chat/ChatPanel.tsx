@@ -16,7 +16,7 @@ import {
 } from '@phosphor-icons/react';
 
 export function ChatPanel() {
-  const { messages, isStreaming, sendMessage, stopStreaming, reset, generationStatus, setPendingPlugin } = useWizardChatStore();
+  const { messages, isStreaming, sendMessage, stopStreaming, reset, generationStatus, setPendingPlugin, setForkPluginId } = useWizardChatStore();
   const [input, setInput] = useState('');
   const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null);
   const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null);
@@ -97,17 +97,20 @@ export function ChatPanel() {
     if (!nextPrompt || prefilledPromptRef.current === nextPrompt) return;
     prefilledPromptRef.current = nextPrompt;
     reset();
+    setForkPluginId(forkPluginId);
     setInput(nextPrompt);
 
     const cleanUrl = `${window.location.pathname}${window.location.hash || ''}`;
-    window.history.replaceState({}, '', cleanUrl);
+    // Keep the remix reference until a thread exists, so refreshing before the
+    // first message cannot detach the draft from its saved source.
+    window.history.replaceState({}, '', forkPluginId ? `${window.location.pathname}?forkPluginId=${encodeURIComponent(forkPluginId)}${window.location.hash || ''}` : cleanUrl);
 
     // If we have a forkPluginId, immediately fetch its source to hydrate the preview editor
     if (forkPluginId) {
       fetch(`/api/plugins/${forkPluginId}/source`)
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data && data.sceneCode) {
+          if (data && data.sceneCode && useWizardChatStore.getState().forkPluginId === forkPluginId && !useWizardChatStore.getState().threadId) {
             setPendingPlugin({
               pluginId: data.pluginId,
               pluginName: data.pluginName,
@@ -120,7 +123,7 @@ export function ChatPanel() {
         })
         .catch((err) => console.error('Failed to load fork source:', err));
     }
-  }, [reset, setPendingPlugin]);
+  }, [reset, setPendingPlugin, setForkPluginId]);
 
   const handleImagePick = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

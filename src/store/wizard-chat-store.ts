@@ -36,6 +36,7 @@ interface ActiveRunState {
 interface WizardChatState {
   // Chat state
   threadId: string | null;
+  forkPluginId: string | null;
   messages: ChatMessage[];
   isStreaming: boolean;
 
@@ -86,6 +87,7 @@ interface WizardChatActions {
   setSelectedVoice: (id: string | null) => void;
   setSelectedStyle: (id: string | null) => void;
   setPendingPlugin: (p: WizardChatState['pendingPlugin']) => void;
+  setForkPluginId: (id: string | null) => void;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -714,6 +716,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
   return {
     // Initial state
     threadId: null,
+    forkPluginId: null,
     messages: [],
     isStreaming: false,
     generationStatus: 'idle',
@@ -777,6 +780,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
           body: JSON.stringify({
             messages: chatMessages,
             threadId: state.threadId,
+            forkPluginId: state.forkPluginId,
             templateId: state.selectedTemplateId,
             voiceId: state.selectedVoiceId,
             styleId: state.selectedStyleId,
@@ -786,7 +790,8 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
         });
 
         if (!startResponse.ok) {
-          throw new Error(`HTTP ${startResponse.status}`);
+          const failure = await startResponse.json().catch(() => null);
+          throw new Error(failure?.error || `HTTP ${startResponse.status}`);
         }
 
         const startPayload = await startResponse.json();
@@ -803,6 +808,12 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
         if (resolvedThreadId && !get().threadId) {
           set({ threadId: resolvedThreadId });
           setStoredWizardThreadId(resolvedThreadId);
+        }
+        if (resolvedThreadId && state.forkPluginId && typeof window !== 'undefined') {
+          const url = new URL(window.location.href);
+          url.searchParams.delete('forkPluginId');
+          url.searchParams.set('t', resolvedThreadId);
+          window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
         }
 
         const activeThreadId = resolvedThreadId ?? state.threadId ?? '';
@@ -893,6 +904,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
     // whatever the last generation left behind. No polling — the SSE stream
     // takes over once the user sends another message.
     hydrateFromThread: async (threadId: string) => {
+      set({ forkPluginId: null });
       try {
         if (currentAbortController) {
           currentAbortController.abort();
@@ -938,6 +950,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
           return;
         }
 
+        set({ forkPluginId: job.state?.pluginRemix?.pluginId ?? null });
         const persistedRun = job.state?.activeRun;
         const localRun = get().activeRuns[threadId];
         const activeRun: ActiveRunState | null =
@@ -1049,6 +1062,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
       clearCurrentThreadId();
       set({
         threadId: null,
+        forkPluginId: null,
         messages: [],
         isStreaming: false,
         generationStatus: 'idle',
@@ -1069,6 +1083,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
     setSelectedVoice: (id: string | null) => set({ selectedVoiceId: id }),
     setSelectedStyle: (id: string | null) => set({ selectedStyleId: id }),
     setPendingPlugin: (p) => set({ pendingPlugin: p }),
+    setForkPluginId: (id) => set({ forkPluginId: id }),
   };
 });
 

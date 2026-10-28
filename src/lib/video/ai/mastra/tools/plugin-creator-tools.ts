@@ -175,6 +175,11 @@ export const recordPluginPlanTool = createTool({
     // In modify mode (or if a fork was loaded), require a recent getSourceMap call.
     const job = await getJob(inputData.threadId);
     const state = job?.state as any;
+    const remixId = state?.pluginRemix?.pluginId;
+    if (remixId && (inputData.pluginId !== remixId || !state?.pendingPlugin)) {
+      return { ok: false as const, error: `This chat edits remix ${remixId}. Load its existing source and use that exact pluginId before planning.` };
+    }
+    if (remixId) inputData.mode = 'modify';
     const hasExistingPlugin = inputData.mode === 'modify' || !!state?.pendingPlugin;
 
     if (hasExistingPlugin) {
@@ -311,6 +316,14 @@ export const setInitialSceneTool = createTool({
   }),
   execute: async (inputData) => {
     const { threadId, pluginId, pluginName, description, schemaJson, sceneCode, modules, dependencies, userId } = inputData;
+    const existingJob = await getJob(threadId);
+    if (!existingJob) return { ok: false as const, error: 'Chat session not found.' };
+    if (existingJob.state?.pendingPlugin || existingJob.state?.pluginRemix || existingJob.state?.pluginExecution?.mode === 'modify') {
+      return {
+        ok: false as const,
+        error: 'Existing plugin code cannot be replaced by setInitialScene. Read it with getSourceMap/readLines and apply focused edits. Use a new chat to create a new plugin.',
+      };
+    }
 
     // Validate: need either sceneCode or modules
     const hasModules = modules && Object.keys(modules).length > 0;
@@ -371,7 +384,6 @@ export const setInitialSceneTool = createTool({
       ast,
     };
 
-    const existingJob = await getJob(threadId);
     const existingExecution = (existingJob?.state as any)?.pluginExecution ?? null;
     pendingPlugin.runLedger = createPluginRunLedger(pendingPlugin, `${pluginName}\n${description}`);
     pendingPlugin = attachPluginExecutionState(pendingPlugin, existingExecution) as Record<string, any>;
