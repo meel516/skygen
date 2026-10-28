@@ -11,7 +11,7 @@ import {
 } from './source-validation';
 import { uploadToS3 } from '@/lib/s3';
 import { db } from '@/lib/db';
-import { normalizePluginId } from './utils';
+import { resolvePluginSaveId } from './utils';
 import { derivePluginTags } from './tags';
 import { formatDependencyPolicyChanges, normalizePluginDependencies } from './dependency-policy';
 
@@ -78,7 +78,15 @@ export async function createPluginFromSource(input: CreatePluginInput): Promise<
     userId,
   } = input;
 
-  const normalizedId = normalizePluginId(id);
+  let normalizedId: string;
+  try {
+    normalizedId = await resolvePluginSaveId(id, async (candidate) => {
+      const existing = await db.query('SELECT id FROM plugins WHERE id = $1', [candidate]);
+      return existing.rows.length > 0;
+    });
+  } catch {
+    return { ok: false, status: 500, error: 'Could not verify the existing plugin ID before saving. Please retry.' };
+  }
 
   const sourceModules = normalizePluginModules(sceneCode, modules);
   const effectiveSceneCode = sourceModules['Scene.tsx'] ?? sceneCode;

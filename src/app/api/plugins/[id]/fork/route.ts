@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuthenticatedSession } from '@/lib/api-security';
 import { getSignedS3Url } from '@/lib/s3';
 import { createPluginFromSource } from '@/lib/plugins/create-plugin';
+import { createRemixPluginId } from '@/lib/plugins/remix-id';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -42,7 +43,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
 
     // 3. Prepare new plugin data
-    const newPluginId = `${pluginId}-remix-${Math.random().toString(36).slice(2, 8)}`;
+    const newPluginId = createRemixPluginId(pluginId);
     const newName = `Copy of ${existingPlugin.name}`;
 
     const { sceneCode, modules, dependencies } = sourceJson;
