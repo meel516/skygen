@@ -7,21 +7,24 @@ let plugin: any;
 const originalFetch = globalThis.fetch;
 const fetchMock = mock(async (_url: any, _init?: any): Promise<Response> => Response.json(source));
 let source: any;
+let skipStateWrites = false;
+const previewMock = mock(async (..._args: any[]): Promise<any> => { throw new Error('Unexpected preview build'); });
 
 mock.module('@/lib/db', () => ({ db: { query: async () => ({ rows: plugin ? [plugin] : [] }) } }));
 mock.module('@/lib/mcp/wizard-jobs', () => ({
   getJob: async () => structuredClone(job),
   patchJobState: async (_id: string, update: (state: any) => any) => {
+    if (skipStateWrites) return;
     job.state = update(structuredClone(job.state ?? {}));
   },
 }));
 mock.module('@/lib/s3', () => ({ getSignedS3Url: async (key: string) => `https://example.test/${key}` }));
 mock.module('@/lib/plugins/create-plugin', () => ({ createPluginFromSource: async () => { throw new Error('Unexpected build'); } }));
-mock.module('@/lib/plugins/preview-bundler', () => ({ bundlePreview: async () => { throw new Error('Unexpected preview build'); } }));
+mock.module('@/lib/plugins/preview-bundler', () => ({ bundlePreview: previewMock }));
 
 const { preparePluginRemix, remixAgentContext } = await import('../src/lib/plugins/remix-session');
 const { loadForkedPluginSourceTool } = await import('../src/lib/video/ai/mastra/tools/load-forked-plugin-source');
-const { setInitialSceneTool, recordPluginPlanTool } = await import('../src/lib/video/ai/mastra/tools/plugin-creator-tools');
+const { setInitialSceneTool, recordPluginPlanTool, editSceneCodeTool, readSceneCodeTool, readModuleTool, compilePreviewTool, savePendingPluginTool } = await import('../src/lib/video/ai/mastra/tools/plugin-creator-tools');
 const { sourceMapTools } = await import('../src/lib/video/ai/mastra/tools/source-map-tools');
 const { useWizardChatStore } = await import('../src/store/wizard-chat-store');
 
@@ -34,6 +37,9 @@ export default function Scene() {
 }`;
 
 beforeEach(() => {
+  skipStateWrites = false;
+  previewMock.mockReset();
+  previewMock.mockImplementation(async () => { throw new Error('Unexpected preview build'); });
   job = { thread_id: 'thread-1', user_id: 'user-1', state: {} };
   plugin = { name: 'Copy of Original', description: 'An animated title', user_id: 'user-1', schema_json: { properties: { title: { type: 'string' } }, defaults: { title: 'Existing title' } } };
   source = { sceneCode: scene, modules: { 'Scene.tsx': scene, 'theme.ts': "export const color = 'red';" }, dependencies: { remotion: '4.0.529' } };
@@ -43,6 +49,103 @@ beforeEach(() => {
   useWizardChatStore.getState().reset();
 });
 afterAll(() => { globalThis.fetch = originalFetch; });
+
+describe('single-file edit persistence', () => {
+  const redScene = [
+    "import React from 'react';", ...Array(99).fill(''),
+    'export default function Scene() {',
+    "  return <div style={{background:'#0b0003'}}>Existing animation</div>;",
+    '}',
+  ].join('\n');
+  const blueScene = redScene.replace('#0b0003', '#00060b');
+
+  async function loadSingleFile() {
+    source = { sceneCode: redScene, modules: { 'Scene.tsx': redScene }, dependencies: {} };
+    await preparePluginRemix('thread-1', 'user-1', remixId);
+    return execute(sourceMapTools.getSourceMap, { threadId: 'thread-1', refresh: true });
+  }
+
+  async function editColor(method: string) {
+    return method === 'editLines'
+      ? execute(sourceMapTools.editLines, { threadId: 'thread-1', file: 'Scene.tsx', startLine: 102, endLine: 102, newLines: [blueScene.split('\n')[101]] })
+      : execute(editSceneCodeTool, { threadId: 'thread-1', oldString: '#0b0003', newString: '#00060b' });
+  }
+
+  for (const method of ['editLines', 'editSceneCode']) {
+    test(`${method} persists the same edited source for readers, fingerprints, preview, and follow-ups`, async () => {
+      const before = await loadSingleFile();
+      expect((await editColor(method)).ok).toBe(true);
+      expect(job.state.pendingPlugin.sceneCode).toBe(blueScene);
+      expect(job.state.pendingPlugin.modules['Scene.tsx']).toBe(blueScene);
+      expect((await execute(readSceneCodeTool, { threadId: 'thread-1' })).sceneCode).toBe(blueScene);
+      expect((await execute(readModuleTool, { threadId: 'thread-1', filePath: 'Scene.tsx' })).code).toBe(blueScene);
+      const lines = await execute(sourceMapTools.readLines, { threadId: 'thread-1', file: 'Scene.tsx', startLine: 102, endLine: 102, context: 0 });
+      expect(lines.lines[0].text).toBe(blueScene.split('\n')[101]);
+      const after = await execute(sourceMapTools.getSourceMap, { threadId: 'thread-1', refresh: true });
+      expect(after.sourceMap.overallHash).not.toBe(before.sourceMap.overallHash);
+      expect(after.sourceMap.files[0].hash).not.toBe(before.sourceMap.files[0].hash);
+
+      previewMock.mockImplementation(async () => ({ ok: true, bundleJs: 'compiled preview' }));
+      expect((await execute(compilePreviewTool, { threadId: 'thread-1' })).ok).toBe(true);
+      expect(previewMock.mock.calls[0][0]).toBe(blueScene);
+      expect(previewMock.mock.calls[0][2].modules['Scene.tsx']).toBe(blueScene);
+      const emit = mock(async (_event: any) => {});
+      expect((await savePendingPluginTool.execute!({ threadId: 'thread-1' }, { writer: { custom: emit } } as any) as any).ok).toBe(true);
+      expect(emit.mock.calls[0][0].data.pendingPlugin.modules['Scene.tsx']).toBe(blueScene);
+      const reopened = await preparePluginRemix('thread-1', 'user-1');
+      expect(reopened.sceneCode).toBe(blueScene);
+      expect(reopened.modules['Scene.tsx']).toBe(blueScene);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    test(`${method} does not report success if the state write does not persist`, async () => {
+      await loadSingleFile();
+      skipStateWrites = true;
+      expect((await editColor(method)).ok).toBe(false);
+      expect(job.state.pendingPlugin.modules['Scene.tsx']).toBe(redScene);
+    });
+
+    test(`${method} repairs the source mismatch left by an earlier failed edit`, async () => {
+      await loadSingleFile();
+      job.state.pendingPlugin.sceneCode = blueScene;
+      expect((await execute(readModuleTool, { threadId: 'thread-1', filePath: 'Scene.tsx' })).code).toBe(redScene);
+      expect((await editColor(method)).ok).toBe(true);
+      expect(job.state.pendingPlugin.sceneCode).toBe(blueScene);
+      expect(job.state.pendingPlugin.modules['Scene.tsx']).toBe(blueScene);
+    });
+
+    test(`${method} also works for a new single-file plugin without a modules map`, async () => {
+      expect((await execute(setInitialSceneTool, {
+        threadId: 'thread-1', pluginId: 'new-single', pluginName: 'New single', description: '',
+        schemaJson: JSON.stringify(plugin.schema_json), sceneCode: redScene,
+      })).ok).toBe(true);
+      expect((await editColor(method)).ok).toBe(true);
+      expect((await execute(readSceneCodeTool, { threadId: 'thread-1' })).sceneCode).toBe(blueScene);
+      expect((await execute(readModuleTool, { threadId: 'thread-1', filePath: 'Scene.tsx' })).code).toBe(blueScene);
+    });
+  }
+
+  test('deleteLines updates the singleton module as well as sceneCode', async () => {
+    await loadSingleFile();
+    expect((await execute(sourceMapTools.deleteLines, { threadId: 'thread-1', file: 'Scene.tsx', startLine: 2, endLine: 2 })).ok).toBe(true);
+    const expected = redScene.split('\n').filter((_, index) => index !== 1).join('\n');
+    expect((await execute(readSceneCodeTool, { threadId: 'thread-1' })).sceneCode).toBe(expected);
+    expect(job.state.pendingPlugin.sceneCode).toBe(expected);
+  });
+
+  test('previewEdit checks the edited singleton module without mutating the draft', async () => {
+    await loadSingleFile();
+    const before = structuredClone(job.state);
+    const preview = await execute(sourceMapTools.previewEdit, {
+      threadId: 'thread-1', file: 'Scene.tsx', startLine: 1, endLine: 1,
+      newLines: ["import React from 'react';", "import {missing} from './missing';"],
+    });
+    expect(preview.ok).toBe(true);
+    expect(preview.wouldPassValidation).toBe(false);
+    expect(preview.guard.importIssues.length).toBeGreaterThan(0);
+    expect(job.state).toEqual(before);
+  });
+});
 
 describe('server remix preparation', () => {
   test('loads the exact legacy 64-character ID without guessing or trimming its trailing hyphen', async () => {

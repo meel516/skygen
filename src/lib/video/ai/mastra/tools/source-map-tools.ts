@@ -17,7 +17,7 @@ import {
   type SymbolIndexEntry,
 } from '../shared/source-map';
 import { deriveAST } from './code-ast';
-import { isMultiFile } from './module-bundler';
+import { getPluginSourceFiles as getModules, withPluginSourceFiles, persistPluginSourceEdit } from './plugin-source-state';
 import {
   appendPluginLedgerEvent,
   validatePluginRunState,
@@ -55,13 +55,6 @@ interface PendingPlugin {
   sourceMap?: SourceMap;
   roleOverrides?: Record<string, string>;
   [key: string]: any;
-}
-
-function getModules(pending: PendingPlugin): Record<string, string> {
-  if (pending.modules && Object.keys(pending.modules).length > 0) {
-    return pending.modules;
-  }
-  return { 'Scene.tsx': pending.sceneCode ?? '' };
 }
 
 function withCurrentSourceHash<T extends Record<string, any>>(pending: T): T {
@@ -567,9 +560,7 @@ async function applyLineEdit(args: ApplyLineEditArgs): Promise<LineEditResult> {
   const updatedCode = updatedLines.join('\n');
 
   // Source validation (same gate as editSceneCode)
-  const candidateModules = isMulti
-    ? { ...modules, [file]: updatedCode }
-    : { 'Scene.tsx': updatedCode };
+  const candidateModules = { ...modules, [file]: updatedCode };
   const sourceCheck = validatePluginSource(candidateModules);
   if (!sourceCheck.ok) {
     const formatted = formatPluginSourceIssues(sourceCheck.issues);
@@ -581,9 +572,10 @@ async function applyLineEdit(args: ApplyLineEditArgs): Promise<LineEditResult> {
   }
 
   // Build the candidate pending plugin
-  const candidatePending: PendingPlugin = isMulti && pending.modules?.[file]
-    ? { ...pending, modules: candidateModules, sceneCode: candidateModules['Scene.tsx'] ?? pending.sceneCode, ast: deriveAST(candidateModules) }
-    : { ...pending, sceneCode: updatedCode, ast: deriveAST({ 'Scene.tsx': updatedCode }) };
+  const candidatePending: PendingPlugin = {
+    ...withPluginSourceFiles(pending, candidateModules),
+    ast: deriveAST(candidateModules),
+  };
 
   // Refresh source map so subsequent searches see the new state
   const refreshed = refreshSourceMap(candidatePending);
@@ -610,7 +602,9 @@ async function applyLineEdit(args: ApplyLineEditArgs): Promise<LineEditResult> {
     warnings: guard.warnings,
   });
 
-  await patchJobState(threadId, (s: any) => ({ ...s, pendingPlugin: nextPending }));
+  if (!await persistPluginSourceEdit(threadId, nextPending)) {
+    return { ok: false, error: 'The edited source could not be verified in saved state. Re-read the file before retrying.' };
+  }
 
   const linesDelta = newLines.length - (endLine - startLine + 1);
   console.log(`[line-edit] ✅ ${file} ${startLine}-${endLine} → ${newLines.length} line(s) (Δ${linesDelta >= 0 ? '+' : ''}${linesDelta}) for thread ${threadId.slice(0, 8)}`);
@@ -758,14 +752,9 @@ export const previewEditTool = createTool({
     for (const line of newLines) diff.push(`+${line}`);
 
     // Validate
-    const isMulti = pending.modules && Object.keys(pending.modules).length > 1;
-    const candidateModules = isMulti
-      ? { ...modules, [file]: updatedCode }
-      : { 'Scene.tsx': updatedCode };
+    const candidateModules = { ...modules, [file]: updatedCode };
     const sourceCheck = validatePluginSource(candidateModules);
-    const candidatePending: PendingPlugin = isMulti && pending.modules?.[file]
-      ? { ...pending, modules: candidateModules, sceneCode: candidateModules['Scene.tsx'] ?? pending.sceneCode }
-      : { ...pending, sceneCode: updatedCode };
+    const candidatePending = withPluginSourceFiles(pending, candidateModules);
     const refreshed = refreshSourceMap(candidatePending);
     const guard = validatePluginRunState(refreshed.pending);
 

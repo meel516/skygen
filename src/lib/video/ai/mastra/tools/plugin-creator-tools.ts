@@ -12,6 +12,7 @@ import {
 import { patchJobState, getJob } from '@/lib/mcp/wizard-jobs';
 import { deriveAST, type PluginAST, type FileAST } from './code-ast';
 import { isMultiFile } from './module-bundler';
+import { getPluginSourceFiles, withPluginSourceFiles, persistPluginSourceEdit } from './plugin-source-state';
 import {
   appendPluginLedgerEvent,
   attachPluginExecutionState,
@@ -440,7 +441,7 @@ export const readSceneCodeTool = createTool({
       return { ok: false as const, error: 'No pending plugin found. Call setInitialScene first to create one.' };
     }
     // If multi-file, return the Scene.tsx entry specifically
-    const sceneCode = pending.modules?.['Scene.tsx'] ?? pending.sceneCode;
+    const sceneCode = getPluginSourceFiles(pending)['Scene.tsx'];
     console.log(`[read-scene-code] ✅ returned ${sceneCode.length} chars for thread ${inputData.threadId.slice(0, 8)}`);
     return { ok: true as const, sceneCode };
   },
@@ -469,15 +470,11 @@ export const editSceneCodeTool = createTool({
 
     // Get the target code
     let targetCode: string;
-    const isMulti = current.modules && Object.keys(current.modules).length > 1;
-
-    if (isMulti && current.modules?.[targetFile]) {
-      targetCode = current.modules[targetFile];
-    } else if (targetFile === 'Scene.tsx') {
-      targetCode = current.sceneCode;
-    } else {
-      return { ok: false as const, error: `File "${targetFile}" not found. Available files: ${isMulti ? Object.keys(current.modules).join(', ') : 'Scene.tsx (single-file mode)'}` };
+    const modules = getPluginSourceFiles(current);
+    if (modules[targetFile] === undefined) {
+      return { ok: false as const, error: `File "${targetFile}" not found. Available files: ${Object.keys(modules).join(', ')}` };
     }
+    targetCode = modules[targetFile];
 
     const occurrences = targetCode.split(oldString).length - 1;
     if (occurrences === 0) {
@@ -496,9 +493,7 @@ export const editSceneCodeTool = createTool({
     }
 
     const updatedCode = targetCode.replace(oldString, newString);
-    const candidateModules = isMulti
-      ? { ...current.modules, [targetFile]: updatedCode }
-      : { 'Scene.tsx': updatedCode };
+    const candidateModules = { ...modules, [targetFile]: updatedCode };
     const sourceCheck = validatePluginSource(candidateModules);
     if (!sourceCheck.ok) {
       const formatted = formatPluginSourceIssues(sourceCheck.issues);
@@ -509,9 +504,12 @@ export const editSceneCodeTool = createTool({
       };
     }
 
-    const candidatePending = isMulti && current.modules?.[targetFile]
-      ? { ...current, modules: candidateModules, sceneCode: candidateModules['Scene.tsx'] ?? current.sceneCode, ast: deriveAST(candidateModules) }
-      : { ...current, sceneCode: updatedCode, ast: deriveAST({ 'Scene.tsx': updatedCode }) };
+    const candidatePending = {
+      ...withPluginSourceFiles(current, candidateModules),
+      ast: deriveAST(candidateModules),
+      // String edits change line numbers too; force the next recon to refresh.
+      sourceMap: undefined,
+    };
     const guard = validatePluginRunState(candidatePending);
     const hasCriticalErrors = guard.missingRequirements.length > 0 || guard.importIssues.length > 0;
     if (hasCriticalErrors) {
@@ -533,17 +531,8 @@ export const editSceneCodeTool = createTool({
       warnings: guard.warnings,
     });
 
-    // Update the right storage
-    if (isMulti && current.modules?.[targetFile]) {
-      await patchJobState(threadId, (s: any) => ({
-        ...s,
-        pendingPlugin: nextPending,
-      }));
-    } else {
-      await patchJobState(threadId, (s: any) => ({
-        ...s,
-        pendingPlugin: nextPending,
-      }));
+    if (!await persistPluginSourceEdit(threadId, nextPending)) {
+      return { ok: false as const, error: 'The edited source could not be verified in saved state. Re-read the file before retrying.' };
     }
 
     const sizeDelta = updatedCode.length - targetCode.length;
@@ -964,18 +953,14 @@ export const readModuleTool = createTool({
       return { ok: false as const, error: 'No pending plugin found.' };
     }
 
-    const isMulti = pending.modules && Object.keys(pending.modules).length > 1;
-    let code: string;
+    const modules = getPluginSourceFiles(pending);
+    const code = modules[filePath];
     let fileAst: FileAST | null = null;
 
-    if (isMulti && pending.modules?.[filePath]) {
-      code = pending.modules[filePath];
-    } else if (filePath === 'Scene.tsx') {
-      code = pending.sceneCode;
-    } else {
+    if (code === undefined) {
       return {
         ok: false as const,
-        error: `File "${filePath}" not found. Available: ${isMulti ? Object.keys(pending.modules).join(', ') : 'Scene.tsx (single-file mode)'}`,
+        error: `File "${filePath}" not found. Available: ${Object.keys(modules).join(', ')}`,
       };
     }
 
@@ -1009,12 +994,7 @@ export const readASTTool = createTool({
     }
 
     // Re-derive AST from current code (ensures accuracy)
-    let ast: PluginAST;
-    if (pending.modules && isMultiFile(pending.modules)) {
-      ast = deriveAST(pending.modules);
-    } else {
-      ast = deriveAST({ 'Scene.tsx': pending.sceneCode });
-    }
+    const ast = deriveAST(getPluginSourceFiles(pending));
 
     // Cache the updated AST
     await patchJobState(threadId, (s: any) => ({
