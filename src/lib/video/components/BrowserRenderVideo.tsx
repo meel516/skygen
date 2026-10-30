@@ -108,5 +108,5 @@ function CanvasRenderVideo({ src, style, className, playbackRate = 1, loop = fal
     delayRender, continueRender, cancelRender, delayRenderTimeoutInMilliseconds, delayRenderRetries]);
 
   // Match @remotion/media: its objectFit prop takes precedence over style.objectFit.
-  return <canvas ref={canvasRef} className={className} style={{ ...style, objectFit: objectFit ?? 'contain' }} />;
+  return <canvas ref={canvasRef} className={className} style={{ ...style, objectFit: objectFit ?? 'cover' }} />;
 }
