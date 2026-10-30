@@ -12,6 +12,7 @@ import {
   continueRender,
 } from 'remotion';
 import { BrowserAudio as Audio } from '../components/BrowserAudio';
+import { BrowserRenderVideo } from '../components/BrowserRenderVideo';
 import * as RemotionLib from 'remotion';
 import {
   Intro,
@@ -353,8 +354,8 @@ function PluginScene({ block, theme, animation, motionProfile, bundleUrl }: Plug
   useEffect(() => {
     const deps: Record<string, unknown> = {
       ...pluginRuntimeDependencies,
-      // Keep Remotion's Video identical to the plugin preview runtime.
-      remotion: { ...RemotionLib, Audio: ProxiedAudio, Img: ProxiedImg },
+      // Preserve the renderer's WebCodecs audio and CORS-aware media.
+      remotion: { ...RemotionLib, Audio: ProxiedAudio, Img: ProxiedImg, Video: BrowserRenderVideo },
     };
     if (typeof globalThis !== 'undefined') {
       const g = globalThis as Record<string, unknown>;
