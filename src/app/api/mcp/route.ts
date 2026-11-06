@@ -8,6 +8,7 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Authorization, Content-Type, MCP-Protocol-Version',
+  'Access-Control-Expose-Headers': 'WWW-Authenticate',
 };
 
 function jsonRpc(result: unknown, id: unknown) {
@@ -508,7 +509,19 @@ export async function POST(request: Request) {
       // Auth is required ONLY for calling tools
       const authResult = await requireAuthenticatedSession();
       if ('response' in authResult) {
-        return jsonRpcError(-32000, 'Unauthorized - Authentication required', id);
+        // Authentication errors are transport-level responses so MCP clients
+        // can discover OAuth and retry the tool call after signing in.
+        const headers = new Headers(authResult.response.headers);
+        for (const [name, value] of Object.entries(CORS_HEADERS)) headers.set(name, value);
+        headers.set('Cache-Control', 'no-store');
+        if (authResult.response.status === 401) {
+          headers.set('WWW-Authenticate',
+            'Bearer resource_metadata="https://skygen.salru.in/.well-known/oauth-protected-resource", scope="generate"');
+        }
+        return new Response(authResult.response.body, {
+          status: authResult.response.status,
+          headers,
+        });
       }
       const toolName = params?.name as string | undefined;
       const toolArgs = params?.arguments ?? {};
