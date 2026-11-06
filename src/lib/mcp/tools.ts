@@ -64,98 +64,100 @@ export const TOOL_DEFINITIONS = [
     name: 'list_templates',
     description:
       'List available video templates (yours + public). Each template defines ordered content blocks. ' +
-      'Use get_template for full block detail. Use create_template to build a new one from built-in blocks + custom plugins.',
+      'Use get_template for full block detail. Create templates in the SkyGen web UI.',
     inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'get_template',
     description:
       'Fetch a single template by id, including its full blocks array. ' +
-      'Use before start_video_generation or before update_template.',
+      'Use before start_video_generation.',
     inputSchema: {
       type: 'object',
       required: ['template_id'],
       properties: {
-        template_id: { type: 'string', description: 'Template ID from list_templates or create_template.' },
+        template_id: { type: 'string', description: 'Template ID from list_templates.' },
       },
     },
   },
-  {
-    name: 'create_template',
-    description: `Create a reusable video template from built-in blocks and/or custom plugins.
-Premium required. After creation, pass template_id to start_video_generation.
-
-BLOCK SHAPES:
-- Built-in: { "type": "stat" | "text" | "quote" | "list" | "timeline" | "motivational-image" | ... } — see list_content_blocks
-- Custom plugin: { "type": "custom-plugin", "pluginId": "<id>", "pluginData": { ...schema defaults } }
-
-Typical workflow:
-1. list_content_blocks + list_plugins
-2. propose_plugin_preview if you need a custom Remotion block
-3. create_template with mixed blocks
-4. start_video_generation({ user_story, template_id })`,
-    inputSchema: {
-      type: 'object',
-      required: ['name', 'blocks'],
-      properties: {
-        name: { type: 'string', description: 'Template display name.' },
-        description: { type: 'string', description: 'What this template is for.' },
-        category: {
-          type: 'string',
-          description: 'Category slug, e.g. "review", "explainer", "motivational", "general".',
-        },
-        is_public: {
-          type: 'boolean',
-          description: 'If true, other users can see this template. Default false.',
-        },
-        blocks: {
-          type: 'array',
-          description:
-            'Ordered content blocks. Built-in types from list_content_blocks, or custom-plugin entries.',
-          items: {
-            type: 'object',
-            required: ['type'],
-            properties: {
-              type: {
-                type: 'string',
-                description: 'Block type e.g. "stat", "text", "motivational-image", "custom-plugin".',
-              },
-              pluginId: {
-                type: 'string',
-                description: 'Required when type is "custom-plugin".',
-              },
-              pluginData: {
-                type: 'object',
-                description: 'Plugin field values / defaults when type is "custom-plugin".',
-              },
-            },
-            additionalProperties: true,
-          },
-        },
-      },
-    },
-  },
-  {
-    name: 'update_template',
-    description:
-      'Update a template you own (name, description, category, is_public, and/or full blocks list). Premium required.',
-    inputSchema: {
-      type: 'object',
-      required: ['template_id'],
-      properties: {
-        template_id: { type: 'string' },
-        name: { type: 'string' },
-        description: { type: 'string' },
-        category: { type: 'string' },
-        is_public: { type: 'boolean' },
-        blocks: {
-          type: 'array',
-          description: 'If provided, replaces the entire blocks array.',
-          items: { type: 'object', additionalProperties: true },
-        },
-      },
-    },
-  },
+  // Disabled for public MCP submission.
+// {
+//     name: 'create_template',
+//     description: `Create a reusable video template from built-in blocks and/or custom plugins.
+// Premium required. After creation, pass template_id to start_video_generation.
+//
+// BLOCK SHAPES:
+// - Built-in: { "type": "stat" | "text" | "quote" | "list" | "timeline" | "motivational-image" | ... } — see list_content_blocks
+// - Custom plugin: { "type": "custom-plugin", "pluginId": "<id>", "pluginData": { ...schema defaults } }
+//
+// Typical workflow:
+// 1. list_content_blocks + list_plugins
+// 2. propose_plugin_preview if you need a custom Remotion block
+// 3. create_template with mixed blocks
+// 4. start_video_generation({ user_story, template_id })`,
+//     inputSchema: {
+//       type: 'object',
+//       required: ['name', 'blocks'],
+//       properties: {
+//         name: { type: 'string', description: 'Template display name.' },
+//         description: { type: 'string', description: 'What this template is for.' },
+//         category: {
+//           type: 'string',
+//           description: 'Category slug, e.g. "review", "explainer", "motivational", "general".',
+//         },
+//         is_public: {
+//           type: 'boolean',
+//           description: 'If true, other users can see this template. Default false.',
+//         },
+//         blocks: {
+//           type: 'array',
+//           description:
+//             'Ordered content blocks. Built-in types from list_content_blocks, or custom-plugin entries.',
+//           items: {
+//             type: 'object',
+//             required: ['type'],
+//             properties: {
+//               type: {
+//                 type: 'string',
+//                 description: 'Block type e.g. "stat", "text", "motivational-image", "custom-plugin".',
+//               },
+//               pluginId: {
+//                 type: 'string',
+//                 description: 'Required when type is "custom-plugin".',
+//               },
+//               pluginData: {
+//                 type: 'object',
+//                 description: 'Plugin field values / defaults when type is "custom-plugin".',
+//               },
+//             },
+//             additionalProperties: true,
+//           },
+//         },
+//       },
+//     },
+//   },
+  // Disabled for public MCP submission.
+// {
+//     name: 'update_template',
+//     description:
+//       'Update a template you own (name, description, category, is_public, and/or full blocks list). Premium required.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['template_id'],
+//       properties: {
+//         template_id: { type: 'string' },
+//         name: { type: 'string' },
+//         description: { type: 'string' },
+//         category: { type: 'string' },
+//         is_public: { type: 'boolean' },
+//         blocks: {
+//           type: 'array',
+//           description: 'If provided, replaces the entire blocks array.',
+//           items: { type: 'object', additionalProperties: true },
+//         },
+//       },
+//     },
+//   },
   {
     name: 'delete_template',
     description: 'Delete a template you own. Premium required. Templates you do not own cannot be deleted.',
@@ -175,7 +177,7 @@ Typical workflow:
   {
     name: 'list_plugins',
     description:
-      'List installed plugins (core + user custom). Use plugin ids with type "custom-plugin" in create_template / start_video_generation blocks. ' +
+      'List installed plugins (core + user custom). Use plugin ids with type "custom-plugin" in start_video_generation blocks. ' +
       'Call get_plugin for schema/defaults of a specific plugin.',
     inputSchema: { type: 'object', properties: {} },
   },
@@ -196,8 +198,8 @@ Typical workflow:
     description: `Start LangGraph video generation. Returns immediately with a thread_id — generation runs in the background.
 
 BLOCKS — provide ONE of:
-- template_id: use a saved template (from list_templates / create_template)
-- blocks: ad-hoc block list (same shape as create_template). When both are set, \`blocks\` wins.
+- template_id: use a saved template (from list_templates)
+- blocks: ad-hoc block list (using the block schema below). When both are set, \`blocks\` wins.
 
 ARC SELECTION — choose ONE:
 - arc_id: preset from list_arcs
@@ -208,7 +210,7 @@ CUSTOM PLUGIN BLOCKS:
 { "type": "custom-plugin", "pluginId": "<id>", "pluginData": { ... } }
 LangGraph fills generation_fields (image/audio/video) from schema + scene annotations.
 
-After start: poll get_generation_status every 10-15s → approve_story / approve_images / approve_audio as needed → get_video_preview.`,
+After start: poll get_generation_status every 10-15s. If approval is required, ask the user to complete that stage in the SkyGen web UI; this MCP does not expose stage approvals. Once complete, call get_video_preview.`,
     inputSchema: {
       type: 'object',
       required: ['user_story'],
@@ -219,7 +221,7 @@ After start: poll get_generation_status every 10-15s → approve_story / approve
         },
         template_id: {
           type: 'string',
-          description: 'Template ID from list_templates or create_template. Required unless blocks is provided.',
+          description: 'Template ID from list_templates. Required unless blocks is provided.',
         },
         blocks: {
           type: 'array',
@@ -282,34 +284,35 @@ After start: poll get_generation_status every 10-15s → approve_story / approve
       },
     },
   },
-  {
-    name: 'approve_story',
-    description:
-      'Approve the narrative plan and start image generation. ' +
-      'Optionally pass edited_scripts to revise block scripts before image generation begins. ' +
-      'Returns immediately — poll get_generation_status to track progress.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id'],
-      properties: {
-        thread_id: { type: 'string' },
-        edited_scripts: {
-          type: 'object',
-          description:
-            'Optional. Map of block index (string key) to revised script text. ' +
-            'Example: { "0": "New intro script", "3": "New conclusion" }. ' +
-            'Only include blocks the user wants to change. Omit to approve all as-is.',
-          additionalProperties: { type: 'string' },
-        },
-      },
-    },
-  },
+  // Disabled for public MCP submission.
+// {
+//     name: 'approve_story',
+//     description:
+//       'Approve the narrative plan and start image generation. ' +
+//       'Optionally pass edited_scripts to revise block scripts before image generation begins. ' +
+//       'Returns immediately — poll get_generation_status to track progress.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id'],
+//       properties: {
+//         thread_id: { type: 'string' },
+//         edited_scripts: {
+//           type: 'object',
+//           description:
+//             'Optional. Map of block index (string key) to revised script text. ' +
+//             'Example: { "0": "New intro script", "3": "New conclusion" }. ' +
+//             'Only include blocks the user wants to change. Omit to approve all as-is.',
+//           additionalProperties: { type: 'string' },
+//         },
+//       },
+//     },
+//   },
   {
     name: 'regenerate_image',
     description:
       'Generate a new image from a description. Returns a URL. ' +
       'For parallax layers, pass field_path (e.g. "layers[1].image") and set remove_background appropriately. ' +
-      'Use update_block_image to regenerate and persist in one step.',
+      'Apply the returned image in the SkyGen web UI; this tool does not persist it to a block.',
     inputSchema: {
       type: 'object',
       required: ['thread_id', 'block_index', 'description'],
@@ -323,32 +326,33 @@ After start: poll get_generation_status every 10-15s → approve_story / approve
       },
     },
   },
-  {
-    name: 'approve_images',
-    description:
-      'Approve generated visuals and start audio generation. ' +
-      'Optionally pass updated_blocks with new image URLs if any images were changed. ' +
-      'Returns immediately — poll get_generation_status to track progress.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id'],
-      properties: {
-        thread_id: { type: 'string' },
-        updated_blocks: {
-          type: 'array',
-          description:
-            'Optional. The full blocks array from interrupt.blocks with imageUrl fields replaced by URLs from regenerate_image. ' +
-            'Pass this if any images were regenerated.',
-          items: { type: 'object' },
-        },
-      },
-    },
-  },
+  // Disabled for public MCP submission.
+// {
+//     name: 'approve_images',
+//     description:
+//       'Approve generated visuals and start audio generation. ' +
+//       'Optionally pass updated_blocks with new image URLs if any images were changed. ' +
+//       'Returns immediately — poll get_generation_status to track progress.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id'],
+//       properties: {
+//         thread_id: { type: 'string' },
+//         updated_blocks: {
+//           type: 'array',
+//           description:
+//             'Optional. The full blocks array from interrupt.blocks with imageUrl fields replaced by URLs from regenerate_image. ' +
+//             'Pass this if any images were regenerated.',
+//           items: { type: 'object' },
+//         },
+//       },
+//     },
+//   },
   {
     name: 'regenerate_audio',
     description:
       'Generate audio for a single block from a script. Returns { block_index, new_audio_url }. ' +
-      'Use update_block_audio to regenerate and persist in one step.',
+      'Apply the returned audio in the SkyGen web UI; this tool does not persist it to a block.',
     inputSchema: {
       type: 'object',
       required: ['thread_id', 'block_index', 'script'],
@@ -360,25 +364,26 @@ After start: poll get_generation_status every 10-15s → approve_story / approve
       },
     },
   },
-  {
-    name: 'approve_audio',
-    description:
-      'Approve audio and start final video assembly. ' +
-      'Optionally pass updated_blocks with new audioSrc URLs if any audio was changed. ' +
-      'Returns immediately — poll get_generation_status to track progress.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id'],
-      properties: {
-        thread_id: { type: 'string' },
-        updated_blocks: {
-          type: 'array',
-          description: 'Full blocks array from interrupt.blocks with audioSrc fields replaced by URLs from regenerate_audio.',
-          items: { type: 'object' },
-        },
-      },
-    },
-  },
+  // Disabled for public MCP submission.
+// {
+//     name: 'approve_audio',
+//     description:
+//       'Approve audio and start final video assembly. ' +
+//       'Optionally pass updated_blocks with new audioSrc URLs if any audio was changed. ' +
+//       'Returns immediately — poll get_generation_status to track progress.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id'],
+//       properties: {
+//         thread_id: { type: 'string' },
+//         updated_blocks: {
+//           type: 'array',
+//           description: 'Full blocks array from interrupt.blocks with audioSrc fields replaced by URLs from regenerate_audio.',
+//           items: { type: 'object' },
+//         },
+//       },
+//     },
+//   },
   {
     name: 'get_video_preview',
     description:
@@ -398,7 +403,7 @@ After start: poll get_generation_status every 10-15s → approve_story / approve
     name: 'list_content_blocks',
     description:
       'Returns available built-in content block types with descriptions, key fields, and guidance on when to use each. ' +
-      'Call this before create_template / start_video_generation. ' +
+      'Call this before start_video_generation. ' +
       'If no existing block fits the user\'s need, use propose_plugin_preview to build a custom one, then reference it as type custom-plugin.',
     inputSchema: { type: 'object', properties: {} },
   },
@@ -557,88 +562,92 @@ Requires filesystem access (stdio MCP on the machine). On HTTP MCP (Vercel), use
       },
     },
   },
-  {
-    name: 'update_block_image',
-    description:
-      'Regenerate the image for a specific block and persist it to the generation state. ' +
-      'Can be called at any time — including after the video has been assembled. ' +
-      'For parallax layers, pass field_path (e.g. "layers[1].image"). ' +
-      'Returns { block_index, field_path, new_image_url }.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id', 'block_index', 'description'],
-      properties: {
-        thread_id:          { type: 'string' },
-        block_index:        { type: 'number', description: '0-based block index' },
-        description:        { type: 'string', description: 'New image description / prompt' },
-        field_path:         { type: 'string', description: 'Field path within the block, e.g. "layers[1].image". Defaults to "imageUrl".' },
-        remove_background:  { type: 'boolean', description: 'Whether to remove the image background. Default false.' },
-        visual_style_guide: { type: 'string', description: 'Visual style guide for consistency. Pass state.visualStyleGuide.' },
-      },
-    },
-  },
-  {
-    name: 'update_block_audio',
-    description:
-      'Regenerate audio for a specific block and persist it to the generation state. ' +
-      'Can be called at any time — including after the video has been assembled. ' +
-      'Returns { block_index, new_audio_url }.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id', 'block_index', 'script'],
-      properties: {
-        thread_id:   { type: 'string' },
-        block_index: { type: 'number', description: '0-based block index' },
-        script:      { type: 'string', description: 'Text to speak for this block.' },
-        voice:       { type: 'string', description: 'Voice ID from list_voices. Omit to use default.' },
-      },
-    },
-  },
-  {
-    name: 'assemble_video',
-    description:
-      'Rebuild the final video from the current generation state. ' +
-      'Creates or updates the Video record and returns a previewUrl. ' +
-      'Call this when satisfied with all blocks — can be called multiple times after any edits.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id'],
-      properties: {
-        thread_id: { type: 'string' },
-      },
-    },
-  },
-  {
-    name: 'patch_generation_state',
-    description: `Set any field in the generation state using a dot-notation path.
-Use this to update fields not covered by update_block_image / update_block_audio.
-
-Examples:
-  path "videoMeta.audioTracks"           value [{"src":"https://...","volume":0.8}]  → add background music
-  path "videoMeta.theme"                 value "light_minimal"                       → change theme
-  path "narrativePlan[0].spokenScript"   value "New narration text"                  → edit a voice-over script
-  path "filledBlocks[2].headline"        value "New headline"                        → edit a text field
-  path "visualStyleGuide"                value "Use warm earthy tones throughout"    → update style guide
-
-After patching, call assemble_video(thread_id) to rebuild the video with the updated state.`,
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id', 'path', 'value'],
-      properties: {
-        thread_id: {
-          type: 'string',
-          description: 'Thread ID from start_video_generation.',
-        },
-        path: {
-          type: 'string',
-          description: 'Dot/bracket-notation path relative to the state root. e.g. "videoMeta.audioTracks" or "filledBlocks[2].headline".',
-        },
-        value: {
-          description: 'The value to set at the given path. Can be any JSON type (string, number, array, object, null).',
-        },
-      },
-    },
-  },
+  // Disabled for public MCP submission.
+// {
+//     name: 'update_block_image',
+//     description:
+//       'Regenerate the image for a specific block and persist it to the generation state. ' +
+//       'Can be called at any time — including after the video has been assembled. ' +
+//       'For parallax layers, pass field_path (e.g. "layers[1].image"). ' +
+//       'Returns { block_index, field_path, new_image_url }.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id', 'block_index', 'description'],
+//       properties: {
+//         thread_id:          { type: 'string' },
+//         block_index:        { type: 'number', description: '0-based block index' },
+//         description:        { type: 'string', description: 'New image description / prompt' },
+//         field_path:         { type: 'string', description: 'Field path within the block, e.g. "layers[1].image". Defaults to "imageUrl".' },
+//         remove_background:  { type: 'boolean', description: 'Whether to remove the image background. Default false.' },
+//         visual_style_guide: { type: 'string', description: 'Visual style guide for consistency. Pass state.visualStyleGuide.' },
+//       },
+//     },
+//   },
+  // Disabled for public MCP submission.
+// {
+//     name: 'update_block_audio',
+//     description:
+//       'Regenerate audio for a specific block and persist it to the generation state. ' +
+//       'Can be called at any time — including after the video has been assembled. ' +
+//       'Returns { block_index, new_audio_url }.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id', 'block_index', 'script'],
+//       properties: {
+//         thread_id:   { type: 'string' },
+//         block_index: { type: 'number', description: '0-based block index' },
+//         script:      { type: 'string', description: 'Text to speak for this block.' },
+//         voice:       { type: 'string', description: 'Voice ID from list_voices. Omit to use default.' },
+//       },
+//     },
+//   },
+  // Disabled for public MCP submission.
+// {
+//     name: 'assemble_video',
+//     description:
+//       'Rebuild the final video from the current generation state. ' +
+//       'Creates or updates the Video record and returns a previewUrl. ' +
+//       'Call this when satisfied with all blocks — can be called multiple times after any edits.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id'],
+//       properties: {
+//         thread_id: { type: 'string' },
+//       },
+//     },
+//   },
+  // Disabled for public MCP submission.
+// {
+//     name: 'patch_generation_state',
+//     description: `Set any field in the generation state using a dot-notation path.
+// Use this to update fields not covered by update_block_image / update_block_audio.
+//
+// Examples:
+//   path "videoMeta.audioTracks"           value [{"src":"https://...","volume":0.8}]  → add background music
+//   path "videoMeta.theme"                 value "light_minimal"                       → change theme
+//   path "narrativePlan[0].spokenScript"   value "New narration text"                  → edit a voice-over script
+//   path "filledBlocks[2].headline"        value "New headline"                        → edit a text field
+//   path "visualStyleGuide"                value "Use warm earthy tones throughout"    → update style guide
+//
+// After patching, call assemble_video(thread_id) to rebuild the video with the updated state.`,
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id', 'path', 'value'],
+//       properties: {
+//         thread_id: {
+//           type: 'string',
+//           description: 'Thread ID from start_video_generation.',
+//         },
+//         path: {
+//           type: 'string',
+//           description: 'Dot/bracket-notation path relative to the state root. e.g. "videoMeta.audioTracks" or "filledBlocks[2].headline".',
+//         },
+//         value: {
+//           description: 'The value to set at the given path. Can be any JSON type (string, number, array, object, null).',
+//         },
+//       },
+//     },
+//   },
 ];
 
 // ============================================================================
@@ -740,86 +749,88 @@ export async function handleToolCall(
       };
     }
 
-    case 'create_template': {
-      const { name, description, category, is_public, blocks } = args;
-      if (!name) throw new McpError(ErrorCode.InvalidParams, 'name is required');
-      if (!Array.isArray(blocks) || blocks.length === 0) {
-        throw new McpError(ErrorCode.InvalidParams, 'blocks must be a non-empty array');
-      }
-      const normalized = normalizeTemplateBlocks(blocks);
-      for (const b of normalized) {
-        if (b?.type === 'custom-plugin' && !b.pluginId) {
-          throw new McpError(ErrorCode.InvalidParams, 'custom-plugin blocks require pluginId');
-        }
-      }
-      const result = await apiFetch('/api/templates', {
-        method: 'POST',
-        body: JSON.stringify({
-          name,
-          description: description ?? '',
-          category: category ?? 'general',
-          type: 'user',
-          isPublic: !!is_public,
-          data: { blocks: normalized },
-        }),
-      });
-      if (result.error) {
-        throw new McpError(ErrorCode.InternalError, result.error);
-      }
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            template_id: result.id,
-            name: result.name,
-            block_count: normalized.length,
-            block_types: normalized.map((b: any) =>
-              b?.type === 'custom-plugin' ? `custom-plugin:${b.pluginId}` : b?.type
-            ),
-            usage: `start_video_generation({ user_story: "...", template_id: "${result.id}" })`,
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled for public MCP submission.
+// case 'create_template': {
+//       const { name, description, category, is_public, blocks } = args;
+//       if (!name) throw new McpError(ErrorCode.InvalidParams, 'name is required');
+//       if (!Array.isArray(blocks) || blocks.length === 0) {
+//         throw new McpError(ErrorCode.InvalidParams, 'blocks must be a non-empty array');
+//       }
+//       const normalized = normalizeTemplateBlocks(blocks);
+//       for (const b of normalized) {
+//         if (b?.type === 'custom-plugin' && !b.pluginId) {
+//           throw new McpError(ErrorCode.InvalidParams, 'custom-plugin blocks require pluginId');
+//         }
+//       }
+//       const result = await apiFetch('/api/templates', {
+//         method: 'POST',
+//         body: JSON.stringify({
+//           name,
+//           description: description ?? '',
+//           category: category ?? 'general',
+//           type: 'user',
+//           isPublic: !!is_public,
+//           data: { blocks: normalized },
+//         }),
+//       });
+//       if (result.error) {
+//         throw new McpError(ErrorCode.InternalError, result.error);
+//       }
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             template_id: result.id,
+//             name: result.name,
+//             block_count: normalized.length,
+//             block_types: normalized.map((b: any) =>
+//               b?.type === 'custom-plugin' ? `custom-plugin:${b.pluginId}` : b?.type
+//             ),
+//             usage: `start_video_generation({ user_story: "...", template_id: "${result.id}" })`,
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
-    case 'update_template': {
-      const { template_id, name, description, category, is_public, blocks } = args;
-      if (!template_id) throw new McpError(ErrorCode.InvalidParams, 'template_id is required');
-      const body: Record<string, any> = {};
-      if (name != null) body.name = name;
-      if (description != null) body.description = description;
-      if (category != null) body.category = category;
-      if (is_public != null) body.isPublic = !!is_public;
-      if (Array.isArray(blocks)) {
-        const normalized = normalizeTemplateBlocks(blocks);
-        for (const b of normalized) {
-          if (b?.type === 'custom-plugin' && !b.pluginId) {
-            throw new McpError(ErrorCode.InvalidParams, 'custom-plugin blocks require pluginId');
-          }
-        }
-        body.data = { blocks: normalized };
-      }
-      const result = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`, {
-        method: 'PATCH',
-        body: JSON.stringify(body),
-      });
-      if (result.error) {
-        throw new McpError(ErrorCode.InternalError, result.error);
-      }
-      const updatedBlocks = extractBlocksFromTemplate(result);
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            template_id: result.id,
-            name: result.name,
-            block_count: updatedBlocks.length,
-            blocks: updatedBlocks,
-            success: true,
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled for public MCP submission.
+// case 'update_template': {
+//       const { template_id, name, description, category, is_public, blocks } = args;
+//       if (!template_id) throw new McpError(ErrorCode.InvalidParams, 'template_id is required');
+//       const body: Record<string, any> = {};
+//       if (name != null) body.name = name;
+//       if (description != null) body.description = description;
+//       if (category != null) body.category = category;
+//       if (is_public != null) body.isPublic = !!is_public;
+//       if (Array.isArray(blocks)) {
+//         const normalized = normalizeTemplateBlocks(blocks);
+//         for (const b of normalized) {
+//           if (b?.type === 'custom-plugin' && !b.pluginId) {
+//             throw new McpError(ErrorCode.InvalidParams, 'custom-plugin blocks require pluginId');
+//           }
+//         }
+//         body.data = { blocks: normalized };
+//       }
+//       const result = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`, {
+//         method: 'PATCH',
+//         body: JSON.stringify(body),
+//       });
+//       if (result.error) {
+//         throw new McpError(ErrorCode.InternalError, result.error);
+//       }
+//       const updatedBlocks = extractBlocksFromTemplate(result);
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             template_id: result.id,
+//             name: result.name,
+//             block_count: updatedBlocks.length,
+//             blocks: updatedBlocks,
+//             success: true,
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
     case 'delete_template': {
       const { template_id } = args;
@@ -1024,37 +1035,38 @@ export async function handleToolCall(
       };
     }
 
-    case 'approve_story': {
-      const { thread_id, edited_scripts } = args;
-
-      const value: Record<string, any> = { approved: true };
-      if (edited_scripts && Object.keys(edited_scripts).length > 0) {
-        value.editedScripts = edited_scripts;
-      }
-
-      await apiFetch('/api/mcp/jobs', {
-        method: 'POST',
-        body:   JSON.stringify({ threadId: thread_id, status: 'running' }),
-      });
-
-      apiFetch('/api/ai/wizard/execute', {
-        method: 'POST',
-        body:   JSON.stringify({ action: 'resume', threadId: thread_id, value }),
-      }).catch((err: any) => {
-        console.error('[mcp] background resume failed:', err?.message);
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            thread_id,
-            status:  'running',
-            message: 'Story approved. Poll get_generation_status for visual generation progress.',
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled for public MCP submission.
+// case 'approve_story': {
+//       const { thread_id, edited_scripts } = args;
+//
+//       const value: Record<string, any> = { approved: true };
+//       if (edited_scripts && Object.keys(edited_scripts).length > 0) {
+//         value.editedScripts = edited_scripts;
+//       }
+//
+//       await apiFetch('/api/mcp/jobs', {
+//         method: 'POST',
+//         body:   JSON.stringify({ threadId: thread_id, status: 'running' }),
+//       });
+//
+//       apiFetch('/api/ai/wizard/execute', {
+//         method: 'POST',
+//         body:   JSON.stringify({ action: 'resume', threadId: thread_id, value }),
+//       }).catch((err: any) => {
+//         console.error('[mcp] background resume failed:', err?.message);
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             thread_id,
+//             status:  'running',
+//             message: 'Story approved. Poll get_generation_status for visual generation progress.',
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
     case 'regenerate_image': {
       const { block_index, field_path, description, remove_background = false, visual_style_guide = '' } = args;
@@ -1075,37 +1087,38 @@ export async function handleToolCall(
       };
     }
 
-    case 'approve_images': {
-      const { thread_id, updated_blocks } = args;
-
-      const value: Record<string, any> = { approved: true };
-      if (Array.isArray(updated_blocks) && updated_blocks.length > 0) {
-        value.updatedBlocks = updated_blocks;
-      }
-
-      await apiFetch('/api/mcp/jobs', {
-        method: 'POST',
-        body:   JSON.stringify({ threadId: thread_id, status: 'running' }),
-      });
-
-      apiFetch('/api/ai/wizard/execute', {
-        method: 'POST',
-        body:   JSON.stringify({ action: 'resume', threadId: thread_id, value }),
-      }).catch((err: any) => {
-        console.error('[mcp] background resume failed:', err?.message);
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            thread_id,
-            status:  'running',
-            message: 'Images approved. Poll get_generation_status until status = "complete", then call get_video_preview.',
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled for public MCP submission.
+// case 'approve_images': {
+//       const { thread_id, updated_blocks } = args;
+//
+//       const value: Record<string, any> = { approved: true };
+//       if (Array.isArray(updated_blocks) && updated_blocks.length > 0) {
+//         value.updatedBlocks = updated_blocks;
+//       }
+//
+//       await apiFetch('/api/mcp/jobs', {
+//         method: 'POST',
+//         body:   JSON.stringify({ threadId: thread_id, status: 'running' }),
+//       });
+//
+//       apiFetch('/api/ai/wizard/execute', {
+//         method: 'POST',
+//         body:   JSON.stringify({ action: 'resume', threadId: thread_id, value }),
+//       }).catch((err: any) => {
+//         console.error('[mcp] background resume failed:', err?.message);
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             thread_id,
+//             status:  'running',
+//             message: 'Images approved. Poll get_generation_status until status = "complete", then call get_video_preview.',
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
     case 'regenerate_audio': {
       const { block_index, script, voice } = args;
@@ -1121,36 +1134,37 @@ export async function handleToolCall(
       };
     }
 
-    case 'approve_audio': {
-      const { thread_id, updated_blocks } = args;
-      const value: Record<string, any> = { approved: true };
-      if (Array.isArray(updated_blocks) && updated_blocks.length > 0) {
-        value.updatedBlocks = updated_blocks;
-      }
-
-      await apiFetch('/api/mcp/jobs', {
-        method: 'POST',
-        body:   JSON.stringify({ threadId: thread_id, status: 'running' }),
-      });
-
-      apiFetch('/api/ai/wizard/execute', {
-        method: 'POST',
-        body:   JSON.stringify({ action: 'resume', threadId: thread_id, value }),
-      }).catch((err: any) => {
-        console.error('[mcp] background resume failed:', err?.message);
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            thread_id,
-            status:  'running',
-            message: 'Audio approved. Poll get_generation_status until status = "complete", then call get_video_preview.',
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled for public MCP submission.
+// case 'approve_audio': {
+//       const { thread_id, updated_blocks } = args;
+//       const value: Record<string, any> = { approved: true };
+//       if (Array.isArray(updated_blocks) && updated_blocks.length > 0) {
+//         value.updatedBlocks = updated_blocks;
+//       }
+//
+//       await apiFetch('/api/mcp/jobs', {
+//         method: 'POST',
+//         body:   JSON.stringify({ threadId: thread_id, status: 'running' }),
+//       });
+//
+//       apiFetch('/api/ai/wizard/execute', {
+//         method: 'POST',
+//         body:   JSON.stringify({ action: 'resume', threadId: thread_id, value }),
+//       }).catch((err: any) => {
+//         console.error('[mcp] background resume failed:', err?.message);
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             thread_id,
+//             status:  'running',
+//             message: 'Audio approved. Poll get_generation_status until status = "complete", then call get_video_preview.',
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
     case 'get_video_preview': {
       const { thread_id } = args;
@@ -1368,83 +1382,87 @@ export async function handleToolCall(
       };
     }
 
-    case 'update_block_image': {
-      const { thread_id, block_index, description, field_path, remove_background = false, visual_style_guide = '' } = args;
+    // Disabled for public MCP submission.
+// case 'update_block_image': {
+//       const { thread_id, block_index, description, field_path, remove_background = false, visual_style_guide = '' } = args;
+//
+//       const result = await apiFetch('/api/ai/wizard/regenerate-image', {
+//         method: 'POST',
+//         body: JSON.stringify({
+//           description:      `${visual_style_guide ? visual_style_guide + '. ' : ''}${description}`,
+//           removeBackground: remove_background,
+//         }),
+//       });
+//
+//       await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`, {
+//         method: 'PATCH',
+//         body: JSON.stringify({
+//           blockIndex: block_index,
+//           field:      field_path ?? 'imageUrl',
+//           value:      result.url,
+//         }),
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({ block_index, field_path: field_path ?? 'imageUrl', new_image_url: result.url }, null, 2),
+//         }],
+//       };
+//     }
 
-      const result = await apiFetch('/api/ai/wizard/regenerate-image', {
-        method: 'POST',
-        body: JSON.stringify({
-          description:      `${visual_style_guide ? visual_style_guide + '. ' : ''}${description}`,
-          removeBackground: remove_background,
-        }),
-      });
+    // Disabled for public MCP submission.
+// case 'update_block_audio': {
+//       const { thread_id, block_index, script, voice } = args;
+//
+//       const result = await apiFetch('/api/ai/wizard/regenerate-audio', {
+//         method: 'POST',
+//         body: JSON.stringify({ script, voice }),
+//       });
+//
+//       await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`, {
+//         method: 'PATCH',
+//         body: JSON.stringify({
+//           blockIndex: block_index,
+//           field:      'audioSrc',
+//           value:      result.url,
+//         }),
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({ block_index, new_audio_url: result.url }, null, 2),
+//         }],
+//       };
+//     }
 
-      await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          blockIndex: block_index,
-          field:      field_path ?? 'imageUrl',
-          value:      result.url,
-        }),
-      });
+    // Disabled for public MCP submission.
+// case 'assemble_video': {
+//       const { thread_id } = args;
+//       const result = await apiFetch('/api/ai/wizard/assemble', {
+//         method: 'POST',
+//         body: JSON.stringify({ threadId: thread_id }),
+//       });
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({ preview_url: result.previewUrl, video_id: result.videoId }, null, 2),
+//         }],
+//       };
+//     }
 
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({ block_index, field_path: field_path ?? 'imageUrl', new_image_url: result.url }, null, 2),
-        }],
-      };
-    }
-
-    case 'update_block_audio': {
-      const { thread_id, block_index, script, voice } = args;
-
-      const result = await apiFetch('/api/ai/wizard/regenerate-audio', {
-        method: 'POST',
-        body: JSON.stringify({ script, voice }),
-      });
-
-      await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          blockIndex: block_index,
-          field:      'audioSrc',
-          value:      result.url,
-        }),
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({ block_index, new_audio_url: result.url }, null, 2),
-        }],
-      };
-    }
-
-    case 'assemble_video': {
-      const { thread_id } = args;
-      const result = await apiFetch('/api/ai/wizard/assemble', {
-        method: 'POST',
-        body: JSON.stringify({ threadId: thread_id }),
-      });
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({ preview_url: result.previewUrl, video_id: result.videoId }, null, 2),
-        }],
-      };
-    }
-
-    case 'patch_generation_state': {
-      const { thread_id, path, value } = args;
-      await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`, {
-        method: 'PATCH',
-        body: JSON.stringify({ path, value }),
-      });
-      return {
-        content: [{ type: 'text', text: JSON.stringify({ ok: true, patched: path }, null, 2) }],
-      };
-    }
+    // Disabled for public MCP submission.
+// case 'patch_generation_state': {
+//       const { thread_id, path, value } = args;
+//       await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`, {
+//         method: 'PATCH',
+//         body: JSON.stringify({ path, value }),
+//       });
+//       return {
+//         content: [{ type: 'text', text: JSON.stringify({ ok: true, patched: path }, null, 2) }],
+//       };
+//     }
 
     default:
       throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
