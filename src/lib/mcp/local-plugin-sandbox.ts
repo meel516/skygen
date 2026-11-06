@@ -341,7 +341,7 @@ export async function validatePluginLocal(input: LocalSandboxInput): Promise<Loc
     source_hash: sourceHash,
     base_bundle: MCP_BASE_BUNDLE,
     message: success
-      ? `Local sandbox OK (npm install + esbuild). Installed: [${npmInstalled.join(', ') || 'none (host-only)'}]. Pass same modules + dependencies to create_plugin.`
+      ? `Local sandbox OK (npm install + esbuild). Installed: [${npmInstalled.join(', ') || 'none (host-only)'}]. Pass the same modules + dependencies to propose_plugin_preview.`
       : 'Local sandbox failed at npm install or esbuild. Fix dependencies/source — no artificial package blocklist.',
   };
 }
@@ -354,9 +354,9 @@ export function getBaseBundleInfo() {
       'Any package in dependencies (or imported) is npm-installed in the local sandbox and bundled. No allowlist/blocklist.',
     workflow: [
       '1. Multi-file modules + dependencies map (package.json style)',
-      '2. validate_plugin / compile_plugin_preview → local npm install + esbuild',
-      '3. create_plugin with same modules + dependencies (server install)',
-      '4. create_template / start_video_generation',
+      '2. pack_plugin_dir for a local folder, or supply modules directly',
+      '3. propose_plugin_preview with modules, schema and dependencies',
+      '4. Review the preview, then approve_plugin_preview only with user approval',
     ],
   };
 }

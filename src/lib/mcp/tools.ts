@@ -48,38 +48,42 @@ export const TOOL_DEFINITIONS = [
     description: 'Fetch the 69 premium cinematic and motion graphics patterns (Blur-to-Sharp, CSS 3D, Aurora backgrounds, etc.) to use when writing Remotion React code.',
     inputSchema: { type: 'object', properties: {} },
   },
-  {
-    name: 'list_arcs',
-    description:
-      'List available story arc presets. Show these to the user so they can pick one, or skip entirely and craft a fully custom arc based on your conversation with the user. ' +
-      'A custom arc is often better because you know the user\'s topic and tone. Pass it directly to start_video_generation as the `arc` parameter.',
-    inputSchema: { type: 'object', properties: {} },
-  },
-  {
-    name: 'list_visual_styles',
-    description: 'List available visual styles for image generation (e.g. photorealistic, anime, minimalist, cinematic). Show to the user to let them choose.',
-    inputSchema: { type: 'object', properties: {} },
-  },
-  {
-    name: 'list_templates',
-    description:
-      'List available video templates (yours + public). Each template defines ordered content blocks. ' +
-      'Use get_template for full block detail. Create templates in the SkyGen web UI.',
-    inputSchema: { type: 'object', properties: {} },
-  },
-  {
-    name: 'get_template',
-    description:
-      'Fetch a single template by id, including its full blocks array. ' +
-      'Use before start_video_generation.',
-    inputSchema: {
-      type: 'object',
-      required: ['template_id'],
-      properties: {
-        template_id: { type: 'string', description: 'Template ID from list_templates.' },
-      },
-    },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'list_arcs',
+//     description:
+//       'List available story arc presets. Show these to the user so they can pick one, or skip entirely and craft a fully custom arc based on your conversation with the user. ' +
+//       'A custom arc is often better because you know the user\'s topic and tone. Pass it directly to start_video_generation as the `arc` parameter.',
+//     inputSchema: { type: 'object', properties: {} },
+//   },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'list_visual_styles',
+//     description: 'List available visual styles for image generation (e.g. photorealistic, anime, minimalist, cinematic). Show to the user to let them choose.',
+//     inputSchema: { type: 'object', properties: {} },
+//   },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'list_templates',
+//     description:
+//       'List available video templates (yours + public). Each template defines ordered content blocks. ' +
+//       'Use get_template for full block detail. Create templates in the SkyGen web UI.',
+//     inputSchema: { type: 'object', properties: {} },
+//   },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'get_template',
+//     description:
+//       'Fetch a single template by id, including its full blocks array. ' +
+//       'Use before start_video_generation.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['template_id'],
+//       properties: {
+//         template_id: { type: 'string', description: 'Template ID from list_templates.' },
+//       },
+//     },
+//   },
   // Disabled for public MCP submission.
 // {
 //     name: 'create_template',
@@ -158,26 +162,28 @@ export const TOOL_DEFINITIONS = [
 //       },
 //     },
 //   },
-  {
-    name: 'delete_template',
-    description: 'Delete a template you own. Premium required. Templates you do not own cannot be deleted.',
-    inputSchema: {
-      type: 'object',
-      required: ['template_id'],
-      properties: {
-        template_id: { type: 'string' },
-      },
-    },
-  },
-  {
-    name: 'list_voices',
-    description: 'List available TTS voices with gender and provider info. Show to the user to let them choose a narration voice.',
-    inputSchema: { type: 'object', properties: {} },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'delete_template',
+//     description: 'Delete a template you own. Premium required. Templates you do not own cannot be deleted.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['template_id'],
+//       properties: {
+//         template_id: { type: 'string' },
+//       },
+//     },
+//   },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'list_voices',
+//     description: 'List available TTS voices with gender and provider info. Show to the user to let them choose a narration voice.',
+//     inputSchema: { type: 'object', properties: {} },
+//   },
   {
     name: 'list_plugins',
     description:
-      'List installed plugins (core + user custom). Use plugin ids with type "custom-plugin" in start_video_generation blocks. ' +
+      'List installed plugins (core + user custom). Use returned plugin IDs to inspect or manage plugins. ' +
       'Call get_plugin for schema/defaults of a specific plugin.',
     inputSchema: { type: 'object', properties: {} },
   },
@@ -193,94 +199,95 @@ export const TOOL_DEFINITIONS = [
       },
     },
   },
-  {
-    name: 'start_video_generation',
-    description: `Start LangGraph video generation. Returns immediately with a thread_id — generation runs in the background.
-
-BLOCKS — provide ONE of:
-- template_id: use a saved template (from list_templates)
-- blocks: ad-hoc block list (using the block schema below). When both are set, \`blocks\` wins.
-
-ARC SELECTION — choose ONE:
-- arc_id: preset from list_arcs
-- arc: { roles, tone } custom narrative roles (one role per block preferred)
-- Neither: AI director auto-detects
-
-CUSTOM PLUGIN BLOCKS:
-{ "type": "custom-plugin", "pluginId": "<id>", "pluginData": { ... } }
-LangGraph fills generation_fields (image/audio/video) from schema + scene annotations.
-
-After start: poll get_generation_status every 10-15s. If approval is required, ask the user to complete that stage in the SkyGen web UI; this MCP does not expose stage approvals. Once complete, call get_video_preview.`,
-    inputSchema: {
-      type: 'object',
-      required: ['user_story'],
-      properties: {
-        user_story: {
-          type: 'string',
-          description: 'The topic or description of the video (e.g. "Odysseus game review — epic score card and verdict")',
-        },
-        template_id: {
-          type: 'string',
-          description: 'Template ID from list_templates. Required unless blocks is provided.',
-        },
-        blocks: {
-          type: 'array',
-          description:
-            'Optional ad-hoc blocks. If set, used instead of loading template blocks. Mix built-in types and custom-plugin.',
-          items: { type: 'object', additionalProperties: true },
-        },
-        arc_id: {
-          type: 'string',
-          description: 'Preset arc ID from list_arcs. Ignored if custom arc object is provided.',
-        },
-        arc: {
-          type: 'object',
-          description: 'Custom arc — define roles + tone yourself based on the user conversation. Takes priority over arc_id.',
-          properties: {
-            roles: {
-              type: 'array',
-              items: { type: 'string' },
-              description: 'Ordered narrative roles, one per block.',
-            },
-            tone: {
-              type: 'string',
-              description: 'Overall tone/style direction for the director agent.',
-            },
-          },
-          required: ['roles', 'tone'],
-        },
-        visual_style: {
-          type: 'string',
-          description: 'Visual style ID from list_visual_styles. Optional.',
-        },
-        voice: {
-          type: 'string',
-          description: 'Voice ID from list_voices. Optional.',
-        },
-        language: {
-          type: 'string',
-          description: 'Language code, e.g. "en", "es". Defaults to "en".',
-        },
-        model: {
-          type: 'string',
-          description: 'AI model to use, e.g. "grok-3", "grok-3-mini", "deepseek-chat". Defaults to "grok-3".',
-        },
-      },
-    },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'start_video_generation',
+//     description: `Start LangGraph video generation. Returns immediately with a thread_id — generation runs in the background.
+//
+// BLOCKS — provide ONE of:
+// - template_id: use a saved template (from list_templates)
+// - blocks: ad-hoc block list (using the block schema below). When both are set, \`blocks\` wins.
+//
+// ARC SELECTION — choose ONE:
+// - arc_id: preset from list_arcs
+// - arc: { roles, tone } custom narrative roles (one role per block preferred)
+// - Neither: AI director auto-detects
+//
+// CUSTOM PLUGIN BLOCKS:
+// { "type": "custom-plugin", "pluginId": "<id>", "pluginData": { ... } }
+// LangGraph fills generation_fields (image/audio/video) from schema + scene annotations.
+//
+// After start: poll get_generation_status every 10-15s. If approval is required, ask the user to complete that stage in the SkyGen web UI; this MCP does not expose stage approvals. Once complete, call get_video_preview.`,
+//     inputSchema: {
+//       type: 'object',
+//       required: ['user_story'],
+//       properties: {
+//         user_story: {
+//           type: 'string',
+//           description: 'The topic or description of the video (e.g. "Odysseus game review — epic score card and verdict")',
+//         },
+//         template_id: {
+//           type: 'string',
+//           description: 'Template ID from list_templates. Required unless blocks is provided.',
+//         },
+//         blocks: {
+//           type: 'array',
+//           description:
+//             'Optional ad-hoc blocks. If set, used instead of loading template blocks. Mix built-in types and custom-plugin.',
+//           items: { type: 'object', additionalProperties: true },
+//         },
+//         arc_id: {
+//           type: 'string',
+//           description: 'Preset arc ID from list_arcs. Ignored if custom arc object is provided.',
+//         },
+//         arc: {
+//           type: 'object',
+//           description: 'Custom arc — define roles + tone yourself based on the user conversation. Takes priority over arc_id.',
+//           properties: {
+//             roles: {
+//               type: 'array',
+//               items: { type: 'string' },
+//               description: 'Ordered narrative roles, one per block.',
+//             },
+//             tone: {
+//               type: 'string',
+//               description: 'Overall tone/style direction for the director agent.',
+//             },
+//           },
+//           required: ['roles', 'tone'],
+//         },
+//         visual_style: {
+//           type: 'string',
+//           description: 'Visual style ID from list_visual_styles. Optional.',
+//         },
+//         voice: {
+//           type: 'string',
+//           description: 'Voice ID from list_voices. Optional.',
+//         },
+//         language: {
+//           type: 'string',
+//           description: 'Language code, e.g. "en", "es". Defaults to "en".',
+//         },
+//         model: {
+//           type: 'string',
+//           description: 'AI model to use, e.g. "grok-3", "grok-3-mini", "deepseek-chat". Defaults to "grok-3".',
+//         },
+//       },
+//     },
+//   },
   {
     name: 'get_generation_status',
     description:
-      'Poll the status of a video generation job (reads from DB instantly — no blocking). ' +
+      'Poll the status of a custom plugin preview or save job (reads from DB instantly — no blocking). ' +
       'Call every 10-15 seconds while status = "running". ' +
       'status = "interrupted" → generation paused for review, check interrupt.type for details. ' +
-      'status = "complete" → call get_video_preview. ' +
+      'status = "complete" → inspect the returned payload for the plugin result. ' +
       'status = "error" → generation failed, check error field.',
     inputSchema: {
       type: 'object',
       required: ['thread_id'],
       properties: {
-        thread_id: { type: 'string', description: 'Thread ID from start_video_generation' },
+        thread_id: { type: 'string', description: 'Thread ID from propose_plugin_preview or approve_plugin_preview' },
       },
     },
   },
@@ -307,25 +314,26 @@ After start: poll get_generation_status every 10-15s. If approval is required, a
 //       },
 //     },
 //   },
-  {
-    name: 'regenerate_image',
-    description:
-      'Generate a new image from a description. Returns a URL. ' +
-      'For parallax layers, pass field_path (e.g. "layers[1].image") and set remove_background appropriately. ' +
-      'Apply the returned image in the SkyGen web UI; this tool does not persist it to a block.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id', 'block_index', 'description'],
-      properties: {
-        thread_id:          { type: 'string' },
-        block_index:        { type: 'number', description: '0-based index of the block (blockIdx from imageItem)' },
-        field_path:         { type: 'string', description: 'Dot-notation field path within the block, e.g. "layers[1].image". Required for parallax layer images.' },
-        description:        { type: 'string', description: 'New image description / prompt' },
-        remove_background:  { type: 'boolean', description: 'Match the removeBackground field from the imageItem. True for parallax foreground/midground layers, false for background.' },
-        visual_style_guide: { type: 'string', description: 'Pass interrupt.visualStyleGuide for visual consistency across blocks.' },
-      },
-    },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'regenerate_image',
+//     description:
+//       'Generate a new image from a description. Returns a URL. ' +
+//       'For parallax layers, pass field_path (e.g. "layers[1].image") and set remove_background appropriately. ' +
+//       'Apply the returned image in the SkyGen web UI; this tool does not persist it to a block.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id', 'block_index', 'description'],
+//       properties: {
+//         thread_id:          { type: 'string' },
+//         block_index:        { type: 'number', description: '0-based index of the block (blockIdx from imageItem)' },
+//         field_path:         { type: 'string', description: 'Dot-notation field path within the block, e.g. "layers[1].image". Required for parallax layer images.' },
+//         description:        { type: 'string', description: 'New image description / prompt' },
+//         remove_background:  { type: 'boolean', description: 'Match the removeBackground field from the imageItem. True for parallax foreground/midground layers, false for background.' },
+//         visual_style_guide: { type: 'string', description: 'Pass interrupt.visualStyleGuide for visual consistency across blocks.' },
+//       },
+//     },
+//   },
   // Disabled for public MCP submission.
 // {
 //     name: 'approve_images',
@@ -348,22 +356,23 @@ After start: poll get_generation_status every 10-15s. If approval is required, a
 //       },
 //     },
 //   },
-  {
-    name: 'regenerate_audio',
-    description:
-      'Generate audio for a single block from a script. Returns { block_index, new_audio_url }. ' +
-      'Apply the returned audio in the SkyGen web UI; this tool does not persist it to a block.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id', 'block_index', 'script'],
-      properties: {
-        thread_id:   { type: 'string' },
-        block_index: { type: 'number', description: '0-based block index' },
-        script:      { type: 'string', description: 'Text to speak. Use interrupt.audioItems[i].script if not changing the script.' },
-        voice:       { type: 'string', description: 'Voice ID from list_voices. Omit to use default voice.' },
-      },
-    },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'regenerate_audio',
+//     description:
+//       'Generate audio for a single block from a script. Returns { block_index, new_audio_url }. ' +
+//       'Apply the returned audio in the SkyGen web UI; this tool does not persist it to a block.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id', 'block_index', 'script'],
+//       properties: {
+//         thread_id:   { type: 'string' },
+//         block_index: { type: 'number', description: '0-based block index' },
+//         script:      { type: 'string', description: 'Text to speak. Use interrupt.audioItems[i].script if not changing the script.' },
+//         voice:       { type: 'string', description: 'Voice ID from list_voices. Omit to use default voice.' },
+//       },
+//     },
+//   },
   // Disabled for public MCP submission.
 // {
 //     name: 'approve_audio',
@@ -384,29 +393,31 @@ After start: poll get_generation_status every 10-15s. If approval is required, a
 //       },
 //     },
 //   },
-  {
-    name: 'get_video_preview',
-    description:
-      'Get the final video after generation is complete. ' +
-      'Call this only when get_generation_status returns status = "complete". ' +
-      'Returns an HTML video player with the video URL and block timeline.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id'],
-      properties: {
-        thread_id: { type: 'string' },
-      },
-    },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'get_video_preview',
+//     description:
+//       'Get the final video after generation is complete. ' +
+//       'Call this only when get_generation_status returns status = "complete". ' +
+//       'Returns an HTML video player with the video URL and block timeline.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id'],
+//       properties: {
+//         thread_id: { type: 'string' },
+//       },
+//     },
+//   },
   // ── Catalog + plugins ───────────────────────────────────────────────────────
-  {
-    name: 'list_content_blocks',
-    description:
-      'Returns available built-in content block types with descriptions, key fields, and guidance on when to use each. ' +
-      'Call this before start_video_generation. ' +
-      'If no existing block fits the user\'s need, use propose_plugin_preview to build a custom one, then reference it as type custom-plugin.',
-    inputSchema: { type: 'object', properties: {} },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'list_content_blocks',
+//     description:
+//       'Returns available built-in content block types with descriptions, key fields, and guidance on when to use each. ' +
+//       'Call this before start_video_generation. ' +
+//       'If no existing block fits the user\'s need, use propose_plugin_preview to build a custom one, then reference it as type custom-plugin.',
+//     inputSchema: { type: 'object', properties: {} },
+//   },
   {
     name: 'list_plugin_base_bundle',
     description:
@@ -431,7 +442,7 @@ Folder layout:
 
 Skips node_modules, dist, lockfiles. Returns propose_plugin_args ready for propose_plugin_preview.
 
-Requires filesystem access (stdio MCP on the machine). On HTTP MCP (Vercel), use the pack CLI:
+Requires filesystem access (stdio MCP on the machine). On HTTP MCP, use the pack CLI:
   node mcp-server/scripts/pack-plugin.mjs ./my-plugin --out packed.json`,
     inputSchema: {
       type: 'object',
@@ -461,7 +472,7 @@ Requires filesystem access (stdio MCP on the machine). On HTTP MCP (Vercel), use
   },
   {
       name: 'request_media_upload',
-      description: 'Requests a UI widget to allow the user to directly upload a media file (image, video, audio) from their browser. Use this when the user wants to provide their own media for a block or plugin. Wait for the user to upload the file, the tool will return the uploaded URL.',
+      description: 'Requests a UI widget to allow the user to directly upload a media file (image, video, audio) from their browser. Use this when the user wants to provide their own media for a plugin. Wait for the user to upload the file, the tool will return the uploaded URL.',
       _meta: {
         ui: {
           resourceUri: 'ui://skygen/upload-v4.html',
@@ -548,20 +559,21 @@ Requires filesystem access (stdio MCP on the machine). On HTTP MCP (Vercel), use
     },
   },
   // ── Post-generation edit tools ─────────────────────────────────────────────
-  {
-    name: 'get_generation_state',
-    description:
-      'Read the full current generation state for a thread: narrative plan with scripts, ' +
-      'all blocks with their current images and audio URLs, imageItems metadata, and videoMeta. ' +
-      'Use this to inspect what was generated before deciding what to change.',
-    inputSchema: {
-      type: 'object',
-      required: ['thread_id'],
-      properties: {
-        thread_id: { type: 'string', description: 'Thread ID from start_video_generation' },
-      },
-    },
-  },
+  // Disabled: public MCP is for plugin authoring only.
+// {
+//     name: 'get_generation_state',
+//     description:
+//       'Read the full current generation state for a thread: narrative plan with scripts, ' +
+//       'all blocks with their current images and audio URLs, imageItems metadata, and videoMeta. ' +
+//       'Use this to inspect what was generated before deciding what to change.',
+//     inputSchema: {
+//       type: 'object',
+//       required: ['thread_id'],
+//       properties: {
+//         thread_id: { type: 'string', description: 'Thread ID from start_video_generation' },
+//       },
+//     },
+//   },
   // Disabled for public MCP submission.
 // {
 //     name: 'update_block_image',
@@ -674,80 +686,84 @@ export async function handleToolCall(
       };
     }
 
-    case 'list_arcs': {
-      const data = await apiFetch('/api/story-arcs');
-      const arcs = Array.isArray(data) ? data : data.arcs ?? [];
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(arcs.map((a: any) => ({
-            id:          a.id,
-            label:       a.label,
-            description: a.description,
-            roles:       a.arc_pattern?.roles ?? [],
-          })), null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'list_arcs': {
+//       const data = await apiFetch('/api/story-arcs');
+//       const arcs = Array.isArray(data) ? data : data.arcs ?? [];
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify(arcs.map((a: any) => ({
+//             id:          a.id,
+//             label:       a.label,
+//             description: a.description,
+//             roles:       a.arc_pattern?.roles ?? [],
+//           })), null, 2),
+//         }],
+//       };
+//     }
 
-    case 'list_visual_styles': {
-      const data = await apiFetch('/api/visual-styles');
-      const styles = Array.isArray(data) ? data : data.styles ?? [];
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(styles.map((s: any) => ({
-            id:          s.id,
-            label:       s.label,
-            description: s.description,
-          })), null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'list_visual_styles': {
+//       const data = await apiFetch('/api/visual-styles');
+//       const styles = Array.isArray(data) ? data : data.styles ?? [];
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify(styles.map((s: any) => ({
+//             id:          s.id,
+//             label:       s.label,
+//             description: s.description,
+//           })), null, 2),
+//         }],
+//       };
+//     }
 
-    case 'list_templates': {
-      const data = await apiFetch('/api/templates');
-      const templates = Array.isArray(data) ? data : data.templates ?? [];
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(templates.map((t: any) => {
-            const blocks = extractBlocksFromTemplate(t);
-            return {
-              id:          t.id,
-              name:        t.name,
-              description: t.description,
-              category:    t.category,
-              is_public:   t.isPublic,
-              block_count: blocks.length,
-              block_types: blocks.map((b: any) =>
-                b?.type === 'custom-plugin' ? `custom-plugin:${b.pluginId ?? '?'}` : b?.type
-              ),
-            };
-          }), null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'list_templates': {
+//       const data = await apiFetch('/api/templates');
+//       const templates = Array.isArray(data) ? data : data.templates ?? [];
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify(templates.map((t: any) => {
+//             const blocks = extractBlocksFromTemplate(t);
+//             return {
+//               id:          t.id,
+//               name:        t.name,
+//               description: t.description,
+//               category:    t.category,
+//               is_public:   t.isPublic,
+//               block_count: blocks.length,
+//               block_types: blocks.map((b: any) =>
+//                 b?.type === 'custom-plugin' ? `custom-plugin:${b.pluginId ?? '?'}` : b?.type
+//               ),
+//             };
+//           }), null, 2),
+//         }],
+//       };
+//     }
 
-    case 'get_template': {
-      const { template_id } = args;
-      if (!template_id) throw new McpError(ErrorCode.InvalidParams, 'template_id is required');
-      const tmpl = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`);
-      const blocks = extractBlocksFromTemplate(tmpl);
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            id:          tmpl.id,
-            name:        tmpl.name,
-            description: tmpl.description,
-            category:    tmpl.category,
-            is_public:   tmpl.isPublic,
-            blocks,
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'get_template': {
+//       const { template_id } = args;
+//       if (!template_id) throw new McpError(ErrorCode.InvalidParams, 'template_id is required');
+//       const tmpl = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`);
+//       const blocks = extractBlocksFromTemplate(tmpl);
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             id:          tmpl.id,
+//             name:        tmpl.name,
+//             description: tmpl.description,
+//             category:    tmpl.category,
+//             is_public:   tmpl.isPublic,
+//             blocks,
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
     // Disabled for public MCP submission.
 // case 'create_template': {
@@ -832,39 +848,41 @@ export async function handleToolCall(
 //       };
 //     }
 
-    case 'delete_template': {
-      const { template_id } = args;
-      if (!template_id) throw new McpError(ErrorCode.InvalidParams, 'template_id is required');
-      const result = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`, {
-        method: 'DELETE',
-      });
-      if (result.error) {
-        throw new McpError(ErrorCode.InternalError, result.error);
-      }
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({ success: true, deleted: template_id }, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'delete_template': {
+//       const { template_id } = args;
+//       if (!template_id) throw new McpError(ErrorCode.InvalidParams, 'template_id is required');
+//       const result = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`, {
+//         method: 'DELETE',
+//       });
+//       if (result.error) {
+//         throw new McpError(ErrorCode.InternalError, result.error);
+//       }
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({ success: true, deleted: template_id }, null, 2),
+//         }],
+//       };
+//     }
 
-    case 'list_voices': {
-      const data = await apiFetch('/api/voices');
-      const voices = Array.isArray(data) ? data : data.voices ?? [];
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(voices.map((v: any) => ({
-            id:       v.id,
-            name:     v.name,
-            gender:   v.gender,
-            provider: v.provider,
-            preview:  v.previewUrl,
-          })), null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'list_voices': {
+//       const data = await apiFetch('/api/voices');
+//       const voices = Array.isArray(data) ? data : data.voices ?? [];
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify(voices.map((v: any) => ({
+//             id:       v.id,
+//             name:     v.name,
+//             gender:   v.gender,
+//             provider: v.provider,
+//             preview:  v.previewUrl,
+//           })), null, 2),
+//         }],
+//       };
+//     }
 
     case 'list_plugins': {
       const data = await apiFetch('/api/plugins/registry');
@@ -927,85 +945,86 @@ export async function handleToolCall(
       };
     }
 
-    case 'start_video_generation': {
-      const {
-        user_story, template_id, blocks,
-        arc_id, arc,
-        visual_style, voice,
-        language = 'en',
-        model = 'grok-3',
-      } = args;
-
-      if (!user_story) {
-        throw new McpError(ErrorCode.InvalidParams, 'user_story is required');
-      }
-
-      let templateBlocks: any[] = [];
-      if (Array.isArray(blocks) && blocks.length > 0) {
-        templateBlocks = normalizeTemplateBlocks(blocks);
-      } else if (template_id) {
-        const tmplData = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`);
-        templateBlocks = extractBlocksFromTemplate(tmplData);
-      } else {
-        throw new McpError(
-          ErrorCode.InvalidParams,
-          'Provide template_id or a non-empty blocks array',
-        );
-      }
-
-      if (!templateBlocks.length) {
-        throw new McpError(ErrorCode.InvalidParams, 'Template has no blocks');
-      }
-
-      for (const b of templateBlocks) {
-        if (b?.type === 'custom-plugin' && !b.pluginId) {
-          throw new McpError(ErrorCode.InvalidParams, 'custom-plugin blocks require pluginId');
-        }
-      }
-
-      const threadId = `mcp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
-      await apiFetch('/api/mcp/jobs', {
-        method: 'POST',
-        body:   JSON.stringify({ threadId }),
-      });
-
-      // Fire LangGraph wizard execution in the background — do NOT await
-      apiFetch('/api/ai/wizard/execute', {
-        method: 'POST',
-        body:   JSON.stringify({
-          action:               'start',
-          threadId,
-          userStory:            user_story,
-          templateBlocks,
-          language,
-          preferredArc:         arc ? null : (arc_id ?? null),
-          customArc:            arc ? { roles: arc.roles, defaultTone: arc.tone } : null,
-          preferredVisualStyle: visual_style ?? null,
-          preferredVoice:       voice ?? null,
-          partialVideoMeta:     {},
-          model,
-        }),
-      }).catch((err: any) => {
-        console.error('[mcp] background wizard failed:', err?.message);
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            thread_id: threadId,
-            status:    'running',
-            template_id: template_id ?? null,
-            block_count: templateBlocks.length,
-            block_types: templateBlocks.map((b: any) =>
-              b?.type === 'custom-plugin' ? `custom-plugin:${b.pluginId}` : b?.type
-            ),
-            message:   'LangGraph generation started. Poll get_generation_status every 10-15 seconds.',
-          }, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'start_video_generation': {
+//       const {
+//         user_story, template_id, blocks,
+//         arc_id, arc,
+//         visual_style, voice,
+//         language = 'en',
+//         model = 'grok-3',
+//       } = args;
+//
+//       if (!user_story) {
+//         throw new McpError(ErrorCode.InvalidParams, 'user_story is required');
+//       }
+//
+//       let templateBlocks: any[] = [];
+//       if (Array.isArray(blocks) && blocks.length > 0) {
+//         templateBlocks = normalizeTemplateBlocks(blocks);
+//       } else if (template_id) {
+//         const tmplData = await apiFetch(`/api/templates/${encodeURIComponent(template_id)}`);
+//         templateBlocks = extractBlocksFromTemplate(tmplData);
+//       } else {
+//         throw new McpError(
+//           ErrorCode.InvalidParams,
+//           'Provide template_id or a non-empty blocks array',
+//         );
+//       }
+//
+//       if (!templateBlocks.length) {
+//         throw new McpError(ErrorCode.InvalidParams, 'Template has no blocks');
+//       }
+//
+//       for (const b of templateBlocks) {
+//         if (b?.type === 'custom-plugin' && !b.pluginId) {
+//           throw new McpError(ErrorCode.InvalidParams, 'custom-plugin blocks require pluginId');
+//         }
+//       }
+//
+//       const threadId = `mcp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+//
+//       await apiFetch('/api/mcp/jobs', {
+//         method: 'POST',
+//         body:   JSON.stringify({ threadId }),
+//       });
+//
+//       // Fire LangGraph wizard execution in the background — do NOT await
+//       apiFetch('/api/ai/wizard/execute', {
+//         method: 'POST',
+//         body:   JSON.stringify({
+//           action:               'start',
+//           threadId,
+//           userStory:            user_story,
+//           templateBlocks,
+//           language,
+//           preferredArc:         arc ? null : (arc_id ?? null),
+//           customArc:            arc ? { roles: arc.roles, defaultTone: arc.tone } : null,
+//           preferredVisualStyle: visual_style ?? null,
+//           preferredVoice:       voice ?? null,
+//           partialVideoMeta:     {},
+//           model,
+//         }),
+//       }).catch((err: any) => {
+//         console.error('[mcp] background wizard failed:', err?.message);
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({
+//             thread_id: threadId,
+//             status:    'running',
+//             template_id: template_id ?? null,
+//             block_count: templateBlocks.length,
+//             block_types: templateBlocks.map((b: any) =>
+//               b?.type === 'custom-plugin' ? `custom-plugin:${b.pluginId}` : b?.type
+//             ),
+//             message:   'LangGraph generation started. Poll get_generation_status every 10-15 seconds.',
+//           }, null, 2),
+//         }],
+//       };
+//     }
 
     case 'get_generation_status': {
       const { thread_id } = args;
@@ -1068,24 +1087,25 @@ export async function handleToolCall(
 //       };
 //     }
 
-    case 'regenerate_image': {
-      const { block_index, field_path, description, remove_background = false, visual_style_guide = '' } = args;
-
-      const result = await apiFetch('/api/ai/wizard/regenerate-image', {
-        method: 'POST',
-        body:   JSON.stringify({
-          description:      `${visual_style_guide ? visual_style_guide + '. ' : ''}${description}`,
-          removeBackground: remove_background,
-        }),
-      });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({ block_index, field_path: field_path ?? null, new_image_url: result.url }, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'regenerate_image': {
+//       const { block_index, field_path, description, remove_background = false, visual_style_guide = '' } = args;
+//
+//       const result = await apiFetch('/api/ai/wizard/regenerate-image', {
+//         method: 'POST',
+//         body:   JSON.stringify({
+//           description:      `${visual_style_guide ? visual_style_guide + '. ' : ''}${description}`,
+//           removeBackground: remove_background,
+//         }),
+//       });
+//
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({ block_index, field_path: field_path ?? null, new_image_url: result.url }, null, 2),
+//         }],
+//       };
+//     }
 
     // Disabled for public MCP submission.
 // case 'approve_images': {
@@ -1120,19 +1140,20 @@ export async function handleToolCall(
 //       };
 //     }
 
-    case 'regenerate_audio': {
-      const { block_index, script, voice } = args;
-      const result = await apiFetch('/api/ai/wizard/regenerate-audio', {
-        method: 'POST',
-        body:   JSON.stringify({ script, voice }),
-      });
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({ block_index, new_audio_url: result.url }, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'regenerate_audio': {
+//       const { block_index, script, voice } = args;
+//       const result = await apiFetch('/api/ai/wizard/regenerate-audio', {
+//         method: 'POST',
+//         body:   JSON.stringify({ script, voice }),
+//       });
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify({ block_index, new_audio_url: result.url }, null, 2),
+//         }],
+//       };
+//     }
 
     // Disabled for public MCP submission.
 // case 'approve_audio': {
@@ -1166,70 +1187,72 @@ export async function handleToolCall(
 //       };
 //     }
 
-    case 'get_video_preview': {
-      const { thread_id } = args;
+    // Disabled: public MCP is for plugin authoring only.
+// case 'get_video_preview': {
+//       const { thread_id } = args;
+//
+//       const job = await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}`);
+//
+//       if (!job || job.status !== 'complete' || !job.payload) {
+//         return {
+//           content: [{
+//             type: 'text',
+//             text: `Video not ready yet. Status: ${job?.status ?? 'unknown'}. Keep polling get_generation_status.`,
+//           }],
+//         };
+//       }
+//
+//       const payload    = job.payload;
+//       const previewUrl = payload.previewUrl ?? '';
+//       const blocks: any[] = payload.contentBlocks ?? [];
+//
+//       const blockChips = blocks.map((b: any, i: number) => {
+//         const role = b.narrativeRole ?? b.role ?? `block_${i + 1}`;
+//         return `<span style="background:#1a1a2e;border:1px solid rgba(124,58,237,0.3);padding:4px 12px;border-radius:20px;font-size:12px;color:#c4b5fd">${i + 1} · ${role}</span>`;
+//       }).join('');
+//
+//       const html = `<!DOCTYPE html>
+// <html>
+// <head><meta charset="utf-8"><style>
+//   * { box-sizing: border-box; margin: 0; padding: 0; }
+//   body { background: #0a0a0f; color: #f1f1f8; font-family: -apple-system, sans-serif; padding: 16px; }
+//   .btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg,#7c3aed,#4f46e5); color: #fff; text-align: center; border-radius: 10px; font-size: 16px; font-weight: 600; text-decoration: none; }
+//   .btn:hover { opacity: 0.9; }
+//   .chips { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+//   .meta { margin-top: 10px; font-size: 12px; color: #6b6b8a; }
+// </style></head>
+// <body>
+//   ${previewUrl
+//     ? `<a href="${previewUrl}" target="_blank" class="btn">Open Live Preview in Editor →</a>`
+//     : `<div style="padding:16px;border-radius:10px;background:#111;color:#6b6b8a;font-size:14px">Preview not available</div>`
+//   }
+//   <div class="chips">${blockChips}</div>
+//   <div class="meta">Thread: ${thread_id} · ${blocks.length} blocks · Arc: ${payload.videoMeta?.selectedArc ?? 'custom'}</div>
+// </body>
+// </html>`;
+//
+//       return {
+//         content: [{
+//           type:     'resource',
+//           resource: {
+//             uri:      `videogen://preview/${thread_id}`,
+//             mimeType: 'text/html',
+//             text:     html,
+//           },
+//         }],
+//       };
+//     }
 
-      const job = await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}`);
-
-      if (!job || job.status !== 'complete' || !job.payload) {
-        return {
-          content: [{
-            type: 'text',
-            text: `Video not ready yet. Status: ${job?.status ?? 'unknown'}. Keep polling get_generation_status.`,
-          }],
-        };
-      }
-
-      const payload    = job.payload;
-      const previewUrl = payload.previewUrl ?? '';
-      const blocks: any[] = payload.contentBlocks ?? [];
-
-      const blockChips = blocks.map((b: any, i: number) => {
-        const role = b.narrativeRole ?? b.role ?? `block_${i + 1}`;
-        return `<span style="background:#1a1a2e;border:1px solid rgba(124,58,237,0.3);padding:4px 12px;border-radius:20px;font-size:12px;color:#c4b5fd">${i + 1} · ${role}</span>`;
-      }).join('');
-
-      const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0a0a0f; color: #f1f1f8; font-family: -apple-system, sans-serif; padding: 16px; }
-  .btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg,#7c3aed,#4f46e5); color: #fff; text-align: center; border-radius: 10px; font-size: 16px; font-weight: 600; text-decoration: none; }
-  .btn:hover { opacity: 0.9; }
-  .chips { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .meta { margin-top: 10px; font-size: 12px; color: #6b6b8a; }
-</style></head>
-<body>
-  ${previewUrl
-    ? `<a href="${previewUrl}" target="_blank" class="btn">Open Live Preview in Editor →</a>`
-    : `<div style="padding:16px;border-radius:10px;background:#111;color:#6b6b8a;font-size:14px">Preview not available</div>`
-  }
-  <div class="chips">${blockChips}</div>
-  <div class="meta">Thread: ${thread_id} · ${blocks.length} blocks · Arc: ${payload.videoMeta?.selectedArc ?? 'custom'}</div>
-</body>
-</html>`;
-
-      return {
-        content: [{
-          type:     'resource',
-          resource: {
-            uri:      `videogen://preview/${thread_id}`,
-            mimeType: 'text/html',
-            text:     html,
-          },
-        }],
-      };
-    }
-
-    case 'list_content_blocks': {
-      const data = await apiFetch('/api/plugins/content-blocks');
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(data, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'list_content_blocks': {
+//       const data = await apiFetch('/api/plugins/content-blocks');
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify(data, null, 2),
+//         }],
+//       };
+//     }
 
     case 'list_plugin_base_bundle': {
       return {
@@ -1371,16 +1394,17 @@ export async function handleToolCall(
       };
     }
 
-    case 'get_generation_state': {
-      const { thread_id } = args;
-      const state = await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`);
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify(state, null, 2),
-        }],
-      };
-    }
+    // Disabled: public MCP is for plugin authoring only.
+// case 'get_generation_state': {
+//       const { thread_id } = args;
+//       const state = await apiFetch(`/api/mcp/jobs/${encodeURIComponent(thread_id)}/state`);
+//       return {
+//         content: [{
+//           type: 'text',
+//           text: JSON.stringify(state, null, 2),
+//         }],
+//       };
+//     }
 
     // Disabled for public MCP submission.
 // case 'update_block_image': {

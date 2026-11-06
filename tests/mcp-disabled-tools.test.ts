@@ -2,7 +2,7 @@ import { expect, mock, test } from 'bun:test';
 
 mock.module('@/lib/mcp/wizard-jobs', () => ({ createJob: async () => { throw new Error('Unexpected job write'); } }));
 const { TOOL_DEFINITIONS, handleToolCall } = await import('../src/lib/mcp/tools');
-const disabled = ['create_template', 'update_template', 'approve_story', 'approve_images', 'approve_audio', 'update_block_image', 'update_block_audio', 'assemble_video', 'patch_generation_state'];
+const disabled = ["list_arcs","list_visual_styles","list_templates","get_template","delete_template","list_voices","start_video_generation","regenerate_image","regenerate_audio","get_video_preview","list_content_blocks","get_generation_state",'create_template', 'update_template', 'approve_story', 'approve_images', 'approve_audio', 'update_block_image', 'update_block_audio', 'assemble_video', 'patch_generation_state'];
 
 test('disabled public tools are neither advertised nor executable', async () => {
   const apiFetch = mock(async () => { throw new Error('Unexpected API call'); });
