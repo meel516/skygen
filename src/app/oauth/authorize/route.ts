@@ -83,7 +83,12 @@ export async function GET(request: NextRequest) {
 
   if (!session?.user?.id) {
     // Not logged in – redirect to OAuth login page with all params forwarded
-    const loginUrl = new URL('/oauth/login', request.nextUrl.origin);
+    const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    if (!publicAppUrl) {
+      throw new Error('NEXT_PUBLIC_APP_URL is not configured');
+    }
+
+    const loginUrl = new URL('/oauth/login', publicAppUrl);
     loginUrl.searchParams.set('client_id', clientId);
     loginUrl.searchParams.set('redirect_uri', redirectUri);
     loginUrl.searchParams.set('state', state);
