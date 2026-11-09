@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { generateCode, storeCode } from '@/lib/oauth';
+import { ensureOAuthClientSchema } from '@/lib/oauth/clients';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -19,6 +20,8 @@ export async function GET(request: NextRequest) {
 
   // --- Validate client_id and redirect_uri ---
   let isAllowed = false;
+  let clientName = 'Connected app';
+  let requiresPkce = false;
 
   console.log("OAUTH AUTHORIZE REQUEST:", { clientId, redirectUri, state, responseType });
 
@@ -32,6 +35,9 @@ export async function GET(request: NextRequest) {
       
       if (res.ok) {
         const metadata = JSON.parse(text);
+        if (typeof metadata.client_name === 'string' && metadata.client_name.trim()) {
+          clientName = metadata.client_name.trim().slice(0, 120);
+        }
         const allowedUris: string[] = metadata.redirect_uris || [];
         isAllowed = allowedUris.some((pattern) => {
           if (pattern.includes('*')) {
@@ -50,13 +56,16 @@ export async function GET(request: NextRequest) {
     }
   } else {
     // Pre-registered database client (e.g., 'chatgpt')
+    await ensureOAuthClientSchema();
     const clientResult = await db.query(
-      `SELECT id, redirect_uris FROM oauth_clients WHERE id = $1`,
+      `SELECT id, name, redirect_uris, dynamic_registration FROM oauth_clients WHERE id = $1`,
       [clientId]
     );
 
     if (clientResult.rows.length > 0) {
       const allowedUris: string[] = clientResult.rows[0].redirect_uris;
+      clientName = String(clientResult.rows[0].name || clientName).slice(0, 120);
+      requiresPkce = clientResult.rows[0].dynamic_registration === true;
       isAllowed = allowedUris.some((pattern) => {
         if (pattern.includes('*')) {
           const regexStr = '^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$';
@@ -78,6 +87,10 @@ export async function GET(request: NextRequest) {
     }, { status: 400 });
   }
 
+  if (requiresPkce && (!codeChallenge || codeChallengeMethod !== 'S256')) {
+    return NextResponse.json({ error: 'invalid_request', error_description: 'Dynamically registered clients must use PKCE with S256' }, { status: 400 });
+  }
+
   // --- Check for existing NextAuth session ---
   const session = await auth();
 
@@ -93,6 +106,7 @@ export async function GET(request: NextRequest) {
     loginUrl.searchParams.set('redirect_uri', redirectUri);
     loginUrl.searchParams.set('state', state);
     loginUrl.searchParams.set('response_type', responseType);
+    loginUrl.searchParams.set('client_name', clientName);
     if (codeChallenge) loginUrl.searchParams.set('code_challenge', codeChallenge);
     if (codeChallengeMethod) loginUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
     return NextResponse.redirect(loginUrl);

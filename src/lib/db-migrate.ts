@@ -291,6 +291,21 @@ const MIGRATIONS: Migration[] = [
       `CREATE INDEX IF NOT EXISTS plugins_tags_gin_idx ON plugins USING GIN (tags)`,
     ],
   },
+  {
+    version: 21,
+    name: 'oauth_dynamic_client_registration',
+    up: [
+      `CREATE TABLE IF NOT EXISTS oauth_clients (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        redirect_uris TEXT[] NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )`,
+      `ALTER TABLE oauth_clients ADD COLUMN IF NOT EXISTS client_secret_hash TEXT`,
+      `ALTER TABLE oauth_clients ADD COLUMN IF NOT EXISTS token_endpoint_auth_method TEXT NOT NULL DEFAULT 'none'`,
+      `ALTER TABLE oauth_clients ADD COLUMN IF NOT EXISTS dynamic_registration BOOLEAN NOT NULL DEFAULT false`,
+    ],
+  },
 ];
 
 /**

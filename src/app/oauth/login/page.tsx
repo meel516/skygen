@@ -6,6 +6,7 @@ import { Suspense, useState } from 'react';
 
 function OAuthLoginInner() {
   const params = useSearchParams();
+  const clientName = (params.get('client_name') || 'Connected app').slice(0, 120);
   const clientId = params.get('client_id') ?? '';
   const redirectUri = params.get('redirect_uri') ?? '';
   const state = params.get('state') ?? '';
@@ -48,7 +49,7 @@ function OAuthLoginInner() {
         {/* Message */}
         <div className="text-center">
           <p className="text-muted-foreground font-semibold text-base leading-snug">
-            ChatGPT is requesting access to your SkyGen account
+            {clientName} is requesting access to your SkyGen account
           </p>
           <p className="text-muted-foreground text-sm mt-2">
             Sign in to grant permission.

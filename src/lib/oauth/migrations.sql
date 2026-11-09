@@ -4,8 +4,15 @@ CREATE TABLE IF NOT EXISTS oauth_clients (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   redirect_uris TEXT[] NOT NULL,
+  client_secret_hash TEXT,
+  token_endpoint_auth_method TEXT NOT NULL DEFAULT 'none',
+  dynamic_registration BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE oauth_clients ADD COLUMN IF NOT EXISTS client_secret_hash TEXT;
+ALTER TABLE oauth_clients ADD COLUMN IF NOT EXISTS token_endpoint_auth_method TEXT NOT NULL DEFAULT 'none';
+ALTER TABLE oauth_clients ADD COLUMN IF NOT EXISTS dynamic_registration BOOLEAN NOT NULL DEFAULT false;
 
 CREATE TABLE IF NOT EXISTS oauth_authorization_codes (
   code TEXT PRIMARY KEY,

@@ -39,7 +39,7 @@ export async function storeCode(
  * Deletes the code, creates an access token with 90-day expiry.
  * Returns the new token string, or null if the code is invalid/expired.
  */
-export async function exchangeCode(code: string, codeVerifier?: string): Promise<string | null> {
+export async function exchangeCode(code: string, codeVerifier: string | undefined, clientId: string): Promise<string | null> {
   // Look up the code – must exist and not be expired
   const codeResult = await db.query(
     `SELECT client_id, user_id, redirect_uri, scope, code_challenge, code_challenge_method
@@ -51,6 +51,9 @@ export async function exchangeCode(code: string, codeVerifier?: string): Promise
   if (codeResult.rows.length === 0) return null;
 
   const row = codeResult.rows[0];
+
+  // Authorization codes are bound to the client that initiated the flow.
+  if (row.client_id !== clientId) return null;
 
   // Validate PKCE if it was provided during authorization
   if (row.code_challenge && row.code_challenge_method === 'S256') {

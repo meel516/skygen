@@ -5,6 +5,7 @@ export async function GET() {
     issuer: "https://skygen.salru.in",
     authorization_endpoint: "https://skygen.salru.in/oauth/authorize",
     token_endpoint: "https://skygen.salru.in/api/oauth/token",
+    registration_endpoint: "https://skygen.salru.in/api/oauth/register",
     token_endpoint_auth_methods_supported: ["none", "client_secret_post", "client_secret_basic"],
     response_types_supported: ["code"],
     grant_types_supported: ["authorization_code"],
