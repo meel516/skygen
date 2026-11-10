@@ -9,18 +9,33 @@ import fs from 'fs';
 import path from 'path';
 import { db } from '@/lib/db';
 import { derivePluginTags, parseTags } from '@/lib/plugins/tags';
+import { isPluginPreviewVideoUrl } from '@/lib/plugins/preview-url';
 
 export async function GET() {
   try {
     const plugins: Record<string, unknown>[] = [];
     const categories: Record<string, string[]> = {};
+    let previewUrls: Record<string, string> = {};
+
+    try {
+      const previewConfig = await db.query(`SELECT value FROM site_config WHERE key = 'plugin_preview_urls'`);
+      const configuredValue = previewConfig.rows[0]?.value;
+      if (configuredValue && typeof configuredValue === 'object' && !Array.isArray(configuredValue)) {
+        previewUrls = Object.fromEntries(
+          Object.entries(configuredValue).filter((entry): entry is [string, string] => isPluginPreviewVideoUrl(entry[1]))
+        );
+      }
+    } catch { /* config may not exist yet */ }
 
     // 1) Core plugins from filesystem
     const registryPath = path.join(process.cwd(), 'plugins', '_registry.json');
     if (fs.existsSync(registryPath)) {
       try {
         const registry = JSON.parse(fs.readFileSync(registryPath, 'utf-8'));
-        plugins.push(...(registry.plugins ?? []));
+        plugins.push(...(registry.plugins ?? []).map((plugin: Record<string, unknown>) => ({
+          ...plugin,
+          previewUrl: previewUrls[plugin.id as string] || plugin.previewUrl,
+        })));
         Object.assign(categories, registry.categories ?? {});
       } catch { /* malformed json, skip */ }
     }
@@ -44,6 +59,7 @@ export async function GET() {
           status: row.status,
           tags: tags.length > 0 ? tags : derivePluginTags(row),
           likesCount: row.likes_count ?? 0,
+          previewUrl: previewUrls[row.id],
         });
         const cat = row.category ?? 'other';
         if (!categories[cat]) categories[cat] = [];

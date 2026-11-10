@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Palette, Layout, Grid3X3, FileText, LogOut, Image, Music } from '@/components/ui/studio-icons';
+import { Palette, Layout, Grid3X3, FileText, LogOut, Image, Music, Film } from '@/components/ui/studio-icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -42,6 +42,7 @@ export default function ContentManagerLayout({ children }: { children: React.Rea
     { href: '/content-manager/blocks', label: 'Block Thumbnails', icon: Grid3X3 },
     { href: '/content-manager/style-previews', label: 'Style & Arc Previews', icon: Image },
     { href: '/content-manager/templates', label: 'Templates', icon: FileText },
+    { href: '/content-manager/plugin-previews', label: 'Plugin Previews', icon: Film },
     { href: '/content-manager/music', label: 'Music Library', icon: Music },
   ];
 

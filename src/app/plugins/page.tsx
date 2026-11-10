@@ -5,7 +5,8 @@ import { WorkspaceSkeleton } from '@/components/app/WorkspaceSkeleton';
 import { AppShell } from '@/components/app/AppShell';
 import { LibraryPreviewModal } from '@/components/app/LibraryPreviewModal';
 import { PluginFieldMapModal } from '@/components/plugins/PluginFieldMapModal';
-import { useEffect, useMemo, useState } from 'react';
+import { PluginCardPreview } from '@/components/plugins/PluginCardPreview';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Copy, Heart, Loader2, Puzzle, Search, Sparkles, Tag, X } from '@/components/ui/studio-icons';
@@ -19,6 +20,7 @@ interface PluginItem {
   tags?: string[];
   likesCount?: number;
   color?: string;
+  previewUrl?: string;
 }
 
 const CATEGORIES = ['All', 'Maps', 'Motion', 'Stats', 'Social', '3D', 'Custom'];
@@ -41,6 +43,23 @@ export default function PluginsPage() {
   const [forking, setForking] = useState(false);
   const [forkError, setForkError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [activePreviewId, setActivePreviewId] = useState<string | null>(null);
+  const visiblePreviewRatios = useRef(new Map<string, number>());
+
+  const updatePreviewVisibility = useCallback((pluginId: string, ratio: number) => {
+    if (ratio > 0) visiblePreviewRatios.current.set(pluginId, ratio);
+    else visiblePreviewRatios.current.delete(pluginId);
+
+    let bestId: string | null = null;
+    let bestRatio = 0.24;
+    for (const [id, visibleRatio] of visiblePreviewRatios.current) {
+      if (visibleRatio > bestRatio) {
+        bestId = id;
+        bestRatio = visibleRatio;
+      }
+    }
+    setActivePreviewId(bestId);
+  }, []);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -193,6 +212,14 @@ export default function PluginsPage() {
                         background: 'var(--studio-accent-wash)',
                       }}
                     >
+                      {plugin.previewUrl && (
+                        <PluginCardPreview
+                          pluginId={plugin.id}
+                          src={plugin.previewUrl}
+                          isActive={activePreviewId === plugin.id}
+                          onVisibilityChange={updatePreviewVisibility}
+                        />
+                      )}
                       <div className="absolute inset-0 bg-background/50 dark:bg-[#09090D] -z-10" />
                       <div
                         className="absolute inset-0 opacity-[0.12] dark:opacity-[0.16]"
@@ -203,7 +230,7 @@ export default function PluginsPage() {
                         }}
                       />
 
-                      <div className="absolute left-4 top-4 flex gap-2">
+                      <div className="absolute left-4 top-4 z-10 flex gap-2">
                         {plugin.category && (
                           <span className="rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 px-2.5 py-1 text-xs font-bold capitalize text-foreground dark:text-[var(--foreground)]  shadow-none">
                             {plugin.category}
@@ -215,7 +242,7 @@ export default function PluginsPage() {
                           </span>
                         )}
                       </div>
-                      <div className="absolute right-4 top-4 flex items-center gap-2">
+                      <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
                         <span className="inline-flex h-8 items-center gap-1.5 rounded-full border border-black/5 dark:border-white/[0.12] bg-white/50 dark:bg-black/30 px-2.5 text-xs font-bold text-foreground dark:text-[var(--foreground)]  shadow-none">
                           <Heart className="h-3.5 w-3.5 text-rose-500" />
                           {plugin.likesCount ?? 0}
@@ -233,13 +260,15 @@ export default function PluginsPage() {
                         </button>
                       </div>
 
-                      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4">
-                        <div
-                          className="flex h-16 w-16 items-center justify-center rounded-sm text-foreground dark:text-white shadow-none dark:shadow-none ring-1 ring-white/40 dark:ring-white/20    group-hover:shadow-none srgb, var(--primary) 30%, transparent)]"
-                          style={{ background: 'var(--studio-accent-wash)' }}
-                        >
-                          <Puzzle className="h-7 w-7 drop-shadow-none" />
-                        </div>
+                      <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 p-4">
+                        {!plugin.previewUrl && (
+                          <div
+                            className="flex h-16 w-16 items-center justify-center rounded-sm text-foreground dark:text-white shadow-none dark:shadow-none ring-1 ring-white/40 dark:ring-white/20    group-hover:shadow-none srgb, var(--primary) 30%, transparent)]"
+                            style={{ background: 'var(--studio-accent-wash)' }}
+                          >
+                            <Puzzle className="h-7 w-7 drop-shadow-none" />
+                          </div>
+                        )}
                         <div className="mb-1 rounded-full border border-black/5 dark:border-white/[0.10] bg-white/50 dark:bg-white/[0.08] px-3 py-1 text-xs font-bold text-foreground dark:text-white/80  shadow-none">
                           Open preview
                         </div>

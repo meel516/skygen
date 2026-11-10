@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuthenticatedSession } from '@/lib/api-security';
 import { db } from '@/lib/db';
+import { isPluginPreviewVideoUrl } from '@/lib/plugins/preview-url';
 
 export async function GET() {
   const authResult = await requireAuthenticatedSession({ contentManager: true });
@@ -24,6 +25,21 @@ export async function PUT(request: NextRequest) {
 
   if (!key || value === undefined) {
     return NextResponse.json({ error: 'key and value are required' }, { status: 400 });
+  }
+
+  if (key === 'plugin_preview_urls') {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return NextResponse.json({ error: 'plugin_preview_urls must be an object' }, { status: 400 });
+    }
+
+    const previewUrls = value as Record<string, unknown>;
+    if (Object.keys(previewUrls).length > 1000 || Object.entries(previewUrls).some(([id, url]) =>
+      !/^[\w.-]{1,160}$/.test(id) || !isPluginPreviewVideoUrl(url)
+    )) {
+      return NextResponse.json({
+        error: 'Each plugin preview must be an HTTPS URL ending in .mp4 or .webm',
+      }, { status: 400 });
+    }
   }
 
   try {
