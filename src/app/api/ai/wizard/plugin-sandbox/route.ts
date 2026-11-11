@@ -104,8 +104,13 @@ export async function POST(req: NextRequest) {
     if (!job) {
       return NextResponse.json({ error: 'Job not found for this thread' }, { status: 404 });
     }
-    if (job.user_id && job.user_id !== session.user.id && session.user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!isMcpPreview && job.user_id) {
+      if (!session) {
+        return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+      }
+      if (job.user_id !== session.user.id && session.user.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
     }
 
     const pending = (job.state as any)?.pendingPlugin;
