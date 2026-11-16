@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // Module-level guard: install a permanent unhandledrejection listener that
 // swallows the specific "Cannot write to a closing writable stream" error
@@ -43,6 +43,7 @@ export interface ClientRenderParams {
   fps: number;
   width: number;
   height: number;
+  filename?: string;
 }
 
 export function useClientRender() {
@@ -51,12 +52,15 @@ export function useClientRender() {
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // WebCodecs + web-renderer are only available in Chrome/Edge
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  // Detect the actual encoding API instead of relying on the browser name.
   const isSupported =
     typeof window !== 'undefined' &&
     typeof window.VideoEncoder !== 'undefined';
 
   const startRender = useCallback(async (params: ClientRenderParams): Promise<void> => {
+    if (abortRef.current) return;
     if (!isSupported) {
       setStatus('unsupported');
       return;
@@ -77,8 +81,13 @@ export function useClientRender() {
     });
 
     try {
-      // Dynamically import so it doesn't bundle into non-Chrome paths
-      const { renderMediaOnWeb } = await import('@remotion/web-renderer');
+      // Load the encoder only when the user requests an export.
+      const { canRenderMediaOnWeb, renderMediaOnWeb } = await import('@remotion/web-renderer');
+      const support = await canRenderMediaOnWeb({ width: params.width, height: params.height, container: 'webm' });
+      if (!support.canRender) {
+        throw new Error(support.issues.map((issue) => issue.message).join(' ') || 'This browser cannot export this video.');
+      }
+      abortRef.current.signal.throwIfAborted();
 
       const result = await renderMediaOnWeb({
         composition: {
@@ -101,15 +110,20 @@ export function useClientRender() {
 
       console.log('[useClientRender] render finished, getting blob…');
       const blob = await result.getBlob();
+      abortRef.current.signal.throwIfAborted();
+      if (!blob.size) throw new Error('The renderer produced an empty video. Please retry.');
       console.log('[useClientRender] blob ready', { size: blob.size, type: blob.type });
 
       // Trigger download
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'video.webm';
+      a.download = params.filename ?? 'video.webm';
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      a.remove();
+      // Leave time for the browser to begin reading the download URL.
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 
       setStatus('done');
       setProgress(1);
@@ -128,16 +142,10 @@ export function useClientRender() {
         setProgress(0);
         return;
       }
-      // Late muxer-stream writes — file is still usable, treat as warning.
-      const msg = e?.message ?? '';
-      if (msg.includes('closing writable stream') || msg.includes('Cannot write to a closing')) {
-        console.warn('[useClientRender] muxer reported a late stream write; output may still be valid', e);
-        setStatus('done');
-        setProgress(1);
-        return;
-      }
       setError(e?.message ?? 'Client render failed');
       setStatus('error');
+    } finally {
+      abortRef.current = null;
     }
   }, [isSupported]);
 

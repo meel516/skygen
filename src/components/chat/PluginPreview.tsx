@@ -8,6 +8,8 @@ import { useWizardChatStore } from '@/store/wizard-chat-store';
 import { CircleNotch, CheckCircle, XCircle, ArrowsClockwise, Code, Copy, DownloadSimple, PencilSimple, FloppyDisk, CloudArrowUp } from '@phosphor-icons/react';
 import Editor from '@monaco-editor/react';
 import { PluginQuickEdit } from './PluginQuickEdit';
+import { useClientRender } from '@/hooks/useClientRender';
+import { PLUGIN_PREVIEW_FORMATS, fitPluginPreview, type PluginPreviewFormat } from '@/lib/plugins/preview-format';
 
 type PreviewState = 'idle' | 'loading' | 'ready' | 'error';
 type PendingPlugin = NonNullable<ReturnType<typeof useWizardChatStore.getState>['pendingPlugin']>;
@@ -245,6 +247,22 @@ export function PluginPreview() {
   const [overrideDuration, setOverrideDuration] = useState<number | null>(null);
   const [showQuickEdit, setShowQuickEdit] = useState(true);
   const [settingsDraft, setSettingsDraft] = useState<{ scope: string; values: Record<string, unknown> } | null>(null);
+  const [previewFormat, setPreviewFormat] = useState<PluginPreviewFormat>('16:9');
+  const previewStageRef = useRef<HTMLDivElement>(null);
+  const [previewSpace, setPreviewSpace] = useState({ width: 640, height: 480 });
+  const { isSupported: canDownload, status: downloadStatus, progress: downloadProgress,
+    error: downloadError, startRender, cancel: cancelDownload } = useClientRender();
+  const isDownloading = downloadStatus === 'rendering';
+
+  useEffect(() => {
+    const stage = previewStageRef.current;
+    if (!stage || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      setPreviewSpace({ width: entry.contentRect.width, height: entry.contentRect.height });
+    });
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, [activeTab, pendingPlugin?.pluginId]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedCode, setEditedCode] = useState('');
@@ -525,16 +543,47 @@ export function PluginPreview() {
   const browserPreviewCurrent = previewMeta?.sourceHash === sourceHash;
   const selectedFileCode = codeFiles[selectedFile] ?? '';
 
-  const basePreviewTiming = previewTimingFromSchema(pendingPlugin.schemaJson);
+  const settingsScope = `${threadId}:${pendingPlugin.pluginId}:${pendingPlugin.schemaJson}`;
+  const liveSettings = settingsDraft?.scope === settingsScope ? settingsDraft.values : undefined;
+  let timingSchemaJson = pendingPlugin.schemaJson;
+  if (liveSettings) {
+    try {
+      const schema = JSON.parse(timingSchemaJson);
+      timingSchemaJson = JSON.stringify({ ...schema, defaults: { ...schema.defaults, ...liveSettings } });
+    } catch { /* malformed schema is already reported in Quick Edit */ }
+  }
+  const basePreviewTiming = previewTimingFromSchema(timingSchemaJson);
   const previewTiming = overrideDuration ? {
     ...basePreviewTiming,
     durationSec: overrideDuration,
     durationInFrames: Math.max(1, Math.round(overrideDuration * basePreviewTiming.fps)),
   } : basePreviewTiming;
 
-  const settingsScope = `${threadId}:${pendingPlugin.pluginId}:${pendingPlugin.schemaJson}`;
   const previewData = previewDataFromSchema(pendingPlugin.schemaJson, previewTiming.durationSec,
-    settingsDraft?.scope === settingsScope ? settingsDraft.values : undefined);
+    liveSettings);
+  if (overrideDuration !== null) previewData.durationSec = previewTiming.durationSec;
+  const compositionSize = PLUGIN_PREVIEW_FORMATS[previewFormat];
+  const playerSize = fitPluginPreview(previewSpace.width, previewSpace.height, previewFormat);
+  const pluginInputProps = {
+    data: previewData,
+    theme: 'dark_modern',
+    animation: previewTiming.animation,
+    motionProfile: 'dynamic',
+  };
+
+  const downloadPreview = () => {
+    if (!Component || state !== 'ready' || isStreaming || isDownloading) return;
+    // Capture the exact component and visible values, including unapplied edits.
+    // No approval, source rebuild, or library save is needed to encode the draft.
+    void startRender({
+      component: Component,
+      inputProps: structuredClone(pluginInputProps),
+      durationInFrames: previewTiming.durationInFrames,
+      fps: previewTiming.fps,
+      ...compositionSize,
+      filename: `${safeFilename(pendingPlugin.pluginName || pendingPlugin.pluginId)}-${previewFormat.replace(':', 'x')}.webm`,
+    });
+  };
 
   const copySelectedFile = async () => {
     await navigator.clipboard.writeText(selectedFileCode);
@@ -997,8 +1046,40 @@ export function PluginPreview() {
           </div>
         ) : (
           /* ── Preview ── */
-          <div className="flex flex-col lg:flex-row h-full min-h-0 overflow-auto lg:overflow-hidden">
-          <div className="flex flex-1 min-w-0 items-center justify-center p-4 min-h-64 lg:min-h-0">
+          <div className="flex flex-col h-full min-h-80 lg:min-h-0">
+          <div className="shrink-0 flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
+            <div role="group" aria-label="Preview aspect ratio" className="flex gap-1">
+              {(Object.keys(PLUGIN_PREVIEW_FORMATS) as PluginPreviewFormat[]).map((format) => (
+                <button key={format} type="button" aria-pressed={previewFormat === format} disabled={isDownloading}
+                  onClick={() => setPreviewFormat(format)}
+                  className={`text-xs rounded-sm px-2.5 py-1.5 disabled:opacity-40 ${previewFormat === format ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                  {format}
+                </button>
+              ))}
+            </div>
+            <span className="text-[10px] text-muted-foreground">{compositionSize.width} × {compositionSize.height}</span>
+            <button type="button" onClick={downloadPreview} disabled={!canDownload || state !== 'ready' || isStreaming || isDownloading}
+              title={canDownload ? 'Render this draft in your browser and download a WebM video' : 'Video export requires a browser with WebCodecs support'}
+              className="ml-auto inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground disabled:opacity-40">
+              {isDownloading ? <CircleNotch size={14} className="animate-spin" /> : <DownloadSimple size={14} />}
+              {isDownloading ? `Rendering ${Math.round(downloadProgress * 100)}%` : 'Download video'}
+            </button>
+            {isDownloading && <button type="button" onClick={cancelDownload} className="text-xs text-muted-foreground">Cancel</button>}
+            <div className="flex w-full items-center gap-2 text-[10px] text-muted-foreground">
+              <label htmlFor="plugin-preview-duration">Duration</label>
+              <input id="plugin-preview-duration" type="range" min="3" max="120"
+                disabled={isDownloading} value={overrideDuration ?? basePreviewTiming.durationSec}
+                onChange={(event) => setOverrideDuration(Number(event.target.value))}
+                className="w-24 h-1" style={{ accentColor: 'var(--primary)' }} />
+              <button type="button" disabled={isDownloading} onClick={() => setOverrideDuration(null)} title="Reset duration to schema default">
+                {previewTiming.durationSec.toFixed(1)}s · {previewTiming.fps} fps
+              </button>
+            </div>
+            {!canDownload && <p className="w-full text-xs text-muted-foreground">Browser video export is unavailable here. Try a current Chrome or Edge browser.</p>}
+            {downloadStatus === 'error' && <p role="alert" className="w-full text-xs text-red-400">Export failed: {downloadError}</p>}
+            {downloadStatus === 'done' && <p role="status" className="w-full text-xs text-green-400">WebM video download started.</p>}
+          </div>
+          <div ref={previewStageRef} className="flex flex-1 min-w-0 items-center justify-center p-4 min-h-64 lg:min-h-0 overflow-hidden">
             {state === 'loading' && (
               <div className="flex flex-col items-center gap-3">
                 <CircleNotch weight="bold" size={24} className="animate-spin" style={{ color: 'var(--primary)' }} />
@@ -1014,46 +1095,15 @@ export function PluginPreview() {
 
             {state === 'ready' && Component && (
               <div
-                className="rounded-sm overflow-hidden w-full relative"
-                style={{ border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)', aspectRatio: '16/9' }}
+                className="rounded-sm overflow-hidden relative shrink-0"
+                style={{ border: '1px solid color-mix(in srgb, var(--primary) 30%, transparent)', ...playerSize }}
               >
-                <div
-                  className="absolute top-2 right-2 z-10 flex items-center gap-2"
-                >
-                  <input
-                    type="range"
-                    min="3"
-                    max="120"
-                    value={overrideDuration ?? basePreviewTiming.durationSec}
-                    onChange={(e) => setOverrideDuration(Number(e.target.value))}
-                    className="w-24 h-1 bg-white/20 rounded-sm appearance-none cursor-pointer"
-                    style={{ accentColor: 'var(--primary)' }}
-                    title="Drag to override preview duration"
-                  />
-                  <div
-                    className="text-[10px] font-mono px-2 py-0.5 rounded-sm cursor-pointer hover:bg-white/10"
-                    style={{
-                      background: 'rgba(0,0,0,0.55)',
-                      color: 'var(--primary)',
-                      border: '1px solid color-mix(in srgb, var(--primary) 25%, transparent)',
-                    }}
-                    title="Click to reset duration to schema default"
-                    onClick={() => setOverrideDuration(null)}
-                  >
-                    {previewTiming.durationSec.toFixed(1)}s / {previewTiming.durationInFrames}f @{previewTiming.fps}
-                  </div>
-                </div>
                 <Player
                   component={Component}
-                  inputProps={{
-                    data: previewData,
-                    theme: 'dark_modern',
-                    animation: previewTiming.animation,
-                    motionProfile: 'dynamic',
-                  }}
+                  inputProps={pluginInputProps}
                   durationInFrames={previewTiming.durationInFrames}
-                  compositionWidth={1920}
-                  compositionHeight={1080}
+                  compositionWidth={compositionSize.width}
+                  compositionHeight={compositionSize.height}
                   fps={previewTiming.fps}
                   style={{ width: '100%', height: '100%' }}
                   controls
@@ -1093,7 +1143,7 @@ export function PluginPreview() {
       </div>
           {threadId && <div className={showQuickEdit && activeTab === 'preview' ? 'flex shrink-0 min-h-0' : 'hidden'}>
             <PluginQuickEdit key={settingsScope} threadId={threadId} pluginId={pendingPlugin.pluginId}
-              schemaJson={pendingPlugin.schemaJson} disabled={isStreaming}
+              schemaJson={pendingPlugin.schemaJson} disabled={isStreaming || isDownloading}
               onPreviewChange={(values) => setSettingsDraft({ scope: settingsScope, values })} />
           </div>}
       </div>
