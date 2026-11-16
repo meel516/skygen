@@ -13,6 +13,13 @@ export default function EditorPage() {
   const router = useRouter();
 
   useEffect(() => {
+    if (status !== 'authenticated' || !('serviceWorker' in navigator)) return;
+    void navigator.serviceWorker.register('/editor-media-cache-sw.js', {
+      scope: '/editor', updateViaCache: 'none',
+    }).catch(error => console.warn('[editor] Media caching unavailable:', error));
+  }, [status]);
+
+  useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/');
     }

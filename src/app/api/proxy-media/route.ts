@@ -21,13 +21,17 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Only http/https URLs allowed', { status: 400 });
   }
 
-  const range = request.headers.get('range') ?? undefined;
-
+  const upstreamHeaders = new Headers();
+  for (const name of ['range', 'if-range', 'if-none-match', 'if-modified-since']) {
+    const value = request.headers.get(name);
+    if (value) upstreamHeaders.set(name, value);
+  }
   const upstream = await fetch(url, {
-    headers: range ? { range } : {},
+    method: request.method === 'HEAD' ? 'HEAD' : 'GET',
+    headers: upstreamHeaders,
   });
 
-  if (!upstream.ok) {
+  if (!upstream.ok && upstream.status !== 304) {
     console.warn('[proxy-media] upstream returned non-OK status', {
       status: upstream.status,
       statusText: upstream.statusText,
@@ -50,13 +54,14 @@ export async function GET(request: NextRequest) {
   headers.set('Access-Control-Allow-Headers', 'Range, Content-Type');
   headers.set('Access-Control-Expose-Headers', 'Content-Length, Content-Range, Accept-Ranges');
 
-  const passthrough = ['content-type', 'content-length', 'content-range', 'accept-ranges', 'cache-control'];
+  const passthrough = ['content-type', 'content-length', 'content-range', 'accept-ranges', 'cache-control', 'etag', 'last-modified', 'expires', 'vary'];
   for (const h of passthrough) {
     const v = upstream.headers.get(h);
     if (v) headers.set(h, v);
   }
+  if (!headers.has('cache-control')) headers.set('cache-control', 'private, max-age=3600');
 
-  return new NextResponse(upstream.body, {
+  return new NextResponse(request.method === 'HEAD' || upstream.status === 304 ? null : upstream.body, {
     status: upstream.status,
     headers,
   });
