@@ -7,6 +7,7 @@ import { PluginBuildErrorPanel } from './PluginBuildErrorPanel';
 import { useWizardChatStore } from '@/store/wizard-chat-store';
 import { CircleNotch, CheckCircle, XCircle, ArrowsClockwise, Code, Copy, DownloadSimple, PencilSimple, FloppyDisk, CloudArrowUp } from '@phosphor-icons/react';
 import Editor from '@monaco-editor/react';
+import { PluginQuickEdit } from './PluginQuickEdit';
 
 type PreviewState = 'idle' | 'loading' | 'ready' | 'error';
 type PendingPlugin = NonNullable<ReturnType<typeof useWizardChatStore.getState>['pendingPlugin']>;
@@ -155,17 +156,18 @@ function safeFilename(value: string): string {
 /** Extract preview data from a plugin schema — uses the schema's own defaults.
  *  Image fields with empty src are replaced with a placeholder so Remotion's
  *  <Img> doesn't throw "No src prop". */
-function previewDataFromSchema(schemaJson: string, durationSec?: number): Record<string, any> {
+function previewDataFromSchema(schemaJson: string, durationSec?: number, overrides?: Record<string, unknown>): Record<string, any> {
   try {
     const schema = JSON.parse(schemaJson);
-    const raw: Record<string, any> =
-      schema.defaults && typeof schema.defaults === 'object'
-        ? { ...schema.defaults }
-        : Object.fromEntries(
+    const raw: Record<string, any> = {
+        ...Object.fromEntries(
             Object.entries<any>(schema.properties ?? {})
               .filter(([, v]) => v.default !== undefined)
               .map(([k, v]) => [k, v.default])
-          );
+          ),
+        ...schema.defaults,
+        ...overrides,
+    };
 
     // Replace empty image fields with a placeholder URL
     const props = schema.properties ?? {};
@@ -241,6 +243,8 @@ export function PluginPreview() {
   const [previewMeta, setPreviewMeta] = useState<PreviewMeta>(null);
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
   const [overrideDuration, setOverrideDuration] = useState<number | null>(null);
+  const [showQuickEdit, setShowQuickEdit] = useState(true);
+  const [settingsDraft, setSettingsDraft] = useState<{ scope: string; values: Record<string, unknown> } | null>(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedCode, setEditedCode] = useState('');
@@ -264,6 +268,7 @@ export function PluginPreview() {
   // Dedup key for re-bundling: hash of sceneCode (changes on every editSceneCode),
   // not pluginId (stays the same across edits). Prevents stale previews after edits.
   const loadedSceneHash = useRef<string | null>(null);
+  const loadedCodeKey = useRef<string | null>(null);
 
   // Fetch latest pendingPlugin from server and update the Zustand store.
   // This ensures the reload button always uses server-side job state (which
@@ -292,7 +297,15 @@ export function PluginPreview() {
     expectedSourceHash?: string,
   ) => {
     const sourceHash = expectedSourceHash ?? hashCode(stableStringify({ sceneCode, dependencies, modules, schemaJson }));
+    const codeKey = hashCode(stableStringify({ pluginId, sceneCode, dependencies, modules }));
     if (loadedSceneHash.current === sourceHash) return true;
+    // Schema defaults are runtime props. Reuse the compiled component when
+    // only settings changed; explicit Reload still forces a build.
+    if (loadedSceneHash.current && loadedCodeKey.current === codeKey) {
+      loadedSceneHash.current = sourceHash;
+      setPreviewMeta((current) => current ? { ...current, sourceHash } : current);
+      return true;
+    }
 
     setState('loading');
     setErrorMsg('');
@@ -326,6 +339,7 @@ export function PluginPreview() {
 
       setComponent(() => exported);
       loadedSceneHash.current = json.sourceHash ?? sourceHash;
+      loadedCodeKey.current = codeKey;
       setPreviewMeta({
         sourceHash: json.sourceHash ?? sourceHash,
         previewBuildId: json.previewBuildId ?? `${sourceHash}-local`,
@@ -518,7 +532,9 @@ export function PluginPreview() {
     durationInFrames: Math.max(1, Math.round(overrideDuration * basePreviewTiming.fps)),
   } : basePreviewTiming;
 
-  const previewData = previewDataFromSchema(pendingPlugin.schemaJson, previewTiming.durationSec);
+  const settingsScope = `${threadId}:${pendingPlugin.pluginId}:${pendingPlugin.schemaJson}`;
+  const previewData = previewDataFromSchema(pendingPlugin.schemaJson, previewTiming.durationSec,
+    settingsDraft?.scope === settingsScope ? settingsDraft.values : undefined);
 
   const copySelectedFile = async () => {
     await navigator.clipboard.writeText(selectedFileCode);
@@ -580,6 +596,7 @@ export function PluginPreview() {
     setManualSaveError(null);
     setManualSaveErrors([]);
     try {
+      await useWizardChatStore.getState().flushPluginSettings?.();
       const res = await fetch('/api/ai/wizard/save-plugin-manual', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -605,18 +622,25 @@ export function PluginPreview() {
     }
   };
 
-  const downloadAllFiles = () => {
+  const downloadAllFiles = async () => {
+    try {
+      await useWizardChatStore.getState().flushPluginSettings?.();
+    } catch {
+      return; // Quick Edit displays the save error; do not export stale values.
+    }
+    const currentPlugin = useWizardChatStore.getState().pendingPlugin;
+    if (!currentPlugin) return;
     const payload = {
-      pluginId: pendingPlugin.pluginId,
-      pluginName: pendingPlugin.pluginName,
-      sourceHash,
+      pluginId: currentPlugin.pluginId,
+      pluginName: currentPlugin.pluginName,
+      sourceHash: localSourceHash(currentPlugin),
       sourceVersion: {
         lastCompiledSourceHash: pendingPlugin.lastCompiledSourceHash ?? null,
         previewSourceHash: pendingPlugin.previewSourceHash ?? null,
         previewBuildId: pendingPlugin.previewBuildId ?? null,
         browserPreviewSourceHash: previewMeta?.sourceHash ?? null,
       },
-      files: codeFiles,
+      files: buildCodeFiles(currentPlugin),
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -663,6 +687,8 @@ export function PluginPreview() {
           </span>
         </div>
         <div className="flex items-center gap-1">
+          {activeTab === 'preview' && <button type="button" onClick={() => setShowQuickEdit((open) => !open)}
+            aria-expanded={showQuickEdit} className="text-xs px-2 py-1 rounded-sm hover:bg-white/10">Edit</button>}
           {/* Tab switcher */}
           <div
             className="flex rounded-sm p-0.5 gap-0.5"
@@ -707,7 +733,8 @@ export function PluginPreview() {
       </div>
 
       {/* Pane */}
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-auto lg:overflow-hidden flex flex-col lg:flex-row">
+      <div className="flex-1 min-w-0 min-h-0">
         {activeTab === 'sandbox' ? (
           <div className="h-full min-h-0 overflow-auto p-4 flex flex-col gap-3">
             <p className="text-[11px] leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
@@ -970,7 +997,8 @@ export function PluginPreview() {
           </div>
         ) : (
           /* ── Preview ── */
-          <div className="flex items-center justify-center p-4 h-full">
+          <div className="flex flex-col lg:flex-row h-full min-h-0 overflow-auto lg:overflow-hidden">
+          <div className="flex flex-1 min-w-0 items-center justify-center p-4 min-h-64 lg:min-h-0">
             {state === 'loading' && (
               <div className="flex flex-col items-center gap-3">
                 <CircleNotch weight="bold" size={24} className="animate-spin" style={{ color: 'var(--primary)' }} />
@@ -1060,7 +1088,14 @@ export function PluginPreview() {
               </div>
             )}
           </div>
+          </div>
         )}
+      </div>
+          {threadId && <div className={showQuickEdit && activeTab === 'preview' ? 'flex shrink-0 min-h-0' : 'hidden'}>
+            <PluginQuickEdit key={settingsScope} threadId={threadId} pluginId={pendingPlugin.pluginId}
+              schemaJson={pendingPlugin.schemaJson} disabled={isStreaming}
+              onPreviewChange={(values) => setSettingsDraft({ scope: settingsScope, values })} />
+          </div>}
       </div>
 
       {/* Approval bar */}
@@ -1085,7 +1120,6 @@ export function PluginPreview() {
         <div className="flex gap-2">
           <button
             onClick={() => {
-              setPendingPlugin(null);
               sendMessage(`The plugin preview looks good. Please build and save it.`);
             }}
             disabled={isStreaming}

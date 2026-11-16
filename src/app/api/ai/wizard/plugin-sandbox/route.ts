@@ -17,6 +17,9 @@ import { requireAuthenticatedSession } from '@/lib/api-security';
 import { getJob, patchJobState } from '@/lib/mcp/wizard-jobs';
 import { bundlePreview } from '@/lib/plugins/preview-bundler';
 import { normalizePluginDependencies } from '@/lib/plugins/dependency-policy';
+import { updateDraftSettings } from '@/lib/plugins/draft-settings';
+import { db } from '@/lib/db';
+import type { Session } from 'next-auth';
 
 export const maxDuration = 180;
 
@@ -85,16 +88,16 @@ function summarizePending(pending: Record<string, any>) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const action = typeof body.action === 'string' ? body.action.trim() : 'list';
     const isMcpPreview = typeof body.threadId === 'string' && body.threadId.includes('mcp_preview_');
     
-    let session = null;
-    if (!isMcpPreview) {
+    let session: Session | null = null;
+    if (!isMcpPreview || action === 'update-settings') {
       const authResult = await requireAuthenticatedSession();
       if ('response' in authResult) return authResult.response;
-      session = authResult.session;
+      session = authResult.session as unknown as Session;
     }
     const threadId = typeof body.threadId === 'string' ? body.threadId.trim() : '';
-    const action = typeof body.action === 'string' ? body.action.trim() : 'list';
 
     if (!threadId) {
       return NextResponse.json({ error: 'threadId is required' }, { status: 400 });
@@ -104,8 +107,8 @@ export async function POST(req: NextRequest) {
     if (!job) {
       return NextResponse.json({ error: 'Job not found for this thread' }, { status: 404 });
     }
-    if (!isMcpPreview && job.user_id) {
-      if (!session) {
+    if ((!isMcpPreview || action === 'update-settings') && job.user_id) {
+      if (!session?.user?.id) {
         return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
       }
       if (job.user_id !== session.user.id && session.user.role !== 'ADMIN') {
@@ -119,6 +122,34 @@ export async function POST(req: NextRequest) {
         { error: 'No pending plugin in this chat. Wait for a plugin preview first.' },
         { status: 400 },
       );
+    }
+
+    if (action === 'update-settings') {
+      if (body.pluginId !== pending.pluginId || body.expectedSchemaJson !== pending.schemaJson) {
+        return NextResponse.json({ error: 'The plugin changed. Reload the draft before applying settings.' }, { status: 409 });
+      }
+      if (!body.changes || typeof body.changes !== 'object' || Array.isArray(body.changes) ||
+          JSON.stringify(body.changes).length > 2_000_000) {
+        return NextResponse.json({ error: 'Provide a settings object smaller than 2 MB.' }, { status: 400 });
+      }
+      let schemaJson: string;
+      try {
+        schemaJson = updateDraftSettings(pending.schemaJson, body.changes);
+      } catch (error) {
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Invalid settings' }, { status: 400 });
+      }
+      // Change only schema defaults. Compare the whole draft to reject concurrent
+      // agent/source edits instead of overwriting them with a stale snapshot.
+      const result = await db.query(
+        `UPDATE wizard_jobs SET state = jsonb_set(jsonb_set(state, '{pendingPlugin,schemaJson}', $2::jsonb), '{pendingPlugin,sourceHash}', $4::jsonb), updated_at = NOW()
+         WHERE thread_id = $1 AND state->'pendingPlugin' = $3::jsonb
+         RETURNING state->'pendingPlugin' AS pending`,
+        [threadId, JSON.stringify(schemaJson), JSON.stringify(pending), JSON.stringify(computePendingPluginSourceHash({ ...pending, schemaJson }))],
+      );
+      if (!result.rows.length) {
+        return NextResponse.json({ error: 'The plugin changed. Reload the draft before applying settings.' }, { status: 409 });
+      }
+      return NextResponse.json({ ok: true, pending: result.rows[0].pending });
     }
 
     // ── list ──────────────────────────────────────────────────────────────

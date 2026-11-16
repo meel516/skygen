@@ -39,6 +39,7 @@ interface WizardChatState {
   forkPluginId: string | null;
   messages: ChatMessage[];
   isStreaming: boolean;
+  flushPluginSettings: (() => Promise<void>) | null;
 
   // Generation state
   generationStatus: GenerationStatus;
@@ -719,6 +720,7 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
     forkPluginId: null,
     messages: [],
     isStreaming: false,
+    flushPluginSettings: null,
     generationStatus: 'idle',
     videoInput: null,
     videoId: null,
@@ -733,6 +735,13 @@ export const useWizardChatStore = create<WizardChatState & WizardChatActions>((s
 
     // ── Send message ────────────────────────────────────────────────────────
     sendMessage: async (text: string, attachmentUrl?: string) => {
+      if (get().isStreaming) return;
+      try {
+        await get().flushPluginSettings?.();
+      } catch (error) {
+        set({ error: error instanceof Error ? error.message : 'Could not apply plugin settings.' });
+        return;
+      }
       const state = get();
       if (state.isStreaming) return;
 
