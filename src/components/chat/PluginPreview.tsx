@@ -245,7 +245,7 @@ export function PluginPreview() {
   const [previewMeta, setPreviewMeta] = useState<PreviewMeta>(null);
   const [copiedFile, setCopiedFile] = useState<string | null>(null);
   const [overrideDuration, setOverrideDuration] = useState<number | null>(null);
-  const [showQuickEdit, setShowQuickEdit] = useState(true);
+  const [showQuickEdit, setShowQuickEdit] = useState(false);
   const [settingsDraft, setSettingsDraft] = useState<{ scope: string; values: Record<string, unknown> } | null>(null);
   const [previewFormat, setPreviewFormat] = useState<PluginPreviewFormat>('16:9');
   const previewStageRef = useRef<HTMLDivElement>(null);
