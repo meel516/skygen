@@ -129,7 +129,7 @@ export async function POST(request: Request) {
       return jsonRpc({ 
         tools: TOOL_DEFINITIONS.map(t => ({
           ...t,
-          annotations: annotationsMap[t.name] || { readOnlyHint: false, openWorldHint: false, destructiveHint: false }
+          annotations: t.annotations ?? annotationsMap[t.name] ?? { readOnlyHint: false, openWorldHint: false, destructiveHint: false }
         })) 
       }, id);
     }

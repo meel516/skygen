@@ -184,7 +184,7 @@ export const TOOL_DEFINITIONS = [
     name: 'list_plugins',
     description:
       'List installed plugins (core + user custom). Use returned plugin IDs to inspect or manage plugins. ' +
-      'Call get_plugin for schema/defaults of a specific plugin.',
+      'Call get_plugin for schema/defaults or get_plugin_source to read the saved files of a plugin you own.',
     inputSchema: { type: 'object', properties: {} },
   },
   {
@@ -196,6 +196,19 @@ export const TOOL_DEFINITIONS = [
       required: ['plugin_id'],
       properties: {
         plugin_id: { type: 'string', description: 'Plugin id from list_plugins or propose_plugin_preview.' },
+      },
+    },
+  },
+  {
+    name: 'get_plugin_source',
+    description:
+      'Read the saved Scene.tsx, supporting modules, schema, and dependencies of a plugin you own. Use the saved files as the starting point when editing or remixing an existing plugin.',
+    annotations: { readOnlyHint: true, openWorldHint: false, destructiveHint: false },
+    inputSchema: {
+      type: 'object',
+      required: ['plugin_id'],
+      properties: {
+        plugin_id: { type: 'string', description: 'Saved plugin ID from list_plugins.' },
       },
     },
   },
@@ -901,6 +914,16 @@ export async function handleToolCall(
           })), null, 2),
         }],
       };
+    }
+
+    case 'get_plugin_source': {
+      const pluginId = typeof args.plugin_id === 'string' ? args.plugin_id.trim() : '';
+      if (!/^[a-z0-9][a-z0-9-]*$/.test(pluginId)) {
+        throw new McpError(ErrorCode.InvalidParams, 'A valid plugin_id is required');
+      }
+
+      const source = await apiFetch(`/api/plugins/${encodeURIComponent(pluginId)}/source`);
+      return { content: [{ type: 'text', text: JSON.stringify(source) }] };
     }
 
     case 'get_plugin': {
