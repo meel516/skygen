@@ -8,7 +8,8 @@ import { useWizardChatStore } from '@/store/wizard-chat-store';
 import { CircleNotch, CheckCircle, XCircle, ArrowsClockwise, Code, Copy, DownloadSimple, PencilSimple, FloppyDisk, CloudArrowUp } from '@phosphor-icons/react';
 import Editor from '@monaco-editor/react';
 import { PluginQuickEdit } from './PluginQuickEdit';
-import { useClientRender } from '@/hooks/useClientRender';
+import { useClientRender, type ClientRenderFormat } from '@/hooks/useClientRender';
+import { VideoDownloadMenu } from '@/components/ui/video-download-menu';
 import { PLUGIN_PREVIEW_FORMATS, fitPluginPreview, type PluginPreviewFormat } from '@/lib/plugins/preview-format';
 
 type PreviewState = 'idle' | 'loading' | 'ready' | 'error';
@@ -250,7 +251,7 @@ export function PluginPreview() {
   const [previewFormat, setPreviewFormat] = useState<PluginPreviewFormat>('16:9');
   const previewStageRef = useRef<HTMLDivElement>(null);
   const [previewSpace, setPreviewSpace] = useState({ width: 640, height: 480 });
-  const { isSupported: canDownload, status: downloadStatus, progress: downloadProgress,
+  const { status: downloadStatus, progress: downloadProgress,
     error: downloadError, startRender, cancel: cancelDownload } = useClientRender();
   const isDownloading = downloadStatus === 'rendering';
 
@@ -571,7 +572,7 @@ export function PluginPreview() {
     motionProfile: 'dynamic',
   };
 
-  const downloadPreview = () => {
+  const downloadPreview = (format: ClientRenderFormat) => {
     if (!Component || state !== 'ready' || isStreaming || isDownloading) return;
     // Capture the exact component and visible values, including unapplied edits.
     // No approval, source rebuild, or library save is needed to encode the draft.
@@ -581,7 +582,8 @@ export function PluginPreview() {
       durationInFrames: previewTiming.durationInFrames,
       fps: previewTiming.fps,
       ...compositionSize,
-      filename: `${safeFilename(pendingPlugin.pluginName || pendingPlugin.pluginId)}-${previewFormat.replace(':', 'x')}.webm`,
+      format,
+      filename: `${safeFilename(pendingPlugin.pluginName || pendingPlugin.pluginId)}-${previewFormat.replace(':', 'x')}.${format}`,
     });
   };
 
@@ -1058,13 +1060,16 @@ export function PluginPreview() {
               ))}
             </div>
             <span className="text-[10px] text-muted-foreground">{compositionSize.width} × {compositionSize.height}</span>
-            <button type="button" onClick={downloadPreview} disabled={!canDownload || state !== 'ready' || isStreaming || isDownloading}
-              title={canDownload ? 'Render this draft in your browser and download a WebM video' : 'Video export requires a browser with WebCodecs support'}
-              className="ml-auto inline-flex items-center gap-1.5 rounded-sm px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground disabled:opacity-40">
-              {isDownloading ? <CircleNotch size={14} className="animate-spin" /> : <DownloadSimple size={14} />}
-              {isDownloading ? `Rendering ${Math.round(downloadProgress * 100)}%` : 'Download video'}
-            </button>
-            {isDownloading && <button type="button" onClick={cancelDownload} className="text-xs text-muted-foreground">Cancel</button>}
+            <VideoDownloadMenu {...compositionSize} className="ml-auto"
+              onDownload={downloadPreview} disabled={state !== 'ready' || isStreaming || isDownloading} />
+            {isDownloading && (
+              <>
+                <span role="status" className="text-xs text-muted-foreground">
+                  Rendering {Math.round(downloadProgress * 100)}%
+                </span>
+                <button type="button" onClick={cancelDownload} className="text-xs text-muted-foreground">Cancel</button>
+              </>
+            )}
             <div className="flex w-full items-center gap-2 text-[10px] text-muted-foreground">
               <label htmlFor="plugin-preview-duration">Duration</label>
               <input id="plugin-preview-duration" type="range" min="3" max="120"
@@ -1075,9 +1080,8 @@ export function PluginPreview() {
                 {previewTiming.durationSec.toFixed(1)}s · {previewTiming.fps} fps
               </button>
             </div>
-            {!canDownload && <p className="w-full text-xs text-muted-foreground">Browser video export is unavailable here. Try a current Chrome or Edge browser.</p>}
             {downloadStatus === 'error' && <p role="alert" className="w-full text-xs text-red-400">Export failed: {downloadError}</p>}
-            {downloadStatus === 'done' && <p role="status" className="w-full text-xs text-green-400">WebM video download started.</p>}
+            {downloadStatus === 'done' && <p role="status" className="w-full text-xs text-green-400">Video download started.</p>}
           </div>
           <div ref={previewStageRef} className="flex flex-1 min-w-0 items-center justify-center p-4 min-h-64 lg:min-h-0 overflow-hidden">
             {state === 'loading' && (

@@ -1,9 +1,8 @@
 'use client';
 
 import { useEditorStore } from '@/store/editor-store';
-import { Download, Loader2, Video, Maximize2, ChevronDown, FlaskConical, X } from '@/components/ui/studio-icons';
+import { Loader2, Video, Maximize2, ChevronDown, X } from '@/components/ui/studio-icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ExportModal } from './ExportModal';
 import { Player, PlayerRef } from '@remotion/player';
 import { DynamicVideo, getCompositionConfig } from '@/lib/video/compositions/DynamicVideo';
 import { type VideoPlan, type AIDecision, COMPONENT_IDS } from '@/lib/video/schemas';
@@ -11,7 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useClientRender } from '@/hooks/useClientRender';
+import { useClientRender, type ClientRenderFormat } from '@/hooks/useClientRender';
+import { VideoDownloadMenu } from '@/components/ui/video-download-menu';
 import { EditorOverlay } from './EditorOverlay';
 
 
@@ -83,7 +83,7 @@ function getPreviewDimensions(ratio: string) {
 }
 
 export function VideoPreview() {
-  const { videoInput, exportVideo, exportJobStatus, updateVideoMeta } = useEditorStore();
+  const { videoInput, updateVideoMeta } = useEditorStore();
   const playerRef = useRef<PlayerRef>(null);
   const playerWrapRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -93,9 +93,7 @@ export function VideoPreview() {
     document.addEventListener('fullscreenchange', onChange);
     return () => document.removeEventListener('fullscreenchange', onChange);
   }, []);
-  const isExporting = exportJobStatus === 'processing';
-
-  const { isSupported: clientRenderSupported, status: clientRenderStatus, progress: clientProgress, error: clientError, startRender, cancel: cancelRender, reset: resetClientRender } = useClientRender();
+  const { status: clientRenderStatus, progress: clientProgress, error: clientError, startRender, cancel: cancelRender, reset: resetClientRender } = useClientRender();
   const isClientRendering = clientRenderStatus === 'rendering';
 
   const plan = useMemo(() => generatePlanFromBlocks(videoInput), [videoInput]);
@@ -106,12 +104,7 @@ export function VideoPreview() {
 
   const previewDims = getPreviewDimensions(videoInput.videoMeta.aspectRatio);
 
-  const handleExport = () => {
-    if (videoInput.contentBlocks.length === 0) return;
-    exportVideo();
-  };
-
-  const handleClientRender = () => {
+  const handleClientRender = (format: ClientRenderFormat) => {
     if (!config || videoInput.contentBlocks.length === 0) return;
     startRender({
       component: DynamicVideo,
@@ -120,6 +113,7 @@ export function VideoPreview() {
       fps: config.fps,
       width: config.width,
       height: config.height,
+      format,
     });
   };
 
@@ -135,8 +129,6 @@ export function VideoPreview() {
   };
 
   return (
-    <>
-    <ExportModal />
     <div
       className="h-full w-full flex items-center justify-center relative overflow-hidden min-h-0 group"
       style={{
@@ -304,75 +296,16 @@ export function VideoPreview() {
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-[11px]"
             style={{ background: 'var(--popover)', backdropFilter: 'none', border: '1px solid rgba(239,68,68,0.4)', color: '#F87171' }}
           >
-            <span>Render failed</span>
+            <span role="alert" title={clientError ?? undefined}>Render failed</span>
             <button onClick={resetClientRender} className="ml-1 hover:text-foreground dark:text-white" title="Dismiss">
               <X className="w-3 h-3" />
             </button>
           </div>
         )}
 
-        {videoInput.contentBlocks.length > 0 && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                disabled={isExporting || isClientRendering}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[11px] font-semibold disabled:opacity-60"
-                style={{
-                  background: (isExporting || isClientRendering)
-                    ? 'color-mix(in srgb, var(--primary) 50%, transparent)'
-                    : 'var(--primary)',
-                  backdropFilter: 'none',
-                  color: 'var(--primary-foreground)',
-                  boxShadow: 'none',
-                }}
-              >
-                {isExporting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    {exportJobStatus === 'processing' ? 'Rendering…' : 'Exporting…'}
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-3.5 h-3.5" />
-                    Export MP4
-                    <ChevronDown className="w-3 h-3 ml-0.5" />
-                  </>
-                )}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              style={{ background: 'var(--muted)', borderColor: 'var(--border)', color: 'var(--foreground)', minWidth: 200 }}
-            >
-              <DropdownMenuItem
-                className="text-xs cursor-pointer flex items-center gap-2"
-                onClick={handleExport}
-              >
-                <Download className="w-3.5 h-3.5" />
-                <div>
-                  <div className="font-medium">Export MP4 (Server)</div>
-                  <div style={{ color: 'var(--muted-foreground)', fontSize: 10 }}>Render via server or Lambda</div>
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-xs cursor-pointer flex items-center gap-2"
-                onClick={handleClientRender}
-                disabled={!clientRenderSupported}
-                title={!clientRenderSupported ? 'Requires Chrome or Edge' : undefined}
-              >
-                <FlaskConical className="w-3.5 h-3.5" style={{ color: clientRenderSupported ? 'var(--primary)' : 'var(--muted-foreground)' }} />
-                <div>
-                  <div className="font-medium flex items-center gap-1">
-                    Render in Browser
-                    <span className="px-1 py-0.5 rounded text-[9px] font-bold" style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)' }}>BETA</span>
-                  </div>
-                  <div style={{ color: 'var(--muted-foreground)', fontSize: 10 }}>
-                    {clientRenderSupported ? 'No server needed · saves as .webm' : 'Chrome / Edge only'}
-                  </div>
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {config && (
+          <VideoDownloadMenu width={config.width} height={config.height}
+            disabled={isClientRendering} onDownload={handleClientRender} />
         )}
         <button
           onClick={handleFullscreen}
@@ -391,6 +324,5 @@ export function VideoPreview() {
         </button>
       </div>
     </div>
-    </>
   );
 }

@@ -35,6 +35,19 @@ function installMuxerErrorGuard() {
 }
 
 export type ClientRenderStatus = 'idle' | 'rendering' | 'done' | 'error' | 'unsupported';
+export type ClientRenderFormat = 'mp4' | 'webm';
+
+export const CLIENT_RENDER_FORMATS = ['mp4', 'webm'] as const;
+
+const encodingOptions = {
+  mp4: { container: 'mp4', videoCodec: 'h264', audioCodec: 'aac' },
+  webm: { container: 'webm' },
+} as const;
+
+export async function checkClientRenderFormat(format: ClientRenderFormat, width: number, height: number) {
+  const { canRenderMediaOnWeb } = await import('@remotion/web-renderer');
+  return canRenderMediaOnWeb({ width, height, ...encodingOptions[format] });
+}
 
 export interface ClientRenderParams {
   component: React.ComponentType<any>;
@@ -43,6 +56,7 @@ export interface ClientRenderParams {
   fps: number;
   width: number;
   height: number;
+  format?: ClientRenderFormat;
   filename?: string;
 }
 
@@ -81,12 +95,12 @@ export function useClientRender() {
     });
 
     try {
-      // Load the encoder only when the user requests an export.
-      const { canRenderMediaOnWeb, renderMediaOnWeb } = await import('@remotion/web-renderer');
-      const support = await canRenderMediaOnWeb({ width: params.width, height: params.height, container: 'webm' });
+      const format = params.format ?? 'webm';
+      const support = await checkClientRenderFormat(format, params.width, params.height);
       if (!support.canRender) {
         throw new Error(support.issues.map((issue) => issue.message).join(' ') || 'This browser cannot export this video.');
       }
+      const { renderMediaOnWeb } = await import('@remotion/web-renderer');
       abortRef.current.signal.throwIfAborted();
 
       const result = await renderMediaOnWeb({
@@ -102,7 +116,7 @@ export function useClientRender() {
         // Allow slow remote media to load and decode before a frame times out.
         // This is a per-frame wait limit; the user can still cancel the export.
         delayRenderTimeoutInMilliseconds: 120_000,
-        container: 'webm',
+        ...encodingOptions[format],
         signal: abortRef.current.signal,
         onProgress: ({ progress: p }) => setProgress(p),
         licenseKey: 'free-license',
@@ -118,7 +132,7 @@ export function useClientRender() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = params.filename ?? 'video.webm';
+      a.download = params.filename ?? `video.${format}`;
       document.body.appendChild(a);
       a.click();
       a.remove();
